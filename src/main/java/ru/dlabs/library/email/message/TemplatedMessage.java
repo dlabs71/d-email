@@ -9,7 +9,7 @@ import ru.dlabs.library.email.utils.MessageValidator;
 import ru.dlabs.library.email.utils.TemplateUtils;
 
 /**
- * Class describe templated email message.
+ * Class describe a templated email message.
  * If you want to send an HTML message, you can use this class to do it. Library use velocity template
  *
  * @author Ivanov Danila

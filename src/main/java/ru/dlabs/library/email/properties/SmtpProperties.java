@@ -22,7 +22,7 @@ public class SmtpProperties {
     private String email;
     private String password;
     private String name;
-    private AuthenticationType authenticationType = AuthenticationType.NONE;
+    private EncryptionType encryptionType = EncryptionType.NONE;
     private Integer readTimeout = 30000;
     private Integer connectionTimeout = 30000;
     private Integer writeTimeout = 30000;

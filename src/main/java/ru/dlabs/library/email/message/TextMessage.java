@@ -6,7 +6,7 @@ import lombok.Getter;
 import ru.dlabs.library.email.utils.MessageValidator;
 
 /**
- * Class describe text email message
+ * Class describe a text email message
  *
  * @author Ivanov Danila
  * @version 1.0

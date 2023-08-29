@@ -7,7 +7,7 @@ import lombok.ToString;
 import ru.dlabs.library.email.exception.ValidationMessageException;
 
 /**
- * Class describe email message recipient
+ * Class describe an email message recipient
  *
  * @author Ivanov Danila
  * @version 1.0

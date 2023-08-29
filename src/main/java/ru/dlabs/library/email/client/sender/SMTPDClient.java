@@ -10,13 +10,14 @@ import jakarta.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Properties;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.angus.mail.util.MailSSLSocketFactory;
 import ru.dlabs.library.email.client.SendingStatus;
 import ru.dlabs.library.email.message.Message;
-import ru.dlabs.library.email.properties.AuthenticationType;
+import ru.dlabs.library.email.properties.EncryptionType;
 import ru.dlabs.library.email.properties.SmtpProperties;
 import ru.dlabs.library.email.utils.EmailMessageUtils;
-import ru.dlabs.library.email.utils.MessageValidator;
 
 /**
  * SMTP email client for sending messages using the SMTP protocol
@@ -43,6 +44,7 @@ public class SMTPDClient implements SenderDClient {
         this.session = this.connect();
     }
 
+    @SneakyThrows
     @Override
     public Session connect() {
         Properties props = new Properties();
@@ -51,21 +53,21 @@ public class SMTPDClient implements SenderDClient {
         props.put("mail.smtp.timeout", smtpProperties.getReadTimeout());
         props.put("mail.smtp.connectiontimeout", smtpProperties.getConnectionTimeout());
         props.put("mail.smtp.writetimeout", smtpProperties.getWriteTimeout());
-        props.put("mail.mime.allowutf8", true);
+        props.put("mail.mime.allowutf8", "true");
         props.put("mail.debug", this.debug);
 
-        if (AuthenticationType.NONE.equals(smtpProperties.getAuthenticationType())) {
-            return Session.getInstance(props);
+        if (EncryptionType.SSL.equals(smtpProperties.getEncryptionType())) {
+            props.put("mail.smtp.ssl.enable", "true");
+            props.put("mail.smtp.socketFactory.port", String.valueOf(smtpProperties.getPort()));
+            MailSSLSocketFactory sf = new MailSSLSocketFactory();
+            props.put("mail.smtp.ssl.socketFactory", sf);
+            props.put("mail.smtp.ssl.checkserveridentity", "true");
+        } else if (EncryptionType.TLS.equals(smtpProperties.getEncryptionType())) {
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.starttls.required", "true");
         }
 
         props.put("mail.smtp.auth", "true");
-        if (AuthenticationType.SSL.equals(smtpProperties.getAuthenticationType())) {
-            props.put("mail.smtp.socketFactory.port", String.valueOf(smtpProperties.getPort()));
-            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        } else if (AuthenticationType.TLS.equals(smtpProperties.getAuthenticationType())) {
-            props.put("mail.smtp.starttls.enable", "true");
-        }
-
         Authenticator auth = new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(smtpProperties.getEmail(), smtpProperties.getPassword());
