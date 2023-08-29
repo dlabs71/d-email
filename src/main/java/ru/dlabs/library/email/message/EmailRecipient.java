@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import ru.dlabs.library.email.exception.ValidationMessageException;
 
 /**
  * Class describe email message recipient
@@ -21,6 +22,9 @@ public class EmailRecipient {
     private String name;
 
     public EmailRecipient(String email) {
+        if (email == null) {
+            throw new ValidationMessageException("The recipient's email must not be null");
+        }
         this.email = email;
     }
 }

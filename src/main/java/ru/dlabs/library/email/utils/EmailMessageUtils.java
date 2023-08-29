@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.CharEncoding;
+import org.apache.commons.lang3.CharEncoding;
 import ru.dlabs.library.email.message.EmailRecipient;
 
 /**

@@ -1,13 +1,18 @@
 package ru.dlabs.library.email;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ru.dlabs.library.email.client.sender.DEmailSender;
 import ru.dlabs.library.email.client.SendingStatus;
+import ru.dlabs.library.email.client.sender.DEmailSender;
+import ru.dlabs.library.email.exception.ValidationMessageException;
 import ru.dlabs.library.email.properties.AuthenticationType;
 import ru.dlabs.library.email.properties.SmtpProperties;
 
@@ -15,11 +20,13 @@ import ru.dlabs.library.email.properties.SmtpProperties;
 public class SMTPClientTests {
 
     private SmtpProperties smtpProperties;
+    private String recipientEmail;
 
     @BeforeEach
     public void loadConfig() throws IOException {
         Properties properties = new Properties();
         properties.load(getClass().getClassLoader().getResourceAsStream("smtp.properties"));
+        this.recipientEmail = properties.getProperty("recipientEmail");
         this.smtpProperties = SmtpProperties.builder()
             .host(properties.getProperty("host"))
             .port(Integer.parseInt(properties.getProperty("port")))
@@ -34,17 +41,37 @@ public class SMTPClientTests {
     }
 
     @Test
-    public void sendTextMessageTest1() {
+    public void sendTextMessageTest() {
         SendingStatus result = DEmailSender.of(this.smtpProperties)
-            .sendText("danila.a.ivanov@gmail.com", "Test subject", "Test message");
-        Assertions.assertEquals(result, SendingStatus.SUCCESS);
+            .sendText(this.recipientEmail, "Test subject", "Test message");
+        assertEquals(result, SendingStatus.SUCCESS);
     }
 
     @Test
-    public void sendTextMessageTest2() {
-        SendingStatus result = DEmailSender.of(this.smtpProperties)
-            .sendText("danila.a.ivanov@gmail.com", "Test subject", null);
-        Assertions.assertEquals(result, SendingStatus.SUCCESS);
+    public void validateMessageTest() {
+        DEmailSender sender = DEmailSender.of(this.smtpProperties);
+        Exception exception = assertThrows(
+            RuntimeException.class,
+            () -> sender.sendText(this.recipientEmail, "Test subject", null)
+        );
+        assertInstanceOf(ValidationMessageException.class, exception);
+        assertEquals(exception.getMessage(), "Content cannot be null in the email message");
+
+        exception = assertThrows(
+            RuntimeException.class,
+            () -> sender.sendText(this.recipientEmail, null, null)
+        );
+
+        assertInstanceOf(ValidationMessageException.class, exception);
+        assertEquals(exception.getMessage(), "Subject cannot be null in the email message");
+
+        exception = assertThrows(
+            RuntimeException.class,
+            () -> sender.sendText(List.of(), null, null)
+        );
+
+        assertInstanceOf(ValidationMessageException.class, exception);
+        assertEquals(exception.getMessage(), "List recipients cannot be null or empty in the email message");
     }
 
 }

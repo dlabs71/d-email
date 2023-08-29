@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
 import lombok.ToString;
+import ru.dlabs.library.email.exception.TemplateCreationException;
 import ru.dlabs.library.email.utils.MessageValidator;
 import ru.dlabs.library.email.utils.TemplateUtils;
 
@@ -29,15 +30,15 @@ public class TemplatedMessage implements Message {
     /**
      * It's values for aliases in the velocity template
      */
-    private final Map<String, String> params;
+    private final Map<String, Object> params;
     private final String content;
 
     public TemplatedMessage(
         Set<EmailRecipient> recipientEmail,
         String subject,
         String pathToTemplate,
-        Map<String, String> params
-    ) {
+        Map<String, Object> params
+    ) throws TemplateCreationException {
         this.recipientEmail = recipientEmail;
         this.subject = subject;
         this.pathToTemplate = pathToTemplate;
@@ -48,7 +49,10 @@ public class TemplatedMessage implements Message {
 
     public static TemplatedMessageBuilder builder() { return new TemplatedMessageBuilder(); }
 
-    public String constructContent() {
+    private String constructContent() throws TemplateCreationException {
+        if (pathToTemplate == null || params == null) {
+            return null;
+        }
         return TemplateUtils.construct(pathToTemplate, params);
     }
 
@@ -58,7 +62,7 @@ public class TemplatedMessage implements Message {
         private Set<EmailRecipient> recipientEmail;
         private String subject;
         private String pathToTemplate;
-        private Map<String, String> params;
+        private Map<String, Object> params;
 
         TemplatedMessageBuilder() { }
 
@@ -77,12 +81,12 @@ public class TemplatedMessage implements Message {
             return this;
         }
 
-        public TemplatedMessageBuilder params(Map<String, String> params) {
+        public TemplatedMessageBuilder params(Map<String, Object> params) {
             this.params = params;
             return this;
         }
 
-        public TemplatedMessage build() {
+        public TemplatedMessage build() throws TemplateCreationException {
             return new TemplatedMessage(recipientEmail, subject, pathToTemplate, params);
         }
     }
