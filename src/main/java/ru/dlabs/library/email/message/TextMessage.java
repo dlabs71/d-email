@@ -5,6 +5,7 @@ import static ru.dlabs.library.email.utils.EmailMessageUtils.DEFAULT_ENCODING;
 import java.util.Set;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import ru.dlabs.library.email.utils.MessageValidator;
 
 /**
@@ -15,6 +16,7 @@ import ru.dlabs.library.email.utils.MessageValidator;
  */
 @Getter
 @Builder
+@ToString
 public class TextMessage implements Message {
 
     private final Set<EmailParticipant> recipientEmail;

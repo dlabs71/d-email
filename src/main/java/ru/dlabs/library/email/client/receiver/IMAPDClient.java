@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.angus.mail.imap.IMAPStore;
 import ru.dlabs.library.email.message.EmailParticipant;
+import ru.dlabs.library.email.message.MessageView;
 import ru.dlabs.library.email.message.TextMessage;
 import ru.dlabs.library.email.properties.ImapProperties;
 import ru.dlabs.library.email.properties.Protocol;
@@ -60,11 +61,11 @@ public class IMAPDClient implements ReceiverDClient {
     }
 
     @Override
-    public List<TextMessage> checkEmailMessages() throws MessagingException {
+    public List<MessageView> checkEmailMessages() throws MessagingException {
         Folder defaultFolder = store.getFolder("INBOX");
         defaultFolder.open(READ_ONLY);
         return Arrays.stream(defaultFolder.getMessages()).map(item -> {
-            TextMessage.TextMessageBuilder builder = TextMessage.builder();
+            MessageView.MessageViewBuilder builder = MessageView.builder();
 
             Set<EmailParticipant> recipients = null;
             try {

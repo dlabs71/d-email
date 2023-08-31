@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import ru.dlabs.library.email.client.receiver.IMAPDClient;
+import ru.dlabs.library.email.message.MessageView;
 import ru.dlabs.library.email.message.TextMessage;
 import ru.dlabs.library.email.properties.EncryptionType;
 import ru.dlabs.library.email.properties.ImapProperties;
@@ -66,7 +67,7 @@ public class IMAPClientTests {
     public void checkEmailTest() throws GeneralSecurityException, MessagingException {
         IMAPDClient client = new IMAPDClient(this.sslImapProperties);
         client.setStore(CREDENTIAL_ID);
-        List<TextMessage> messages = client.checkEmailMessages();
+        List<MessageView> messages = client.checkEmailMessages();
         System.out.println(messages);
     }
 }

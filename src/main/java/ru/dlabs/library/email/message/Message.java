@@ -13,13 +13,17 @@ import java.util.Set;
  */
 public interface Message {
 
-    String getContent();
-
     String getSubject();
 
     Set<EmailParticipant> getRecipientEmail();
 
-    default EmailParticipant getSender() { return null; }
+    default String getContent() {
+        return null;
+    }
+
+    default EmailParticipant getSender() {
+        return null;
+    }
 
     default String getEncoding() {
         return DEFAULT_ENCODING;

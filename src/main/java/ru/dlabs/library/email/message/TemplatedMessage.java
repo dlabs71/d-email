@@ -17,6 +17,7 @@ import ru.dlabs.library.email.utils.TemplateUtils;
  * @see <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
  */
 @Getter
+@ToString
 public class TemplatedMessage implements Message {
 
     private final Set<EmailParticipant> recipientEmail;
