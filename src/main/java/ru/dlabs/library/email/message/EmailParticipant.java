@@ -16,12 +16,12 @@ import ru.dlabs.library.email.exception.ValidationMessageException;
 @ToString
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = { "name" })
-public class EmailRecipient {
+public class EmailParticipant {
 
     private String email;
     private String name;
 
-    public EmailRecipient(String email) {
+    public EmailParticipant(String email) {
         if (email == null) {
             throw new ValidationMessageException("The recipient's email must not be null");
         }

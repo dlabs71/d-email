@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.CharEncoding;
-import ru.dlabs.library.email.message.EmailRecipient;
+import ru.dlabs.library.email.message.EmailParticipant;
 
 /**
  * @author Ivanov Danila
@@ -52,13 +52,13 @@ public class EmailMessageUtils {
     }
 
     /**
-     * It's creating an array of {@link InternetAddress} objects from a list of {@link EmailRecipient} objects.
+     * It's creating an array of {@link InternetAddress} objects from a list of {@link EmailParticipant} objects.
      *
      * @param recipients the list of recipients
      *
      * @return the array of {@link InternetAddress} objects
      */
-    public InternetAddress[] createAddresses(Set<EmailRecipient> recipients) {
+    public InternetAddress[] createAddresses(Set<EmailParticipant> recipients) {
         return recipients.stream()
             .map(recipient -> {
                 try {

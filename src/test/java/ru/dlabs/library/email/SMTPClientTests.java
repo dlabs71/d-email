@@ -23,14 +23,12 @@ public class SMTPClientTests {
     private SmtpProperties tlsSmtpProperties;
     private SmtpProperties simpleSmtpProperties;
     private String recipientEmail;
-    private boolean debugEmail = false;
 
     @BeforeEach
     public void loadConfig() throws IOException {
         Properties properties = new Properties();
         properties.load(getClass().getClassLoader().getResourceAsStream("smtp.properties"));
         this.recipientEmail = properties.getProperty("recipientEmail");
-        this.debugEmail = "true".equals(properties.getProperty("debug", "false"));
 
         SmtpProperties.SmtpPropertiesBuilder builder = SmtpProperties.builder()
             .host(properties.getProperty("host"))
@@ -39,7 +37,8 @@ public class SMTPClientTests {
             .name(properties.getProperty("name"))
             .readTimeout(Integer.parseInt(properties.getProperty("readTimeout")))
             .connectionTimeout(Integer.parseInt(properties.getProperty("connectionTimeout")))
-            .writeTimeout(Integer.parseInt(properties.getProperty("writeTimeout")));
+            .writeTimeout(Integer.parseInt(properties.getProperty("writeTimeout")))
+            .debug("true".equals(properties.getProperty("debug", "false")));
 
         this.sslSmtpProperties = builder
             .encryptionType(EncryptionType.SSL)
@@ -59,21 +58,21 @@ public class SMTPClientTests {
 
     @Test
     public void sendSslTextMessageTest() {
-        SendingStatus result = DEmailSender.of(this.sslSmtpProperties, this.debugEmail)
+        SendingStatus result = DEmailSender.of(this.sslSmtpProperties)
             .sendText(this.recipientEmail, "Test subject", "Test message");
         assertEquals(result, SendingStatus.SUCCESS);
     }
 
     @Test
     public void sendTlsTextMessageTest() {
-        SendingStatus result = DEmailSender.of(this.tlsSmtpProperties, this.debugEmail)
+        SendingStatus result = DEmailSender.of(this.tlsSmtpProperties)
             .sendText(this.recipientEmail, "Test subject", "Test message");
         assertEquals(result, SendingStatus.SUCCESS);
     }
 
     @Test
     public void sendSimpleTextMessageTest() {
-        SendingStatus result = DEmailSender.of(this.simpleSmtpProperties, this.debugEmail)
+        SendingStatus result = DEmailSender.of(this.simpleSmtpProperties)
             .sendText(this.recipientEmail, "Test subject", "Test message");
         assertEquals(result, SendingStatus.SUCCESS);
     }

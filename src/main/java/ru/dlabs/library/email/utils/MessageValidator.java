@@ -15,7 +15,7 @@ public class MessageValidator {
             throw new ValidationMessageException("Subject cannot be null in the email message");
         }
         if (message.getContent() == null) {
-            throw new ValidationMessageException("Content cannot be null in the email message");
+//            throw new ValidationMessageException("Content cannot be null in the email message");
         }
     }
 }

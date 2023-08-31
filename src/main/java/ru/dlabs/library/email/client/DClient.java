@@ -1,6 +1,8 @@
 package ru.dlabs.library.email.client;
 
+import jakarta.mail.NoSuchProviderException;
 import jakarta.mail.Session;
+import java.security.GeneralSecurityException;
 
 /**
  * Interface is any email client
@@ -15,5 +17,5 @@ public interface DClient {
      *
      * @return {@link Session} object
      */
-    Session connect();
+    Session connect() throws NoSuchProviderException, GeneralSecurityException;
 }

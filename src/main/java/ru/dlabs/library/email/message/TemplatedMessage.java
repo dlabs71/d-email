@@ -19,7 +19,7 @@ import ru.dlabs.library.email.utils.TemplateUtils;
 @Getter
 public class TemplatedMessage implements Message {
 
-    private final Set<EmailRecipient> recipientEmail;
+    private final Set<EmailParticipant> recipientEmail;
     private final String subject;
 
     /**
@@ -34,7 +34,7 @@ public class TemplatedMessage implements Message {
     private final String content;
 
     public TemplatedMessage(
-        Set<EmailRecipient> recipientEmail,
+        Set<EmailParticipant> recipientEmail,
         String subject,
         String pathToTemplate,
         Map<String, Object> params
@@ -59,14 +59,14 @@ public class TemplatedMessage implements Message {
     @ToString
     public static class TemplatedMessageBuilder {
 
-        private Set<EmailRecipient> recipientEmail;
+        private Set<EmailParticipant> recipientEmail;
         private String subject;
         private String pathToTemplate;
         private Map<String, Object> params;
 
         TemplatedMessageBuilder() { }
 
-        public TemplatedMessageBuilder recipientEmail(Set<EmailRecipient> recipientEmail) {
+        public TemplatedMessageBuilder recipientEmail(Set<EmailParticipant> recipientEmail) {
             this.recipientEmail = recipientEmail;
             return this;
         }

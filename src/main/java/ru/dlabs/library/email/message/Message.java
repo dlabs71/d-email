@@ -17,7 +17,9 @@ public interface Message {
 
     String getSubject();
 
-    Set<EmailRecipient> getRecipientEmail();
+    Set<EmailParticipant> getRecipientEmail();
+
+    default EmailParticipant getSender() { return null; }
 
     default String getEncoding() {
         return DEFAULT_ENCODING;
