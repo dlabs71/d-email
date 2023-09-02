@@ -1,5 +1,6 @@
 package ru.dlabs.library.email.client.sender;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,7 +37,8 @@ public final class DEmailSender {
     }
 
     public SendingStatus sendText(String email, String subject, String content) {
-        Set<EmailParticipant> recipients = Set.of(new EmailParticipant(email));
+        Set<EmailParticipant> recipients = new HashSet<>();
+        recipients.add(new EmailParticipant(email));
         return this.sendText(recipients, subject, content);
     }
 
@@ -51,7 +53,7 @@ public final class DEmailSender {
         Message message = TextMessage.builder()
             .recipientEmail(recipients)
             .subject(subject)
-            .message(content)
+            .content(content)
             .build();
         return this.senderClient.send(message);
     }

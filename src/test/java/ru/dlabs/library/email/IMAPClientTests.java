@@ -1,17 +1,14 @@
 package ru.dlabs.library.email;
 
-import jakarta.mail.MessagingException;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.List;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.Properties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ru.dlabs.library.email.client.receiver.IMAPDClient;
+import ru.dlabs.library.email.client.receiver.DEmailReceiver;
 import ru.dlabs.library.email.message.MessageView;
-import ru.dlabs.library.email.message.TextMessage;
+import ru.dlabs.library.email.message.PageResponse;
 import ru.dlabs.library.email.properties.EncryptionType;
 import ru.dlabs.library.email.properties.ImapProperties;
 
@@ -34,17 +31,17 @@ public class IMAPClientTests {
         Properties properties = new Properties();
         properties.load(getClass().getClassLoader().getResourceAsStream("imap.properties"));
 
+        HashMap<String, ImapProperties.Credentials> credentialsMap = new HashMap<>();
+        credentialsMap.put(
+            CREDENTIAL_ID,
+            new ImapProperties.Credentials(
+                properties.getProperty("email"),
+                properties.getProperty("password")
+            )
+        );
         ImapProperties.ImapPropertiesBuilder builder = ImapProperties.builder()
             .host(properties.getProperty("host"))
-            .credentials(
-                Map.of(
-                    CREDENTIAL_ID,
-                    new ImapProperties.Credentials(
-                        properties.getProperty("email"),
-                        properties.getProperty("password")
-                    )
-                )
-            )
+            .credentials(credentialsMap)
             .debug("true".equals(properties.getProperty("debug", "false")));
 
         this.sslImapProperties = builder
@@ -64,10 +61,17 @@ public class IMAPClientTests {
     }
 
     @Test
-    public void checkEmailTest() throws GeneralSecurityException, MessagingException {
-        IMAPDClient client = new IMAPDClient(this.sslImapProperties);
-        client.setStore(CREDENTIAL_ID);
-        List<MessageView> messages = client.checkEmailMessages();
-        System.out.println(messages);
+    public void checkSimpleEmailTest() {
+        PageResponse<MessageView> response = DEmailReceiver.of(this.simpleImapProperties).nextCheckEmail();
+    }
+
+    @Test
+    public void checkSSLEmailTest() {
+        PageResponse<MessageView> response = DEmailReceiver.of(this.sslImapProperties).nextCheckEmail();
+    }
+
+    @Test
+    public void checkTLSEmailTest() {
+        PageResponse<MessageView> response = DEmailReceiver.of(this.tlsImapProperties).nextCheckEmail();
     }
 }

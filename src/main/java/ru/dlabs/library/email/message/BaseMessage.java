@@ -4,27 +4,37 @@ import static ru.dlabs.library.email.utils.EmailMessageUtils.DEFAULT_CONTENT_TYP
 import static ru.dlabs.library.email.utils.EmailMessageUtils.DEFAULT_ENCODING;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author Ivanov Danila
  * Project name: d-email
- * Creation date: 2023-08-31
+ * Creation date: 2023-09-01
  */
+@Setter
 @Getter
-@Builder
-@ToString
-public class MessageView implements Message {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(builderMethodName = "baseMessageBuilder")
+public class BaseMessage implements Message {
 
     private Integer id;
 
-    private final EmailParticipant sender;
-    private final Set<EmailParticipant> recipientEmail;
-    private final String subject;
+    private String subject;
+    private String content;
+
+    private Set<EmailParticipant> recipientEmail = new HashSet<>();
+    private EmailParticipant sender = null;
+
+    private List<EmailAttachment> attachments = new ArrayList<>();
 
     private String encoding = DEFAULT_ENCODING;
     private String contentType = DEFAULT_CONTENT_TYPE;
@@ -32,14 +42,4 @@ public class MessageView implements Message {
 
     private LocalDateTime sentDate;
     private LocalDateTime receivedDate;
-
-    @Override
-    public String getContent() {
-        return null;
-    }
-
-    @Override
-    public List<EmailAttachment> getAttachments() {
-        return null;
-    }
 }

@@ -1,8 +1,7 @@
 package ru.dlabs.library.email.message;
 
-import static ru.dlabs.library.email.utils.EmailMessageUtils.DEFAULT_CONTENT_TYPE;
-import static ru.dlabs.library.email.utils.EmailMessageUtils.DEFAULT_ENCODING;
-
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,23 +12,25 @@ import java.util.Set;
  */
 public interface Message {
 
+    Integer getId();
+
     String getSubject();
+
+    String getContent();
 
     Set<EmailParticipant> getRecipientEmail();
 
-    default String getContent() {
-        return null;
-    }
+    EmailParticipant getSender();
 
-    default EmailParticipant getSender() {
-        return null;
-    }
+    String getEncoding();
 
-    default String getEncoding() {
-        return DEFAULT_ENCODING;
-    }
+    String getContentType();
 
-    default String getContentType() {
-        return DEFAULT_CONTENT_TYPE;
-    }
+    List<EmailAttachment> getAttachments();
+
+    Integer getSize();
+
+    LocalDateTime getSentDate();
+
+    LocalDateTime getReceivedDate();
 }

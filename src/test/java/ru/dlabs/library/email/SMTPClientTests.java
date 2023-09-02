@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import org.junit.jupiter.api.BeforeEach;
@@ -97,7 +98,7 @@ public class SMTPClientTests {
 
         exception = assertThrows(
             RuntimeException.class,
-            () -> sender.sendText(List.of(), null, null)
+            () -> sender.sendText(new ArrayList<>(), null, null)
         );
 
         assertInstanceOf(ValidationMessageException.class, exception);

@@ -1,11 +1,12 @@
 package ru.dlabs.library.email.utils;
 
-import static org.apache.commons.lang3.CharEncoding.UTF_8;
-
 import java.io.File;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -87,9 +88,9 @@ public class TemplateUtils {
         TemplatePath templatePath = normalizeClasspathTemplatePath(pathTemplate);
         velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-        velocityEngine.setProperty("file.resource.loader.path", templatePath.pathToDir());
+        velocityEngine.setProperty("file.resource.loader.path", templatePath.getPathToDir());
         velocityEngine.init();
-        return velocityEngine.getTemplate(templatePath.templateName(), UTF_8);
+        return velocityEngine.getTemplate(templatePath.getTemplateName(), StandardCharsets.UTF_8.name());
     }
 
     /**
@@ -104,11 +105,11 @@ public class TemplateUtils {
         TemplatePath templatePath = normalizeFileTemplatePath(pathTemplate);
         velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "file");
         velocityEngine.setProperty("classpath.resource.loader.class", FileResourceLoader.class.getName());
-        velocityEngine.setProperty("file.resource.loader.path", templatePath.pathToDir());
+        velocityEngine.setProperty("file.resource.loader.path", templatePath.getPathToDir());
         velocityEngine.setProperty("file.resource.loader.cache", false);
         velocityEngine.setProperty("file.resource.loader.modificationCheckInterval", 0);
         velocityEngine.init();
-        return velocityEngine.getTemplate(templatePath.templateName(), UTF_8);
+        return velocityEngine.getTemplate(templatePath.getTemplateName(), StandardCharsets.UTF_8.name());
     }
 
     /**
@@ -162,5 +163,11 @@ public class TemplateUtils {
         return new TemplatePath(filename, String.join(File.separator, pathToDirectory));
     }
 
-    public static record TemplatePath(String templateName, String pathToDir) { }
+    @Getter
+    @RequiredArgsConstructor
+    public static class TemplatePath {
+
+        private final String templateName;
+        private final String pathToDir;
+    }
 }

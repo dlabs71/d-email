@@ -1,11 +1,13 @@
 package ru.dlabs.library.email.message;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import ru.dlabs.library.email.exception.TemplateCreationException;
-import ru.dlabs.library.email.utils.MessageValidator;
 import ru.dlabs.library.email.utils.TemplateUtils;
 
 /**
@@ -18,10 +20,7 @@ import ru.dlabs.library.email.utils.TemplateUtils;
  */
 @Getter
 @ToString
-public class TemplatedMessage implements Message {
-
-    private final Set<EmailParticipant> recipientEmail;
-    private final String subject;
+public class TemplatedMessage extends BaseMessage {
 
     /**
      * Path to velocity template
@@ -32,25 +31,38 @@ public class TemplatedMessage implements Message {
      * It's values for aliases in the velocity template
      */
     private final Map<String, Object> params;
-    private final String content;
 
     public TemplatedMessage(
-        Set<EmailParticipant> recipientEmail,
         String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        Set<EmailParticipant> recipientEmail
+    ) throws TemplateCreationException {
+        this.setSubject(subject);
+        this.setRecipientEmail(recipientEmail);
+        this.pathToTemplate = pathToTemplate;
+        this.params = params;
+        this.setContent(this.constructContent());
+    }
+
+    public TemplatedMessage(
+        String subject,
+        Set<EmailParticipant> recipientEmail,
+        EmailParticipant sender,
         String pathToTemplate,
         Map<String, Object> params
     ) throws TemplateCreationException {
-        this.recipientEmail = recipientEmail;
-        this.subject = subject;
         this.pathToTemplate = pathToTemplate;
         this.params = params;
-        this.content = this.constructContent();
-        MessageValidator.validate(this);
+        this.setContent(this.constructContent());
+        this.setSubject(subject);
+        this.setRecipientEmail(recipientEmail);
+        this.setSender(sender);
     }
 
     public static TemplatedMessageBuilder builder() { return new TemplatedMessageBuilder(); }
 
-    private String constructContent() throws TemplateCreationException {
+    public String constructContent() throws TemplateCreationException {
         if (pathToTemplate == null || params == null) {
             return null;
         }
@@ -58,17 +70,34 @@ public class TemplatedMessage implements Message {
     }
 
     @ToString
+    @NoArgsConstructor
     public static class TemplatedMessageBuilder {
 
-        private Set<EmailParticipant> recipientEmail;
-        private String subject;
         private String pathToTemplate;
-        private Map<String, Object> params;
+        private Map<String, Object> params = new HashMap<>();
+        private String subject;
+        private Set<EmailParticipant> recipientEmail = new HashSet<>();
+        private EmailParticipant sender = null;
 
-        TemplatedMessageBuilder() { }
 
-        public TemplatedMessageBuilder recipientEmail(Set<EmailParticipant> recipientEmail) {
-            this.recipientEmail = recipientEmail;
+        public TemplatedMessage build() throws TemplateCreationException {
+            return new TemplatedMessage(
+                subject,
+                recipientEmail,
+                sender,
+                pathToTemplate,
+                params
+            );
+        }
+
+        public TemplatedMessageBuilder template(String pathToTemplate, Map<String, Object> params) {
+            this.pathToTemplate = pathToTemplate;
+            this.params = params;
+            return this;
+        }
+
+        public TemplatedMessageBuilder template(String pathToTemplate) {
+            this.pathToTemplate = pathToTemplate;
             return this;
         }
 
@@ -77,18 +106,14 @@ public class TemplatedMessage implements Message {
             return this;
         }
 
-        public TemplatedMessageBuilder pathToTemplate(String pathToTemplate) {
-            this.pathToTemplate = pathToTemplate;
+        public TemplatedMessageBuilder recipientEmail(Set<EmailParticipant> recipientEmail) {
+            this.recipientEmail = recipientEmail;
             return this;
         }
 
-        public TemplatedMessageBuilder params(Map<String, Object> params) {
-            this.params = params;
+        public TemplatedMessageBuilder sender(EmailParticipant sender) {
+            this.sender = sender;
             return this;
-        }
-
-        public TemplatedMessage build() throws TemplateCreationException {
-            return new TemplatedMessage(recipientEmail, subject, pathToTemplate, params);
         }
     }
 }

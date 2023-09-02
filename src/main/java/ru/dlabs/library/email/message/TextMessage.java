@@ -1,12 +1,10 @@
 package ru.dlabs.library.email.message;
 
-import static ru.dlabs.library.email.utils.EmailMessageUtils.DEFAULT_ENCODING;
-
+import java.util.HashSet;
 import java.util.Set;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
-import ru.dlabs.library.email.utils.MessageValidator;
 
 /**
  * Class describe a text email message
@@ -15,46 +13,61 @@ import ru.dlabs.library.email.utils.MessageValidator;
  * @version 1.0
  */
 @Getter
-@Builder
 @ToString
-public class TextMessage implements Message {
-
-    private final Set<EmailParticipant> recipientEmail;
-    private final String subject;
-    private final String message;
-    private final String contentType;
-    private final EmailParticipant sender;
+public class TextMessage extends BaseMessage {
 
     public TextMessage(
-        Set<EmailParticipant> recipientEmail,
         String subject,
-        String message,
-        String contentType,
+        String content,
+        Set<EmailParticipant> recipientEmail,
         EmailParticipant sender
     ) {
-        this.recipientEmail = recipientEmail;
-        this.subject = subject;
-        this.message = message;
-        this.contentType = contentType;
-        this.sender = sender;
-        MessageValidator.validate(this);
+        this.setSubject(subject);
+        this.setContent(content);
+        this.setRecipientEmail(recipientEmail);
+        this.setSender(sender);
     }
 
-    public TextMessage(
-        Set<EmailParticipant> recipientEmail,
-        String subject,
-        String message
-    ) {
-        this.recipientEmail = recipientEmail;
-        this.subject = subject;
-        this.message = message;
-        this.contentType = DEFAULT_ENCODING;
-        this.sender = null;
-        MessageValidator.validate(this);
+    public static TextMessageBuilder builder() {
+        return new TextMessageBuilder();
     }
 
-    @Override
-    public String getContent() {
-        return this.message;
+    @ToString
+    @NoArgsConstructor
+    public static class TextMessageBuilder {
+
+        private String subject;
+        private String content;
+        private Set<EmailParticipant> recipientEmail = new HashSet<>();
+        private EmailParticipant sender = null;
+
+        public TextMessage build() {
+            return new TextMessage(
+                subject,
+                content,
+                recipientEmail,
+                sender
+            );
+        }
+
+        public TextMessageBuilder subject(String subject) {
+            this.subject = subject;
+            return this;
+        }
+
+        public TextMessageBuilder content(String content) {
+            this.content = content;
+            return this;
+        }
+
+        public TextMessageBuilder recipientEmail(Set<EmailParticipant> recipientEmail) {
+            this.recipientEmail = recipientEmail;
+            return this;
+        }
+
+        public TextMessageBuilder sender(EmailParticipant sender) {
+            this.sender = sender;
+            return this;
+        }
     }
 }

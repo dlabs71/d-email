@@ -5,12 +5,12 @@ import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.CharEncoding;
 import ru.dlabs.library.email.message.EmailParticipant;
 
 /**
@@ -24,7 +24,7 @@ public class EmailMessageUtils {
     public final static String CONTENT_TYPE_HDR = "Content-type";
     public final static String FORMAT_HDR = "format";
     public final static String CONTENT_TRANSFER_ENCODING_HDR = "Content-Transfer-Encoding";
-    public final static String DEFAULT_ENCODING = CharEncoding.UTF_8;
+    public final static String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
     public final static String DEFAULT_CONTENT_TYPE = "text/html; charset=" + DEFAULT_ENCODING;
 
     public void addCommonHeaders(MimeMessage msg) throws MessagingException {

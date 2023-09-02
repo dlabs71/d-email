@@ -67,14 +67,12 @@ public class TemplateUtilsTests {
 
         assertEquals(
             content,
-            """
-                <div>
-                    <h1>Header Template</h1>
-                    <div>
-                        <p>It's the content of an HTML page.</p>
-                    </div>
-                </div>
-                """.trim()
+            " <div>\n" +
+                "                    <h1>Header Template</h1>\n" +
+                "                    <div>\n" +
+                "                        <p>It's the content of an HTML page.</p>\n" +
+                "                    </div>\n" +
+                "                </div>".trim()
         );
     }
 }
