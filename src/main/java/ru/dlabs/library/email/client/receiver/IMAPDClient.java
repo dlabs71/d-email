@@ -18,16 +18,16 @@ import ru.dlabs.library.email.converter.MessageViewConverter;
 import ru.dlabs.library.email.exception.CheckEmailException;
 import ru.dlabs.library.email.exception.FolderOperationException;
 import ru.dlabs.library.email.exception.SessionException;
-import ru.dlabs.library.email.message.BaseMessage;
-import ru.dlabs.library.email.message.MessageView;
-import ru.dlabs.library.email.message.PageRequest;
-import ru.dlabs.library.email.properties.ImapProperties;
-import ru.dlabs.library.email.properties.Protocol;
-import ru.dlabs.library.email.utils.SessionUtils;
+import ru.dlabs.library.email.dto.message.common.BaseMessage;
+import ru.dlabs.library.email.dto.message.MessageView;
+import ru.dlabs.library.email.dto.pageable.PageRequest;
+import ru.dlabs.library.email.property.ImapProperties;
+import ru.dlabs.library.email.property.Protocol;
+import ru.dlabs.library.email.util.SessionUtils;
 
 public class IMAPDClient implements ReceiverDClient {
 
-    public final static String IMAP_PROTOCOL_NAME = "imap";
+    public final static String PROTOCOL_NAME = "imap";
     public final static String DEFAULT_FOLDER_NAME = "INBOX";
 
     private final ImapProperties imapProperties;
@@ -62,7 +62,7 @@ public class IMAPDClient implements ReceiverDClient {
         }
         ImapProperties.Credentials credentials = imapProperties.getCredentials().get(credentialId);
         try {
-            IMAPStore store = (IMAPStore) session.getStore(IMAP_PROTOCOL_NAME);
+            IMAPStore store = (IMAPStore) session.getStore(PROTOCOL_NAME);
             store.connect(credentials.getEmail(), credentials.getPassword());
             this.store = store;
         } catch (MessagingException e) {
@@ -91,10 +91,11 @@ public class IMAPDClient implements ReceiverDClient {
     public List<MessageView> checkEmailMessages(String folderName, PageRequest pageRequest) {
         Folder folder = this.openFolder(folderName);
         Stream<Message> messages = this.getMessages(folder, pageRequest);
-        closeFolder(folder);
 
-        return messages.map(MessageViewConverter::convert)
+        List<MessageView> result = messages.map(MessageViewConverter::convert)
             .collect(Collectors.toList());
+        closeFolder(folder);
+        return result;
     }
 
     @Override
@@ -106,10 +107,11 @@ public class IMAPDClient implements ReceiverDClient {
     public List<BaseMessage> readMessages(String folderName, PageRequest pageRequest) {
         Folder folder = this.openFolder(folderName);
         Stream<Message> messages = this.getMessages(folder, pageRequest);
-        closeFolder(folder);
 
-        return messages.map(BaseMessageConverter::convert)
-            .collect(Collectors.toList());
+        List<BaseMessage> result =
+            messages.map(BaseMessageConverter::convertToIncomingMessage).collect(Collectors.toList());
+        closeFolder(folder);
+        return result;
     }
 
     @Override

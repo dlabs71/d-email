@@ -1,12 +1,11 @@
 package ru.dlabs.library.email.client.receiver;
 
 import jakarta.mail.Folder;
-import jakarta.mail.MessagingException;
 import java.util.List;
 import ru.dlabs.library.email.client.DClient;
-import ru.dlabs.library.email.message.BaseMessage;
-import ru.dlabs.library.email.message.MessageView;
-import ru.dlabs.library.email.message.PageRequest;
+import ru.dlabs.library.email.dto.message.common.BaseMessage;
+import ru.dlabs.library.email.dto.message.MessageView;
+import ru.dlabs.library.email.dto.pageable.PageRequest;
 
 public interface ReceiverDClient extends DClient {
 

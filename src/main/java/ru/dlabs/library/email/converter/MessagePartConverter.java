@@ -1,11 +1,14 @@
 package ru.dlabs.library.email.converter;
 
-import jakarta.mail.BodyPart;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
+import jakarta.mail.Part;
+import jakarta.mail.internet.ContentType;
 import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.ParseException;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,12 +19,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import ru.dlabs.library.email.dto.message.common.EmailAttachment;
+import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.exception.CheckEmailException;
 import ru.dlabs.library.email.exception.ReadMessageException;
-import ru.dlabs.library.email.message.AttachmentType;
-import ru.dlabs.library.email.message.EmailAttachment;
-import ru.dlabs.library.email.message.EmailParticipant;
+import ru.dlabs.library.email.type.AttachmentType;
+import ru.dlabs.library.email.util.EmailMessageUtils;
+import ru.dlabs.library.email.util.IOUtils;
 
 /**
  * @author Ivanov Danila
@@ -50,50 +58,69 @@ public class MessagePartConverter {
         }
     }
 
-    public List<EmailAttachment> getAttachments(Message message) {
-        List<EmailAttachment> attachments = new ArrayList<>();
+    public EmailAttachment getAttachment(Part part) {
         try {
-            if (message.isMimeType("multipart/*")) {
-                Multipart mp = (Multipart) message.getContent();
-                int count = mp.getCount();
-                for (int i = 0; i < count; i++) {
-                    BodyPart bodyPart = mp.getBodyPart(i);
-                    byte[] content = getContentDefaultAsBytes(bodyPart);
-                    EmailAttachment attachment = EmailAttachment.builder()
-                        .name(bodyPart.getFileName())
-                        .data(content)
-                        .type(AttachmentType.find(bodyPart.getContentType()))
-                        .contentType(bodyPart.getContentType())
-                        .size(content.length)
-                        .build();
-                    attachments.add(attachment);
-                }
-            }
-        } catch (MessagingException | IOException e) {
+            byte[] content = getContentDefaultAsBytes(part);
+            return EmailAttachment.builder()
+                .name(EmailMessageUtils.decodeData(part.getFileName()))
+                .data(content)
+                .type(AttachmentType.find(part.getContentType()))
+                .contentType(EmailMessageUtils.decodeData(part.getContentType()))
+                .size(content.length)
+                .build();
+        } catch (MessagingException e) {
             throw new ReadMessageException(
                 "An error occurred in getting attachments from the message: " + e.getLocalizedMessage(), e);
         }
-        return attachments;
     }
 
-    public String getContent(Message message) {
+    public ContentAndAttachments getContent(Part part) {
+        ContentAndAttachments result = new ContentAndAttachments();
+        getContent(part, result);
+        return result;
+    }
+
+    @SneakyThrows
+    public void getContent(Part part, ContentAndAttachments result) {
         try {
+            if (part.isMimeType("text/*")) {
+                result.addContent(part.getContentType(), (String) part.getContent());
+                return;
+            }
             // this is a nested message
-            if (message.isMimeType("message/rfc822")) {
-                getContent((Message) message.getContent());
+            if (part.isMimeType("message/rfc822")) {
+                getContent((Message) part.getContent(), result);
+                return;
+            }
+            // check if the content has several parts
+            if (part.isMimeType("multipart/*")) {
+                Multipart mp = (Multipart) part.getContent();
+                int count = mp.getCount();
+                for (int i = 0; i < count; i++) {
+                    getContent(mp.getBodyPart(i), result);
+                }
+                return;
+            }
+            // check if the part is attachment
+            if (!AttachmentType.UNKNOWN.equals(AttachmentType.find(part.getContentType()))) {
+                EmailAttachment attachment = getAttachment(part);
+                if (attachment != null) {
+                    result.addAttachment(attachment);
+                    return;
+                }
             }
         } catch (MessagingException | IOException e) {
             throw new ReadMessageException(
                 "An error occurred in getting content from the message: " + e.getLocalizedMessage(), e);
         }
-
-        return getContentDefault(message);
+        result.addContent(part.getContentType(), getContentDefault(part));
     }
 
-    public String getContentDefault(Message message) {
+    @SneakyThrows
+    public String getContentDefault(Part part) {
         Object content;
         try {
-            content = message.getContent();
+            content = part.getContent();
         } catch (IOException | MessagingException e) {
             throw new ReadMessageException(
                 "An error occurred in getting content from the message: " + e.getLocalizedMessage(), e);
@@ -106,10 +133,13 @@ public class MessagePartConverter {
                 .lines()
                 .collect(Collectors.joining("\n"));
         }
-        return content.toString();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        part.writeTo(bos);
+        bos.close();
+        return bos.toString(StandardCharsets.UTF_8.name());
     }
 
-    public byte[] getContentDefaultAsBytes(BodyPart bodyPart) {
+    public byte[] getContentDefaultAsBytes(Part bodyPart) {
         Object content;
         try {
             content = bodyPart.getContent();
@@ -121,16 +151,51 @@ public class MessagePartConverter {
             return ((String) content).getBytes(StandardCharsets.UTF_8);
         } else if (content instanceof InputStream) {
             InputStream is = (InputStream) content;
-
             try {
-                byte[] buffer = new byte[is.available()];
-                is.read(buffer);
-                return buffer;
+                return IOUtils.toByteArray(is);
             } catch (IOException e) {
                 throw new ReadMessageException(
                     "An error occurred while reading the input stream of the message: " + e.getLocalizedMessage(), e);
             }
         }
         return content.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    @Getter
+    public static class ContentAndAttachments {
+
+        private final List<Content> contents = new ArrayList<>();
+        private final List<EmailAttachment> attachments = new ArrayList<>();
+
+        public void addContent(String contentType, String data) {
+            this.contents.add(new Content(contentType, data));
+        }
+
+        public void addAttachment(EmailAttachment attachment) {
+            this.attachments.add(attachment);
+        }
+
+        public String getContentByType(String contentType) {
+            return this.contents.stream()
+                .filter(item -> item.isMimeType(contentType))
+                .map(Content::getData)
+                .collect(Collectors.joining(","));
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class Content {
+
+        private String contentType;
+        private String data;
+
+        public boolean isMimeType(String contentTypePattern) {
+            try {
+                return new ContentType(contentTypePattern).match(this.contentType);
+            } catch (ParseException e) {
+                return this.contentType.contains(contentTypePattern);
+            }
+        }
     }
 }

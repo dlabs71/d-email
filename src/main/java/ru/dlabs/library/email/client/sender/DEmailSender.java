@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import ru.dlabs.library.email.client.SendingStatus;
-import ru.dlabs.library.email.message.EmailParticipant;
-import ru.dlabs.library.email.message.Message;
-import ru.dlabs.library.email.message.TextMessage;
-import ru.dlabs.library.email.properties.SmtpProperties;
+import ru.dlabs.library.email.dto.message.common.EmailParticipant;
+import ru.dlabs.library.email.dto.message.common.Message;
+import ru.dlabs.library.email.dto.message.TextOutgoingMessage;
+import ru.dlabs.library.email.property.SmtpProperties;
+import ru.dlabs.library.email.util.MessageValidator;
 
 /**
  * This class implements the Facade pattern for sending email messages.
@@ -50,7 +51,7 @@ public final class DEmailSender {
     }
 
     public SendingStatus sendText(Set<EmailParticipant> recipients, String subject, String content) {
-        Message message = TextMessage.builder()
+        Message message = TextOutgoingMessage.builder()
             .recipientEmail(recipients)
             .subject(subject)
             .content(content)

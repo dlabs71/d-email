@@ -1,6 +1,9 @@
 package ru.dlabs.library.email.client.sender;
 
 
+import static ru.dlabs.library.email.util.EmailMessageUtils.CONTENT_TRANSFER_ENCODING_HDR;
+import static ru.dlabs.library.email.util.EmailMessageUtils.FORMAT_HDR;
+
 import jakarta.mail.Authenticator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
@@ -13,11 +16,12 @@ import java.util.Properties;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.dlabs.library.email.client.SendingStatus;
-import ru.dlabs.library.email.message.Message;
-import ru.dlabs.library.email.properties.Protocol;
-import ru.dlabs.library.email.properties.SmtpProperties;
-import ru.dlabs.library.email.utils.EmailMessageUtils;
-import ru.dlabs.library.email.utils.SessionUtils;
+import ru.dlabs.library.email.dto.message.common.Message;
+import ru.dlabs.library.email.property.Protocol;
+import ru.dlabs.library.email.property.SmtpProperties;
+import ru.dlabs.library.email.util.EmailMessageUtils;
+import ru.dlabs.library.email.util.MessageValidator;
+import ru.dlabs.library.email.util.SessionUtils;
 
 /**
  * SMTP email client for sending messages using the SMTP protocol
@@ -61,9 +65,11 @@ public class SMTPDClient implements SenderDClient {
 
     @Override
     public SendingStatus send(Message message) {
+        MessageValidator.validate(message);
         MimeMessage msg = new MimeMessage(session);
         try {
-            EmailMessageUtils.addCommonHeaders(msg);
+            msg.addHeader(FORMAT_HDR, "flowed");
+            msg.addHeader(CONTENT_TRANSFER_ENCODING_HDR, "8bit");
             msg.setFrom(EmailMessageUtils.createAddress(smtpProperties.getEmail(), smtpProperties.getName()));
             msg.reply(false);
             msg.setSubject(message.getSubject(), message.getEncoding());

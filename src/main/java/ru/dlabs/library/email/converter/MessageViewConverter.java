@@ -4,13 +4,17 @@ import jakarta.mail.Address;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
+import java.nio.charset.StandardCharsets;
 import lombok.experimental.UtilityClass;
+import org.eclipse.angus.mail.imap.IMAPMessage;
+import ru.dlabs.library.email.dto.message.MessageView;
+import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.exception.CheckEmailException;
-import ru.dlabs.library.email.message.EmailParticipant;
-import ru.dlabs.library.email.message.MessageView;
-import ru.dlabs.library.email.utils.DateTimeUtils;
+import ru.dlabs.library.email.util.DateTimeUtils;
 
 /**
+ * Utility class is for converting a jakarta.mail.Message to an instance of the MessageView class
+ *
  * @author Ivanov Danila
  * Project name: d-email
  * Creation date: 2023-09-01
@@ -18,6 +22,13 @@ import ru.dlabs.library.email.utils.DateTimeUtils;
 @UtilityClass
 public class MessageViewConverter {
 
+    /**
+     * It converts the message to an instance of the MessageView class
+     *
+     * @param message the source message
+     *
+     * @return instance of the MessageView class
+     */
     public MessageView convert(Message message) {
         MessageView.MessageViewBuilder builder = MessageView.builder();
         builder.id(message.getMessageNumber());
@@ -46,8 +57,10 @@ public class MessageViewConverter {
         }
 
         try {
+            String encoding = ((IMAPMessage) message).getEncoding();
+
             builder.contentType(message.getContentType());
-            builder.encoding(message.getHeader("Encoding")[0]);
+            builder.encoding(encoding != null ? encoding : StandardCharsets.UTF_8.name());
             builder.size(message.getSize());
             builder.sentDate(DateTimeUtils.convert(message.getSentDate()));
             builder.receivedDate(DateTimeUtils.convert(message.getReceivedDate()));

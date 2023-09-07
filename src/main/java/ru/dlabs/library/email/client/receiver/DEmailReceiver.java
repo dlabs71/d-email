@@ -4,11 +4,11 @@ import static ru.dlabs.library.email.client.receiver.IMAPDClient.DEFAULT_FOLDER_
 
 import java.util.ArrayList;
 import java.util.List;
-import ru.dlabs.library.email.message.BaseMessage;
-import ru.dlabs.library.email.message.MessageView;
-import ru.dlabs.library.email.message.PageRequest;
-import ru.dlabs.library.email.message.PageResponse;
-import ru.dlabs.library.email.properties.ImapProperties;
+import ru.dlabs.library.email.dto.message.common.BaseMessage;
+import ru.dlabs.library.email.dto.message.MessageView;
+import ru.dlabs.library.email.dto.pageable.PageRequest;
+import ru.dlabs.library.email.dto.pageable.PageResponse;
+import ru.dlabs.library.email.property.ImapProperties;
 
 /**
  * @author Ivanov Danila

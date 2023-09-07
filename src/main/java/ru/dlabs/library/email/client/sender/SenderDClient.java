@@ -2,7 +2,7 @@ package ru.dlabs.library.email.client.sender;
 
 import ru.dlabs.library.email.client.DClient;
 import ru.dlabs.library.email.client.SendingStatus;
-import ru.dlabs.library.email.message.Message;
+import ru.dlabs.library.email.dto.message.common.Message;
 
 /**
  * The email client for sending messages
