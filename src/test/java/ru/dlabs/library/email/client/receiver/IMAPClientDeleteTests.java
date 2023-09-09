@@ -1,0 +1,98 @@
+package ru.dlabs.library.email.client.receiver;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import ru.dlabs.library.email.client.sender.DEmailSender;
+import ru.dlabs.library.email.dto.message.MessageView;
+import ru.dlabs.library.email.dto.pageable.PageResponse;
+import ru.dlabs.library.email.property.ImapProperties;
+
+/**
+ * @author Ivanov Danila
+ * Project name: d-email
+ * Creation date: 2023-08-31
+ */
+@Order(32)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class IMAPClientDeleteTests {
+
+    private final static Integer delayAfterSend = 1000;
+
+    private DEmailSender emailSender;
+    private DEmailReceiver emailReceiver;
+
+    @BeforeEach
+    public void loadConfig() throws IOException {
+        ImapProperties[] properties = ReceiveTestUtils.loadProperties();
+        ImapProperties sslImapProperties = properties[0];
+        this.emailSender = ReceiveTestUtils.createSender();
+        this.emailReceiver = DEmailReceiver.of(sslImapProperties);
+
+        String email = ReceiveTestUtils.getDefaultEmail(sslImapProperties);
+        this.sendData(email);
+    }
+
+    @SneakyThrows
+    private void sendData(String email) {
+        this.emailSender.sendText(email, "Тестовое сообщение 1", "Содержание тестового сообщения 1");
+        this.emailSender.sendText(email, "Тестовое сообщение 2", "Содержание тестового сообщения 2");
+        this.emailSender.sendText(email, "Тестовое сообщение 3", "Содержание тестового сообщения 3");
+        this.emailSender.sendText(email, "Тестовое сообщение 4", "Содержание тестового сообщения 4");
+        this.emailSender.sendText(email, "Тестовое сообщение 5", "Содержание тестового сообщения 5");
+        Thread.sleep(delayAfterSend);
+    }
+
+    @Test
+    @Order(1)
+    public void deleteMessage() {
+        PageResponse<MessageView> response = this.emailReceiver.nextCheckEmail();
+        int total = response.getTotalCount();
+
+        boolean result = this.emailReceiver.deleteMessage(response.getData().get(0).getId());
+        assertTrue(result);
+
+        this.emailReceiver.start(0);
+        response = this.emailReceiver.nextCheckEmail();
+        assertEquals(total - response.getTotalCount(), 1);
+    }
+
+    @Test
+    @Order(2)
+    public void deleteSeveralMessages() {
+        PageResponse<MessageView> response = this.emailReceiver.nextCheckEmail();
+        int total = response.getTotalCount();
+
+        List<Integer> ids = new ArrayList<>();
+        ids.add(response.getData().get(0).getId());
+        ids.add(response.getData().get(1).getId());
+
+        Map<Integer, Boolean> result = this.emailReceiver.deleteMessages(ids);
+        assertEquals(result.size(), 2);
+        result.forEach((key, value) -> assertTrue(value));
+
+        this.emailReceiver.start(0);
+        response = this.emailReceiver.nextCheckEmail();
+        assertEquals(total - response.getTotalCount(), 2);
+    }
+
+    @Test
+    @Order(3)
+    public void deleteAllMessages() {
+        PageResponse<MessageView> response = this.emailReceiver.nextCheckEmail();
+        int total = response.getTotalCount();
+
+        Map<Integer, Boolean> result = this.emailReceiver.clearCurrentFolder();
+        assertEquals(result.size(), total);
+        result.forEach((key, value) -> assertTrue(value));
+    }
+}

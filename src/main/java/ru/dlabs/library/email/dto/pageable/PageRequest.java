@@ -22,7 +22,7 @@ public class PageRequest {
     }
 
     public PageRequest incrementStart() {
-        this.setStart(this.getEnd());
+        this.setStart(this.getEnd() + 1);
         return this;
     }
 

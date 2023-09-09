@@ -4,11 +4,13 @@ import static ru.dlabs.library.email.util.EmailMessageUtils.HTML_CONTENT_TYPE;
 import static ru.dlabs.library.email.util.EmailMessageUtils.TEXT_CONTENT_TYPE;
 
 import jakarta.mail.Address;
+import jakarta.mail.Flags;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import java.nio.charset.StandardCharsets;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.angus.mail.imap.IMAPMessage;
 import ru.dlabs.library.email.dto.message.DefaultIncomingMessage;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
@@ -24,6 +26,7 @@ import ru.dlabs.library.email.util.EmailMessageUtils;
  * Project name: d-email
  * Creation date: 2023-09-01
  */
+@Slf4j
 @UtilityClass
 public class BaseMessageConverter {
 
@@ -55,9 +58,24 @@ public class BaseMessageConverter {
 
         MessagePartConverter.ContentAndAttachments data = MessagePartConverter.getContent(message);
         baseMessage.setContent(data.getContentByType(TEXT_CONTENT_TYPE));
+        if (baseMessage.getContent() == null || baseMessage.getContent().isEmpty()) {
+            baseMessage.setContent(data.getContentByType(HTML_CONTENT_TYPE));
+        }
         baseMessage.setAttachments(data.getAttachments());
 
-        return new DefaultIncomingMessage(baseMessage, data.getContentByType(HTML_CONTENT_TYPE));
+        boolean seen = false;
+        try {
+            seen = message.isSet(Flags.Flag.SEEN);
+        } catch (MessagingException e) {
+            log.warn("It is impossible to determine whether a message has been flagged as seen. "
+                         + e.getLocalizedMessage());
+        }
+
+        return new DefaultIncomingMessage(
+            baseMessage,
+            data.getContentByType(HTML_CONTENT_TYPE),
+            seen
+        );
     }
 
     /**

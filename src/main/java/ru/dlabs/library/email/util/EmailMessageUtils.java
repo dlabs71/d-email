@@ -25,7 +25,7 @@ public class EmailMessageUtils {
     public final static String FORMAT_HDR = "format";
     public final static String CONTENT_TRANSFER_ENCODING_HDR = "Content-Transfer-Encoding";
     public final static String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
-    public final static String DEFAULT_CONTENT_TYPE = "text/html; charset=" + DEFAULT_ENCODING;
+    public final static String DEFAULT_CONTENT_TYPE = "text/plain; charset=" + DEFAULT_ENCODING;
     public final static String TEXT_CONTENT_TYPE = "text/plain";
     public final static String HTML_CONTENT_TYPE = "text/html";
 
@@ -79,5 +79,13 @@ public class EmailMessageUtils {
             decoded = data;
         }
         return Normalizer.normalize(decoded, Normalizer.Form.NFC);
+    }
+
+    public String contentTypeWithEncoding(String contentType, String encoding) {
+        return contentType + "; charset=" + encoding;
+    }
+
+    public String contentTypeWithEncoding(String contentType) {
+        return contentTypeWithEncoding(contentType, DEFAULT_ENCODING);
     }
 }

@@ -32,6 +32,7 @@ public class MessageView implements Message {
     private String encoding = DEFAULT_ENCODING;
     private String contentType = DEFAULT_CONTENT_TYPE;
     private Integer size;
+    private boolean seen = false;
 
     private LocalDateTime sentDate;
     private LocalDateTime receivedDate;

@@ -1,11 +1,13 @@
 package ru.dlabs.library.email.converter;
 
 import jakarta.mail.Address;
+import jakarta.mail.Flags;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import java.nio.charset.StandardCharsets;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.angus.mail.imap.IMAPMessage;
 import ru.dlabs.library.email.dto.message.MessageView;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
@@ -19,6 +21,7 @@ import ru.dlabs.library.email.util.DateTimeUtils;
  * Project name: d-email
  * Creation date: 2023-09-01
  */
+@Slf4j
 @UtilityClass
 public class MessageViewConverter {
 
@@ -49,6 +52,13 @@ public class MessageViewConverter {
             throw new CheckEmailException(
                 "The attempt to get senders of the message has failed: " + e.getLocalizedMessage()
             );
+        }
+
+        try {
+            builder.seen(message.isSet(Flags.Flag.SEEN));
+        } catch (MessagingException e) {
+            log.warn("It is impossible to determine whether a message has been flagged as seen. "
+                         + e.getLocalizedMessage());
         }
 
         if (froms.length > 0) {

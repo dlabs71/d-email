@@ -1,4 +1,4 @@
-package ru.dlabs.library.email.client;
+package ru.dlabs.library.email.client.sender;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -8,13 +8,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import ru.dlabs.library.email.client.sender.DEmailSender;
+import ru.dlabs.library.email.client.SendingStatus;
 import ru.dlabs.library.email.exception.ValidationMessageException;
 import ru.dlabs.library.email.property.EncryptionType;
 import ru.dlabs.library.email.property.SmtpProperties;
 
+@Order(31)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SMTPClientTests {
 

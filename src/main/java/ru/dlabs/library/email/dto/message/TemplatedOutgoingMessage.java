@@ -11,6 +11,7 @@ import ru.dlabs.library.email.dto.message.api.OutgoingMessage;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.exception.TemplateCreationException;
+import ru.dlabs.library.email.util.EmailMessageUtils;
 import ru.dlabs.library.email.util.TemplateUtils;
 
 /**
@@ -46,6 +47,9 @@ public class TemplatedOutgoingMessage extends BaseMessage implements OutgoingMes
         this.pathToTemplate = pathToTemplate;
         this.params = params;
         this.setContent(this.constructContent());
+
+        String contentType = EmailMessageUtils.contentTypeWithEncoding(EmailMessageUtils.HTML_CONTENT_TYPE);
+        this.setContentType(contentType);
     }
 
     public TemplatedOutgoingMessage(
