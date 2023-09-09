@@ -4,7 +4,6 @@ import static ru.dlabs.library.email.util.EmailMessageUtils.HTML_CONTENT_TYPE;
 import static ru.dlabs.library.email.util.EmailMessageUtils.TEXT_CONTENT_TYPE;
 
 import jakarta.mail.Address;
-import jakarta.mail.Flags;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
@@ -63,18 +62,9 @@ public class BaseMessageConverter {
         }
         baseMessage.setAttachments(data.getAttachments());
 
-        boolean seen = false;
-        try {
-            seen = message.isSet(Flags.Flag.SEEN);
-        } catch (MessagingException e) {
-            log.warn("It is impossible to determine whether a message has been flagged as seen. "
-                         + e.getLocalizedMessage());
-        }
-
         return new DefaultIncomingMessage(
             baseMessage,
-            data.getContentByType(HTML_CONTENT_TYPE),
-            seen
+            data.getContentByType(HTML_CONTENT_TYPE)
         );
     }
 

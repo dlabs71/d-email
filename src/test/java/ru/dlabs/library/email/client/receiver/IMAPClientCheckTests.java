@@ -7,9 +7,11 @@ import java.io.IOException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import ru.dlabs.library.email.client.sender.DEmailSender;
 import ru.dlabs.library.email.dto.message.MessageView;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
@@ -21,8 +23,9 @@ import ru.dlabs.library.email.property.ImapProperties;
  * Project name: d-email
  * Creation date: 2023-08-31
  */
-@Order(33)
+@Order(323)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class IMAPClientCheckTests {
 
     private final static Integer COUNT_OF_MESSAGES = 3;
@@ -43,10 +46,11 @@ public class IMAPClientCheckTests {
         this.tlsImapProperties = properties[1];
         this.simpleImapProperties = properties[2];
         this.emailSender = ReceiveTestUtils.createSender();
-        this.recipientEmail = this.emailSender.sender().getEmail();
 
-        this.senderEmail = ReceiveTestUtils.getDefaultEmail(this.simpleImapProperties);
-        this.sendData(this.senderEmail);
+        this.senderEmail = this.emailSender.sender().getEmail();
+        this.recipientEmail = ReceiveTestUtils.getDefaultEmail(this.simpleImapProperties);
+
+        this.sendData(this.recipientEmail);
     }
 
     @SneakyThrows

@@ -17,7 +17,6 @@ import ru.dlabs.library.email.dto.message.common.BaseMessage;
 public class DefaultIncomingMessage extends BaseMessage implements IncomingMessage {
 
     private String htmlContent;
-    private boolean seen = false;
 
     public DefaultIncomingMessage(BaseMessage baseMessage) {
         super(
@@ -33,12 +32,6 @@ public class DefaultIncomingMessage extends BaseMessage implements IncomingMessa
             baseMessage.getSentDate(),
             baseMessage.getReceivedDate()
         );
-    }
-
-    public DefaultIncomingMessage(BaseMessage baseMessage, String htmlContent, boolean seen) {
-        this(baseMessage);
-        this.htmlContent = htmlContent;
-        this.seen = seen;
     }
 
     public DefaultIncomingMessage(BaseMessage baseMessage, String htmlContent) {

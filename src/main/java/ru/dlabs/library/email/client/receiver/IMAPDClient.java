@@ -20,7 +20,6 @@ import ru.dlabs.library.email.converter.BaseMessageConverter;
 import ru.dlabs.library.email.converter.MessageViewConverter;
 import ru.dlabs.library.email.dto.message.MessageView;
 import ru.dlabs.library.email.dto.message.api.IncomingMessage;
-import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.pageable.PageRequest;
 import ru.dlabs.library.email.exception.CheckEmailException;
 import ru.dlabs.library.email.exception.FolderOperationException;
@@ -71,6 +70,9 @@ public class IMAPDClient implements ReceiverDClient {
         try {
             IMAPStore store = (IMAPStore) session.getStore(PROTOCOL_NAME);
             store.connect(this.currentCredential.getEmail(), this.currentCredential.getPassword());
+            if (this.store != null) {
+                this.store.close();
+            }
             this.store = store;
         } catch (MessagingException e) {
             throw new SessionException("Creating session finished with the error: " + e.getLocalizedMessage(), e);
@@ -102,13 +104,10 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public List<IncomingMessage> readMessages(String folderName, PageRequest pageRequest) {
-        Folder folder = this.openFolderForRead(folderName);
+        Folder folder = this.openFolderForWrite(folderName);
         Stream<Message> messages = this.getMessages(folder, pageRequest);
 
-        List<IncomingMessage> result = messages.map(message -> {
-                this.markedAsSeen(message);
-                return BaseMessageConverter.convertToIncomingMessage(message);
-            })
+        List<IncomingMessage> result = messages.map(BaseMessageConverter::convertToIncomingMessage)
             .collect(Collectors.toList());
         closeFolder(folder);
         return result;
@@ -116,22 +115,21 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public IncomingMessage readMessageById(String folderName, int id) {
-        Folder folder = this.openFolderForRead(folderName);
+        Folder folder = this.openFolderForWrite(folderName);
 
         Message message;
         try {
             message = folder.getMessage(id);
-            this.markedAsSeen(message);
         } catch (MessagingException e) {
             throw new FolderOperationException(
                 "Reading the message with id=" + id + " in the folder with name " + folderName +
                     " finished the error: " +
                     e.getLocalizedMessage(), e);
-        } finally {
-            closeFolder(folder);
         }
 
-        return BaseMessageConverter.convertToIncomingMessage(message);
+        IncomingMessage incomingMessage = BaseMessageConverter.convertToIncomingMessage(message);
+        closeFolder(folder);
+        return incomingMessage;
     }
 
     @Override
@@ -282,6 +280,7 @@ public class IMAPDClient implements ReceiverDClient {
     private void markedAsSeen(Message message) {
         try {
             message.setFlag(Flags.Flag.SEEN, true);
+            message.saveChanges();
         } catch (MessagingException e) {
             log.warn(
                 "The message wasn't marked as seen because of the following error: " + e.getLocalizedMessage());

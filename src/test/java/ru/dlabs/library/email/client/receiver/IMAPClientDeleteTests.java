@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Map;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import ru.dlabs.library.email.client.sender.DEmailSender;
 import ru.dlabs.library.email.dto.message.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
@@ -22,8 +24,9 @@ import ru.dlabs.library.email.property.ImapProperties;
  * Project name: d-email
  * Creation date: 2023-08-31
  */
-@Order(32)
+@Order(321)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class IMAPClientDeleteTests {
 
     private final static Integer delayAfterSend = 1000;
