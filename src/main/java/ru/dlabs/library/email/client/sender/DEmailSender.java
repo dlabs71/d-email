@@ -1,13 +1,15 @@
 package ru.dlabs.library.email.client.sender;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import ru.dlabs.library.email.client.SendingStatus;
 import ru.dlabs.library.email.dto.message.TextOutgoingMessage;
+import ru.dlabs.library.email.dto.message.api.OutgoingMessage;
+import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
-import ru.dlabs.library.email.dto.message.common.Message;
 import ru.dlabs.library.email.property.SmtpProperties;
 
 /**
@@ -38,7 +40,7 @@ public final class DEmailSender {
         return new EmailParticipant(this.properties.getEmail(), this.properties.getName());
     }
 
-    public SendingStatus send(Message message) {
+    public SendingStatus send(OutgoingMessage message) {
         return this.senderClient.send(message);
     }
 
@@ -56,11 +58,33 @@ public final class DEmailSender {
     }
 
     public SendingStatus sendText(Set<EmailParticipant> recipients, String subject, String content) {
-        Message message = TextOutgoingMessage.builder()
+        return this.sendText(recipients, subject, content, null);
+    }
+
+    public SendingStatus sendText(String email, String subject, String content, EmailAttachment... attachments) {
+        Set<EmailParticipant> recipients = new HashSet<>();
+        recipients.add(new EmailParticipant(email));
+        return this.sendText(recipients, subject, content, Arrays.asList(attachments));
+    }
+
+    public SendingStatus sendText(String email, String subject, String content, List<EmailAttachment> attachments) {
+        Set<EmailParticipant> recipients = new HashSet<>();
+        recipients.add(new EmailParticipant(email));
+        return this.sendText(recipients, subject, content, attachments);
+    }
+
+    public SendingStatus sendText(
+        Set<EmailParticipant> recipients,
+        String subject,
+        String content,
+        List<EmailAttachment> attachments
+    ) {
+        OutgoingMessage message = TextOutgoingMessage.builder()
             .recipientEmail(recipients)
             .subject(subject)
             .content(content)
+            .attachments(attachments)
             .build();
-        return this.senderClient.send(message);
+        return this.send(message);
     }
 }

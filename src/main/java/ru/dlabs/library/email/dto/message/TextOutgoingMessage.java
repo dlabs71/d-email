@@ -1,11 +1,15 @@
 package ru.dlabs.library.email.dto.message;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import ru.dlabs.library.email.dto.message.api.OutgoingMessage;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
+import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 
 /**
@@ -16,18 +20,18 @@ import ru.dlabs.library.email.dto.message.common.EmailParticipant;
  */
 @Getter
 @ToString
-public class TextOutgoingMessage extends BaseMessage {
+public class TextOutgoingMessage extends BaseMessage implements OutgoingMessage {
 
     public TextOutgoingMessage(
         String subject,
         String content,
         Set<EmailParticipant> recipientEmail,
-        EmailParticipant sender
+        List<EmailAttachment> attachments
     ) {
         this.setSubject(subject);
         this.setContent(content);
         this.setRecipientEmail(recipientEmail);
-        this.setSender(sender);
+        this.setAttachments(attachments);
     }
 
     public static TextMessageBuilder builder() {
@@ -41,14 +45,14 @@ public class TextOutgoingMessage extends BaseMessage {
         private String subject;
         private String content;
         private Set<EmailParticipant> recipientEmail = new HashSet<>();
-        private EmailParticipant sender = null;
+        private List<EmailAttachment> attachments = new ArrayList<>();
 
         public TextOutgoingMessage build() {
             return new TextOutgoingMessage(
                 subject,
                 content,
                 recipientEmail,
-                sender
+                attachments
             );
         }
 
@@ -67,8 +71,16 @@ public class TextOutgoingMessage extends BaseMessage {
             return this;
         }
 
-        public TextMessageBuilder sender(EmailParticipant sender) {
-            this.sender = sender;
+        public TextMessageBuilder attachments(List<EmailAttachment> attachments) {
+            this.attachments = attachments;
+            return this;
+        }
+
+        public TextMessageBuilder addAttachment(EmailAttachment attachment) {
+            if (this.attachments == null) {
+                this.attachments = new ArrayList<>();
+            }
+            this.attachments.add(attachment);
             return this;
         }
     }

@@ -23,15 +23,14 @@ import ru.dlabs.library.email.dto.message.common.Message;
 @ToString
 public class MessageView implements Message {
 
-    private Integer id;
-
     private final EmailParticipant sender;
     private final Set<EmailParticipant> recipientEmail;
     private final String subject;
 
+    private Integer id;
+    private Integer size;
     private String encoding = DEFAULT_ENCODING;
     private String contentType = DEFAULT_CONTENT_TYPE;
-    private Integer size;
     private boolean seen = false;
 
     private LocalDateTime sentDate;

@@ -1,8 +1,8 @@
 package ru.dlabs.library.email.util;
 
 import lombok.experimental.UtilityClass;
-import ru.dlabs.library.email.exception.ValidationMessageException;
 import ru.dlabs.library.email.dto.message.common.Message;
+import ru.dlabs.library.email.exception.ValidationMessageException;
 
 /**
  * Message validation functions

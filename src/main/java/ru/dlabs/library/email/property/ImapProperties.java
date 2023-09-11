@@ -52,6 +52,8 @@ public class ImapProperties extends CommonProperties {
         this.connectionPoolTimeout = connectionPoolTimeout;
     }
 
+    public static ImapProperties.ImapPropertiesBuilder builder() { return new ImapProperties.ImapPropertiesBuilder(); }
+
     @Getter
     @AllArgsConstructor
     public static class Credentials {
@@ -59,8 +61,6 @@ public class ImapProperties extends CommonProperties {
         private String email;
         private String password;
     }
-
-    public static ImapProperties.ImapPropertiesBuilder builder() { return new ImapProperties.ImapPropertiesBuilder(); }
 
     @Setter
     @ToString

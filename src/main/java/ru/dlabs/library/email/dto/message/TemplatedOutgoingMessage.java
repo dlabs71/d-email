@@ -1,7 +1,9 @@
 package ru.dlabs.library.email.dto.message;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import ru.dlabs.library.email.dto.message.api.OutgoingMessage;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
+import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.exception.TemplateCreationException;
 import ru.dlabs.library.email.util.EmailMessageUtils;
@@ -55,7 +58,7 @@ public class TemplatedOutgoingMessage extends BaseMessage implements OutgoingMes
     public TemplatedOutgoingMessage(
         String subject,
         Set<EmailParticipant> recipientEmail,
-        EmailParticipant sender,
+        List<EmailAttachment> attachments,
         String pathToTemplate,
         Map<String, Object> params
     ) throws TemplateCreationException {
@@ -64,7 +67,7 @@ public class TemplatedOutgoingMessage extends BaseMessage implements OutgoingMes
         this.setContent(this.constructContent());
         this.setSubject(subject);
         this.setRecipientEmail(recipientEmail);
-        this.setSender(sender);
+        this.setAttachments(attachments);
     }
 
     public static TemplatedMessageBuilder builder() { return new TemplatedMessageBuilder(); }
@@ -84,14 +87,14 @@ public class TemplatedOutgoingMessage extends BaseMessage implements OutgoingMes
         private Map<String, Object> params = new HashMap<>();
         private String subject;
         private Set<EmailParticipant> recipientEmail = new HashSet<>();
-        private EmailParticipant sender = null;
+        private List<EmailAttachment> attachments = new ArrayList<>();
 
 
         public TemplatedOutgoingMessage build() throws TemplateCreationException {
             return new TemplatedOutgoingMessage(
                 subject,
                 recipientEmail,
-                sender,
+                attachments,
                 pathToTemplate,
                 params
             );
@@ -118,8 +121,16 @@ public class TemplatedOutgoingMessage extends BaseMessage implements OutgoingMes
             return this;
         }
 
-        public TemplatedMessageBuilder sender(EmailParticipant sender) {
-            this.sender = sender;
+        public TemplatedMessageBuilder attachments(List<EmailAttachment> attachments) {
+            this.attachments = attachments;
+            return this;
+        }
+
+        public TemplatedMessageBuilder addAttachment(EmailAttachment attachment) {
+            if (this.attachments == null) {
+                this.attachments = new ArrayList<>();
+            }
+            this.attachments.add(attachment);
             return this;
         }
     }

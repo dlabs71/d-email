@@ -17,5 +17,5 @@ public class EmailAttachment {
     private byte[] data;
     private AttachmentType type;
     private String contentType;
-    private Integer size;
+    private Long size;
 }
