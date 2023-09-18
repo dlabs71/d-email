@@ -5,8 +5,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import ru.dlabs.library.email.type.EncryptionType;
 
 /**
+ * The properties for connecting to an email server by the SMTP protocol
+ *
  * @author Ivanov Danila
  * @version 1.0
  */

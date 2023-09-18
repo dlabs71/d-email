@@ -6,18 +6,18 @@ import java.util.Properties;
 import lombok.experimental.UtilityClass;
 import org.eclipse.angus.mail.util.MailSSLSocketFactory;
 import ru.dlabs.library.email.property.CommonProperties;
-import ru.dlabs.library.email.property.EncryptionType;
-import ru.dlabs.library.email.property.Protocol;
+import ru.dlabs.library.email.type.EncryptionType;
+import ru.dlabs.library.email.type.Protocol;
 
 /**
+ * Utility class for settings and workings with the email session connection
+ *
  * @author Ivanov Danila
  * Project name: d-email
  * Creation date: 2023-08-30
  */
 @UtilityClass
 public class SessionUtils {
-
-    public final static String IMAP_PROTOCOL_NAME = "imaps";
 
     public Properties createCommonProperties(CommonProperties properties, Protocol protocol)
         throws GeneralSecurityException {

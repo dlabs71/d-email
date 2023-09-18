@@ -14,6 +14,8 @@ import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.common.Message;
 
 /**
+ * This class described common data about an email message. Without a message body and message attachments.
+ *
  * @author Ivanov Danila
  * Project name: d-email
  * Creation date: 2023-08-31

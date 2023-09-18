@@ -13,7 +13,7 @@ import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 
 /**
- * Class describe a text email message
+ * Class describe a text outgoing email message
  *
  * @author Ivanov Danila
  * @version 1.0

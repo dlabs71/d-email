@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.dlabs.library.email.client.SendingStatus;
 import ru.dlabs.library.email.dto.message.api.OutgoingMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.exception.CreateMessageException;
-import ru.dlabs.library.email.property.Protocol;
+import ru.dlabs.library.email.exception.SessionException;
+import ru.dlabs.library.email.type.Protocol;
 import ru.dlabs.library.email.property.SmtpProperties;
 import ru.dlabs.library.email.util.EmailMessageUtils;
 import ru.dlabs.library.email.util.MessageValidator;
@@ -57,13 +57,18 @@ public class SMTPDClient implements SenderDClient {
         this.session = this.connect();
     }
 
-    @SneakyThrows
     @Override
-    public Session connect() {
-        Properties props = SessionUtils.createCommonProperties(
-            this.smtpProperties,
-            Protocol.SMTP
-        );
+    public Session connect() throws SessionException {
+        Properties props;
+        try {
+            props = SessionUtils.createCommonProperties(
+                this.smtpProperties,
+                Protocol.SMTP
+            );
+        } catch (Exception e) {
+            throw new SessionException(
+                "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
+        }
 
         props.put("mail.smtp.auth", "true");
         Authenticator auth = new Authenticator() {
@@ -71,7 +76,12 @@ public class SMTPDClient implements SenderDClient {
                 return new PasswordAuthentication(smtpProperties.getEmail(), smtpProperties.getPassword());
             }
         };
-        return Session.getInstance(props, auth);
+        try {
+            return Session.getInstance(props, auth);
+        } catch (Exception e) {
+            throw new SessionException(
+                "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
+        }
     }
 
 

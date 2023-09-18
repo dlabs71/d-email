@@ -1,8 +1,10 @@
-package ru.dlabs.library.email.property;
+package ru.dlabs.library.email.type;
 
 import lombok.Getter;
 
 /**
+ * It's the enum with protocol names
+ *
  * @author Ivanov Danila
  * Project name: d-email
  * Creation date: 2023-08-30

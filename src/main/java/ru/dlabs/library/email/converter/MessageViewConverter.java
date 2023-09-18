@@ -37,6 +37,7 @@ public class MessageViewConverter {
         builder.id(message.getMessageNumber());
         builder.recipientEmail(MessagePartConverter.getParticipants(message));
 
+        // Extraction of the subject
         try {
             builder.subject(message.getSubject());
         } catch (MessagingException e) {
@@ -45,6 +46,7 @@ public class MessageViewConverter {
             );
         }
 
+        // Extraction of the sender address
         Address[] froms;
         try {
             froms = message.getFrom();
@@ -54,6 +56,13 @@ public class MessageViewConverter {
             );
         }
 
+        // Senders of email messages can be several. But we take only one — the first.
+        if (froms.length > 0) {
+            InternetAddress internetAddress = (InternetAddress) froms[0];
+            builder.sender(new EmailParticipant(internetAddress.getAddress(), internetAddress.getPersonal()));
+        }
+
+        // Set the read flag
         try {
             builder.seen(message.isSet(Flags.Flag.SEEN));
         } catch (MessagingException e) {
@@ -61,11 +70,7 @@ public class MessageViewConverter {
                          + e.getLocalizedMessage());
         }
 
-        if (froms.length > 0) {
-            InternetAddress internetAddress = (InternetAddress) froms[0];
-            builder.sender(new EmailParticipant(internetAddress.getAddress(), internetAddress.getPersonal()));
-        }
-
+        // Set a metadata of the message
         try {
             String encoding = ((IMAPMessage) message).getEncoding();
 

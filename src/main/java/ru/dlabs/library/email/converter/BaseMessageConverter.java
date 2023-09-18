@@ -19,7 +19,7 @@ import ru.dlabs.library.email.util.DateTimeUtils;
 import ru.dlabs.library.email.util.EmailMessageUtils;
 
 /**
- * Utility class is for converting a jakarta.mail.Message to an instance of the BaseMessage class or its inheritors
+ * The Utility class to convert a jakarta.mail.Message to an instance of the BaseMessage class or its inheritors
  *
  * @author Ivanov Danila
  * Project name: d-email

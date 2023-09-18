@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
+ * The page response class. This class contains the selected data and the total count of all the data
+ *
  * @author Ivanov Danila
  * Project name: d-email
  * Creation date: 2023-09-02

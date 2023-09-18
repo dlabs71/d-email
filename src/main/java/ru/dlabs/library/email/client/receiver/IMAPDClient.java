@@ -25,9 +25,18 @@ import ru.dlabs.library.email.exception.CheckEmailException;
 import ru.dlabs.library.email.exception.FolderOperationException;
 import ru.dlabs.library.email.exception.SessionException;
 import ru.dlabs.library.email.property.ImapProperties;
-import ru.dlabs.library.email.property.Protocol;
+import ru.dlabs.library.email.type.Protocol;
 import ru.dlabs.library.email.util.SessionUtils;
 
+/**
+ * This class is an implementation of the interface {@link ReceiverDClient}.
+ * It provides opportunities for reading messages from email using the IMAP protocol. An IMAP connection will be
+ * created by creating the class at once. Then you need to set up a store - email account. An IMAP connection may
+ * work with several accounts using different stores. But this class works only on one store at one time. If you
+ * want to change a store, you must use the {@see setStore} method to do it. For your convenience, we hold your email
+ * accounts in a Map structure in the {@link ImapProperties}. Thus, for setting a store, you use
+ * the "credentialId" - key in the Map of credentials.
+ */
 @Slf4j
 public class IMAPDClient implements ReceiverDClient {
 
@@ -40,25 +49,38 @@ public class IMAPDClient implements ReceiverDClient {
     private IMAPStore store;
     private ImapProperties.Credentials currentCredential;
 
+    /**
+     * Constructor of the class. An IMAP connection will be created by creating the class at once.
+     *
+     * @param imapProperties properties for creating an IMAP connection
+     */
     public IMAPDClient(ImapProperties imapProperties) {
         this.imapProperties = imapProperties;
-        try {
-            this.session = this.connect();
-        } catch (GeneralSecurityException e) {
-            throw new SessionException("Creating IMAP session finished with an error: " + e.getLocalizedMessage(), e);
-        }
+        this.session = this.connect();
     }
 
     @Override
-    public Session connect() throws GeneralSecurityException {
-        Properties props = SessionUtils.createCommonProperties(imapProperties, Protocol.IMAP);
+    public Session connect() throws SessionException {
+        Properties props;
+        try {
+            props = SessionUtils.createCommonProperties(imapProperties, Protocol.IMAP);
+        } catch (GeneralSecurityException e) {
+            throw new SessionException(
+                "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
+        }
         props.put("mail.imap.partialfetch", imapProperties.isPartialFetch());
         props.put("mail.imap.fetchsize", imapProperties.getFetchSize());
         props.put("mail.imap.statuscachetimeout", imapProperties.getStatusCacheTimeout());
         props.put("mail.imap.appendbuffersize", imapProperties.getAppendBufferSize());
         props.put("mail.imap.connectionpoolsize", imapProperties.getConnectionPoolSize());
         props.put("mail.imap.connectionpooltimeout", imapProperties.getConnectionPoolTimeout());
-        return Session.getDefaultInstance(props);
+
+        try {
+            return Session.getDefaultInstance(props);
+        } catch (Exception e) {
+            throw new SessionException(
+                "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
+        }
     }
 
     @Override

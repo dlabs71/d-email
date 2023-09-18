@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Properties;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import ru.dlabs.library.email.client.sender.DEmailSender;
-import ru.dlabs.library.email.property.EncryptionType;
+import ru.dlabs.library.email.DEmailSender;
+import ru.dlabs.library.email.type.EncryptionType;
 import ru.dlabs.library.email.property.ImapProperties;
 import ru.dlabs.library.email.property.SmtpProperties;
 

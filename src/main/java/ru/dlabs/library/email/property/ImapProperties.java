@@ -7,8 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import ru.dlabs.library.email.type.EncryptionType;
 
 /**
+ * The properties for connecting to an email server by the IMAP protocol
+ *
  * @author Ivanov Danila
  * Project name: d-email
  * Creation date: 2023-08-30

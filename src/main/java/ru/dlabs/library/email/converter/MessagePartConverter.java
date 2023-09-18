@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
@@ -32,6 +31,9 @@ import ru.dlabs.library.email.util.EmailMessageUtils;
 import ru.dlabs.library.email.util.IOUtils;
 
 /**
+ * Utility class for converting different parts of a message {@link Message} for using in
+ * a message DTO implement {@link ru.dlabs.library.email.dto.message.common.Message} interface.
+ *
  * @author Ivanov Danila
  * Project name: d-email
  * Creation date: 2023-09-02
@@ -39,6 +41,13 @@ import ru.dlabs.library.email.util.IOUtils;
 @UtilityClass
 public class MessagePartConverter {
 
+    /**
+     * Returns a Set of {@link EmailParticipant} from message recipients have the type {@link Message.RecipientType.TO}
+     *
+     * @param message the message from Java API
+     *
+     * @return Set of {@link EmailParticipant}
+     */
     public Set<EmailParticipant> getParticipants(Message message) {
         try {
             return Arrays.stream(message.getRecipients(Message.RecipientType.TO))
@@ -58,6 +67,13 @@ public class MessagePartConverter {
         }
     }
 
+    /**
+     * Converts the part of a {@link Message} to an object of the class {@link EmailAttachment}
+     *
+     * @param part the part of a {@link Message}
+     *
+     * @return an object of the class {@link EmailAttachment}
+     */
     public EmailAttachment getAttachment(Part part) {
         try {
             byte[] content = getContentDefaultAsBytes(part);
@@ -74,14 +90,21 @@ public class MessagePartConverter {
         }
     }
 
+    /**
+     * Returns the special class {@link ContentAndAttachments}, which contains the message's body and attachments.
+     *
+     * @param part the income message
+     *
+     * @return an object of the class {@link ContentAndAttachments}
+     */
     public ContentAndAttachments getContent(Part part) {
         ContentAndAttachments result = new ContentAndAttachments();
         getContent(part, result);
         return result;
     }
 
-    @SneakyThrows
-    public void getContent(Part part, ContentAndAttachments result) {
+
+    private void getContent(Part part, ContentAndAttachments result) {
         try {
             if (part.isMimeType("text/*")) {
                 result.addContent(part.getContentType(), (String) part.getContent());
@@ -109,15 +132,16 @@ public class MessagePartConverter {
                     return;
                 }
             }
+
+            // adds result
+            result.addContent(part.getContentType(), getContentDefault(part));
         } catch (MessagingException | IOException e) {
             throw new ReadMessageException(
                 "An error occurred in getting content from the message: " + e.getLocalizedMessage(), e);
         }
-        result.addContent(part.getContentType(), getContentDefault(part));
     }
 
-    @SneakyThrows
-    public String getContentDefault(Part part) {
+    private String getContentDefault(Part part) {
         Object content;
         try {
             content = part.getContent();
@@ -133,13 +157,20 @@ public class MessagePartConverter {
                 .lines()
                 .collect(Collectors.joining("\n"));
         }
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        part.writeTo(bos);
-        bos.close();
-        return bos.toString(StandardCharsets.UTF_8.name());
+
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            part.writeTo(bos);
+            bos.close();
+            return bos.toString(StandardCharsets.UTF_8.name());
+        } catch (MessagingException | IOException e) {
+            throw new ReadMessageException(
+                "An error occurred in writing content to ByteArrayOutputStream: " + e.getLocalizedMessage(), e);
+        }
+
     }
 
-    public byte[] getContentDefaultAsBytes(Part bodyPart) {
+    private byte[] getContentDefaultAsBytes(Part bodyPart) {
         Object content;
         try {
             content = bodyPart.getContent();
@@ -161,6 +192,11 @@ public class MessagePartConverter {
         return content.toString().getBytes(StandardCharsets.UTF_8);
     }
 
+    /**
+     * Special transporting class contains a content and attachments of a message.
+     * It is used for only the {@code getContent()} method.
+     * One message can contain several body (content) with different content types.
+     */
     @Getter
     public static class ContentAndAttachments {
 
@@ -175,14 +211,26 @@ public class MessagePartConverter {
             this.attachments.add(attachment);
         }
 
+        /**
+         * Returns the content by the content type.
+         * If there are several contents with the specified type,
+         * then returns all this the contents separated by the '\n'
+         *
+         * @param contentType the type of the content
+         *
+         * @return string from contents separated by the '\n'
+         */
         public String getContentByType(String contentType) {
             return this.contents.stream()
                 .filter(item -> item.isMimeType(contentType))
                 .map(Content::getData)
-                .collect(Collectors.joining(","));
+                .collect(Collectors.joining("\n"));
         }
     }
 
+    /**
+     * Inner class describing a content of a message
+     */
     @Getter
     @AllArgsConstructor
     public static class Content {

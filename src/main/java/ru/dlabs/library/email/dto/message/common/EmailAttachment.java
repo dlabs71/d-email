@@ -5,6 +5,8 @@ import lombok.Getter;
 import ru.dlabs.library.email.type.AttachmentType;
 
 /**
+ * This class described an email attachment
+ *
  * @author Ivanov Danila
  * Project name: d-email
  * Creation date: 2023-09-01

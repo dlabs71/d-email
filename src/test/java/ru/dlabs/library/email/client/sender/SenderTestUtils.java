@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import ru.dlabs.library.email.property.EncryptionType;
+import ru.dlabs.library.email.type.EncryptionType;
 import ru.dlabs.library.email.property.SmtpProperties;
 
 /**

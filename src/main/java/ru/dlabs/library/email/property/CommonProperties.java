@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.dlabs.library.email.type.EncryptionType;
 
 /**
+ * The common class of properties for connecting
+ *
  * @author Ivanov Danila
  * Project name: d-email
  * Creation date: 2023-08-30

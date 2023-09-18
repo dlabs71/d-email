@@ -18,7 +18,7 @@ import ru.dlabs.library.email.util.EmailMessageUtils;
 import ru.dlabs.library.email.util.TemplateUtils;
 
 /**
- * Class describe a templated email message.
+ * Class describe a templated outgoing email message.
  * If you want to send an HTML message, you can use this class to do it. Library use velocity template
  *
  * @author Ivanov Danila

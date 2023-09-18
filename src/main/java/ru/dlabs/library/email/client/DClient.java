@@ -1,8 +1,7 @@
 package ru.dlabs.library.email.client;
 
-import jakarta.mail.NoSuchProviderException;
 import jakarta.mail.Session;
-import java.security.GeneralSecurityException;
+import ru.dlabs.library.email.exception.SessionException;
 
 /**
  * Interface is any email client
@@ -16,6 +15,7 @@ public interface DClient {
      * It connects to email server
      *
      * @return {@link Session} object
+     * @throws SessionException The connection to the server has failed. The properties are broken.
      */
-    Session connect() throws NoSuchProviderException, GeneralSecurityException;
+    Session connect() throws SessionException;
 }

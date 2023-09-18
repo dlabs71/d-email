@@ -15,6 +15,8 @@ import ru.dlabs.library.email.exception.AttachmentException;
 import ru.dlabs.library.email.type.AttachmentType;
 
 /**
+ * This is the utility class for creating {@link EmailAttachment} objects
+ *
  * @author Ivanov Danila
  * Project name: d-email
  * Creation date: 2023-09-11
@@ -23,6 +25,17 @@ import ru.dlabs.library.email.type.AttachmentType;
 @UtilityClass
 public class AttachmentUtils {
 
+    /**
+     * Creates a file object from the file path argument.
+     * The path to file must start with the following prefixes: "file://", "classpath:" or a path separator.
+     * Relatives paths is not supported.
+     *
+     * @param pathToFile the path to file
+     *
+     * @return object of the class {@link File}
+     *
+     * @throws AttachmentException exception may occur when the file path doesn't satisfy conditions or doesn't parse
+     */
     public File createFile(String pathToFile) throws AttachmentException {
         pathToFile = pathToFile.trim();
         try {
@@ -54,6 +67,18 @@ public class AttachmentUtils {
         }
     }
 
+    /**
+     * Creates an object of the {@link EmailAttachment} class by the path to file argument
+     * The path to file must start with the following prefixes: "file://", "classpath:" or a path separator.
+     * Relatives paths is not supported.
+     *
+     * @param pathToFile the path to file
+     *
+     * @return an object of the {@link EmailAttachment} class
+     *
+     * @throws AttachmentException exception may occur when the file path doesn't satisfy conditions or doesn't parse.
+     *                             Also, an exception may occur while reading the file.
+     */
     public EmailAttachment create(String pathToFile) throws AttachmentException {
         File file = createFile(pathToFile);
         String contentType = URLConnection.guessContentTypeFromName(file.getName());

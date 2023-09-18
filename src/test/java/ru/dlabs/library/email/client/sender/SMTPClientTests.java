@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import ru.dlabs.library.email.DEmailSender;
 import ru.dlabs.library.email.client.SendingStatus;
 import ru.dlabs.library.email.exception.ValidationMessageException;
 import ru.dlabs.library.email.property.SmtpProperties;
