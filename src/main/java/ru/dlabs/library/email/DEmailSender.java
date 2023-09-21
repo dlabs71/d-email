@@ -1,17 +1,27 @@
 package ru.dlabs.library.email;
 
+import static ru.dlabs.library.email.util.EmailMessageUtils.DEFAULT_ENCODING;
+import static ru.dlabs.library.email.util.EmailMessageUtils.HTML_CONTENT_TYPE;
+import static ru.dlabs.library.email.util.EmailMessageUtils.TEXT_CONTENT_TYPE;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import ru.dlabs.library.email.client.SendingStatus;
 import ru.dlabs.library.email.client.sender.SMTPDClient;
 import ru.dlabs.library.email.client.sender.SenderDClient;
-import ru.dlabs.library.email.dto.message.TextOutgoingMessage;
+import ru.dlabs.library.email.dto.message.DefaultOutgoingMessage;
+import ru.dlabs.library.email.dto.message.TemplatedOutgoingMessage;
 import ru.dlabs.library.email.dto.message.api.OutgoingMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
+import ru.dlabs.library.email.exception.CreateMessageException;
+import ru.dlabs.library.email.exception.TemplateCreationException;
 import ru.dlabs.library.email.property.SmtpProperties;
 import ru.dlabs.library.email.util.AttachmentUtils;
 
@@ -58,105 +68,143 @@ public final class DEmailSender {
     }
 
     /**
-     * The common method for sending messages
+     * The method is sending a message.
+     * A message body has a content type of text/plain.
+     * A message body takes from "content" argument. It has a type String.
      *
-     * @param message the outgoing message
+     * @param email   a recipient email address. For example: example@mail.com
+     * @param subject a subject of a message
+     * @param content a message body
      *
-     * @return the sending status {@link SendingStatus}
+     * @return a sending status {@link SendingStatus}
      */
-    public SendingStatus send(OutgoingMessage message) {
-        return this.senderClient.send(message);
+    public SendingStatus sendText(
+        String email,
+        String subject,
+        String content
+    ) {
+        return this.sendText(email, subject, content, new ArrayList<>());
     }
 
     /**
-     * Sends message like a text message. Content type is "text/plain".
+     * The method is distributing a message to a group recipients.
+     * A message body has a content type of text/plain.
+     * A message body takes from "content" argument. It has a type String.
      *
-     * @param email   the recipient email address. For example: example@mail.com
-     * @param subject the message subject
-     * @param content the message body
+     * @param emails  a collection of recipient email address. For example: example@mail.com
+     * @param subject a subject of a message
+     * @param content a message body
      *
-     * @return the sending status {@link SendingStatus}
+     * @return a sending status {@link SendingStatus}
      */
-    public SendingStatus sendText(String email, String subject, String content) {
-        Set<EmailParticipant> recipients = new HashSet<>();
-        recipients.add(new EmailParticipant(email));
-        return this.sendText(recipients, subject, content);
+    public SendingStatus sendText(
+        Collection<String> emails,
+        String subject,
+        String content
+    ) {
+        return this.sendText(emails, subject, content, new ArrayList<>());
     }
 
     /**
-     * Email distribution messages to a group of recipients
+     * The method is distributing a message to a group recipients with attachments.
+     * A message body has a content type of text/plain.
+     * A message body takes from "content" argument. It has a type String.
      *
-     * @param emails  the list of a recipient email addresses as simple strings. Use only simple format email address.
-     *                For example: example@mail.com
-     * @param subject the message subject
-     * @param content the message body
+     * @param emails      a collection of recipient email address. For example: example@mail.com
+     * @param subject     a subject of a message
+     * @param content     a message body
+     * @param attachments an array of attachments ({@link EmailAttachment})
      *
-     * @return the sending status {@link SendingStatus}
+     * @return a sending status {@link SendingStatus}
      */
-    public SendingStatus sendText(List<String> emails, String subject, String content) {
+    public SendingStatus sendText(
+        Collection<String> emails,
+        String subject,
+        String content,
+        EmailAttachment... attachments
+    ) {
+        return this.sendText(emails, subject, content, Arrays.asList(attachments));
+    }
+
+    /**
+     * The method is distributing a message to a group recipients with attachments.
+     * A message body has a content type of text/plain.
+     * A message body takes from "content" argument. It has a type String.
+     *
+     * @param emails      a collection of recipient email address. For example: example@mail.com
+     * @param subject     a subject of a message
+     * @param content     a message body
+     * @param attachments a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendText(
+        Collection<String> emails,
+        String subject,
+        String content,
+        List<EmailAttachment> attachments
+    ) {
         Set<EmailParticipant> recipients = emails.stream()
             .map(EmailParticipant::new)
             .collect(Collectors.toSet());
-        return this.sendText(recipients, subject, content);
+        return this.sendText(recipients, subject, content, attachments);
     }
 
     /**
-     * Email distribution messages to a group of recipients
+     * The method is sending a message with attachments.
+     * A message body has a content type of text/plain.
+     * A message body takes from "content" argument. It has a type String.
      *
-     * @param recipients the list of a recipient email addresses as an object of class {@link EmailParticipant}
-     * @param subject    the message subject
-     * @param content    the message body
+     * @param email       a recipient email address. For example: example@mail.com
+     * @param subject     a subject of a message
+     * @param content     a message body
+     * @param attachments an array of attachments ({@link EmailAttachment})
      *
-     * @return the sending status {@link SendingStatus}
+     * @return a sending status {@link SendingStatus}
      */
-    public SendingStatus sendText(Set<EmailParticipant> recipients, String subject, String content) {
-        return this.sendText(recipients, subject, content, null);
+    public SendingStatus sendText(
+        String email,
+        String subject,
+        String content,
+        EmailAttachment... attachments
+    ) {
+        return this.sendText(email, subject, content, Arrays.asList(attachments));
     }
 
     /**
-     * Sends message like a text message with attachments. Content type message body is "text/plain".
-     * For simplifying attachment creation, use the {@link AttachmentUtils} utility class
+     * The method is sending a message with attachments.
+     * A message body has a content type of text/plain.
+     * A message body takes from "content" argument. It has a type String.
      *
-     * @param email       the recipient email address. For example: example@mail.com
-     * @param subject     the message subject
-     * @param content     the message body
-     * @param attachments the one or several objects of the class {@link EmailAttachment}
+     * @param email       a recipient email address. For example: example@mail.com
+     * @param subject     a subject of a message
+     * @param content     a message body
+     * @param attachments a list of attachments ({@link EmailAttachment})
      *
-     * @return the sending status {@link SendingStatus}
+     * @return a sending status {@link SendingStatus}
      */
-    public SendingStatus sendText(String email, String subject, String content, EmailAttachment... attachments) {
-        Set<EmailParticipant> recipients = new HashSet<>();
-        recipients.add(new EmailParticipant(email));
-        return this.sendText(recipients, subject, content, Arrays.asList(attachments));
-    }
-
-    /**
-     * Sends message like a text message with attachments. Content type message body is "text/plain".
-     * For simplifying attachment creation, use the {@link AttachmentUtils} utility class
-     *
-     * @param email       the recipient email address. For example: example@mail.com
-     * @param subject     the message subject
-     * @param content     the message body
-     * @param attachments the list objects of the class {@link EmailAttachment}
-     *
-     * @return the sending status {@link SendingStatus}
-     */
-    public SendingStatus sendText(String email, String subject, String content, List<EmailAttachment> attachments) {
+    public SendingStatus sendText(
+        String email,
+        String subject,
+        String content,
+        List<EmailAttachment> attachments
+    ) {
         Set<EmailParticipant> recipients = new HashSet<>();
         recipients.add(new EmailParticipant(email));
         return this.sendText(recipients, subject, content, attachments);
     }
 
     /**
-     * Email distribution messages to a group of recipients with attachments. Content type message body is "text/plain".
-     * For simplifying attachment creation, use the {@link AttachmentUtils} utility class
+     * The method is distributing a message to a group recipients with attachments.
+     * A message body has a content type of text/plain.
+     * A message body takes from "content" argument. It has a type String.
      *
-     * @param recipients  the set of recipients
-     * @param subject     the message subject
-     * @param content     the message body
-     * @param attachments the list of attachments
+     * @param recipients  the set of information about recipients ({@link EmailParticipant})
+     * @param subject     a subject of a message
+     * @param content     a message body
+     * @param attachments a list of attachments ({@link EmailAttachment})
      *
-     * @return the sending status {@link SendingStatus}
+     * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendText(
         Set<EmailParticipant> recipients,
@@ -164,12 +212,622 @@ public final class DEmailSender {
         String content,
         List<EmailAttachment> attachments
     ) {
-        OutgoingMessage message = TextOutgoingMessage.builder()
+        return this.send(recipients, subject, content, TEXT_CONTENT_TYPE, DEFAULT_ENCODING, attachments);
+    }
+
+    /**
+     * The method is sending a message.
+     * A message body has a content type of text/html.
+     * A message body takes from "content" argument. It has a type String.
+     *
+     * @param email   a recipient email address. For example: example@mail.com
+     * @param subject a subject of a message
+     * @param content a message body
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtml(
+        String email,
+        String subject,
+        String content
+    ) {
+        return this.sendHtml(email, subject, content, new ArrayList<>());
+    }
+
+    /**
+     * The method is distributing a message to a group recipients.
+     * A message body has a content type of text/html.
+     * A message body takes from "content" argument. It has a type String.
+     *
+     * @param emails  a collection of recipient email address. For example: example@mail.com
+     * @param subject a subject of a message
+     * @param content a message body
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtml(
+        Collection<String> emails,
+        String subject,
+        String content
+    ) {
+        return this.sendHtml(emails, subject, content, new ArrayList<>());
+    }
+
+    /**
+     * The method is distributing a message to a group recipients with attachments.
+     * A message body has a content type of text/html.
+     * A message body takes from "content" argument. It has a type String.
+     *
+     * @param emails      a collection of recipient email address. For example: example@mail.com
+     * @param subject     a subject of a message
+     * @param content     a message body
+     * @param attachments an array of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtml(
+        Set<String> emails,
+        String subject,
+        String content,
+        EmailAttachment... attachments
+    ) {
+        return this.sendHtml(emails, subject, content, Arrays.asList(attachments));
+    }
+
+    /**
+     * The method is distributing a message to a group recipients with attachments.
+     * A message body has a content type of text/html.
+     * A message body takes from "content" argument. It has a type String.
+     *
+     * @param emails      a collection of recipient email address. For example: example@mail.com
+     * @param subject     a subject of a message
+     * @param content     a message body
+     * @param attachments a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtml(
+        Collection<String> emails,
+        String subject,
+        String content,
+        List<EmailAttachment> attachments
+    ) {
+        Set<EmailParticipant> recipients = emails.stream()
+            .map(EmailParticipant::new)
+            .collect(Collectors.toSet());
+        return this.sendHtml(recipients, subject, content, attachments);
+    }
+
+    /**
+     * The method is sending a message with attachments.
+     * A message body has a content type of text/html.
+     * A message body takes from "content" argument. It has a type String.
+     *
+     * @param email       a recipient email address. For example: example@mail.com
+     * @param subject     a subject of a message
+     * @param content     a message body
+     * @param attachments an array of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtml(
+        String email,
+        String subject,
+        String content,
+        EmailAttachment... attachments
+    ) {
+        return this.sendHtml(email, subject, content, Arrays.asList(attachments));
+    }
+
+    /**
+     * The method is sending a message with attachments.
+     * A message body has a content type of text/html.
+     * A message body takes from "content" argument. It has a type String.
+     *
+     * @param email       a recipient email address. For example: example@mail.com
+     * @param subject     a subject of a message
+     * @param content     a message body
+     * @param attachments a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtml(
+        String email,
+        String subject,
+        String content,
+        List<EmailAttachment> attachments
+    ) {
+        Set<EmailParticipant> recipients = new HashSet<>();
+        recipients.add(new EmailParticipant(email));
+        return this.sendHtml(recipients, subject, content, attachments);
+    }
+
+    /**
+     * The method is distributing a message to a group recipients with attachments.
+     * A message body has a content type of text/html.
+     * A message body takes from "content" argument. It has a type String.
+     *
+     * @param recipients  the set of information about recipients ({@link EmailParticipant})
+     * @param subject     a subject of a message
+     * @param content     a message body
+     * @param attachments a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtml(
+        Set<EmailParticipant> recipients,
+        String subject,
+        String content,
+        List<EmailAttachment> attachments
+    ) {
+        return this.send(recipients, subject, content, HTML_CONTENT_TYPE, DEFAULT_ENCODING, attachments);
+    }
+
+    /**
+     * The method is sending a message.
+     * A message body has a content type of text/html.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param email          a recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtmlTemplated(
+        String email,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params
+    ) {
+        return this.sendHtmlTemplated(email, subject, pathToTemplate, params, new ArrayList<>());
+    }
+
+    /**
+     * The method is distributing a message to a group recipients.
+     * A message body has a content type of text/html.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param emails         a collection of recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtmlTemplated(
+        Collection<String> emails,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params
+    ) {
+        return this.sendHtmlTemplated(emails, subject, pathToTemplate, params, new ArrayList<>());
+    }
+
+    /**
+     * The method is distributing a message to a group recipients with attachments.
+     * A message body has a content type of text/html.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param emails         a collection of recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    an array of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtmlTemplated(
+        Set<String> emails,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        EmailAttachment... attachments
+    ) {
+        return this.sendHtmlTemplated(emails, subject, pathToTemplate, params, Arrays.asList(attachments));
+    }
+
+    /**
+     * The method is distributing a message to a group recipients with attachments.
+     * A message body has a content type of text/html.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param emails         a collection of recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtmlTemplated(
+        Collection<String> emails,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        List<EmailAttachment> attachments
+    ) {
+        Set<EmailParticipant> recipients = emails.stream()
+            .map(EmailParticipant::new)
+            .collect(Collectors.toSet());
+        return this.sendHtmlTemplated(recipients, subject, pathToTemplate, params, attachments);
+    }
+
+    /**
+     * The method is sending a message with attachments.
+     * A message body has a content type of text/html.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param email          a recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    an array of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtmlTemplated(
+        String email,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        EmailAttachment... attachments
+    ) {
+        return this.sendHtmlTemplated(email, subject, pathToTemplate, params, Arrays.asList(attachments));
+    }
+
+    /**
+     * The method is sending a message with attachments.
+     * A message body has a content type of text/html.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param email          a recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtmlTemplated(
+        String email,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        List<EmailAttachment> attachments
+    ) {
+        Set<EmailParticipant> recipients = new HashSet<>();
+        recipients.add(new EmailParticipant(email));
+        return this.sendHtmlTemplated(recipients, subject, pathToTemplate, params, attachments);
+    }
+
+    /**
+     * The method is sending a message.
+     * A message body has a content type of text/plain.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param email          a recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        String email,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params
+    ) {
+        return this.sendTextTemplated(email, subject, pathToTemplate, params, new ArrayList<>());
+    }
+
+    /**
+     * The method is distributing a message to a group of recipients.
+     * A message body has a content type of text/plain.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param emails         a collection of recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        Collection<String> emails,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params
+    ) {
+        return this.sendTextTemplated(emails, subject, pathToTemplate, params, new ArrayList<>());
+    }
+
+    /**
+     * The method is distributing a message to a group of recipients with attachments.
+     * A message body has a content type of text/plain.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param emails         a collection of recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    an array of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        Collection<String> emails,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        EmailAttachment... attachments
+    ) {
+        return this.sendTextTemplated(emails, subject, pathToTemplate, params, Arrays.asList(attachments));
+    }
+
+    /**
+     * The method is distributing a message to a group of recipients with attachments.
+     * A message body has a content type of text/plain.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param emails         a collection of recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        Collection<String> emails,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        List<EmailAttachment> attachments
+    ) {
+        Set<EmailParticipant> recipients = emails.stream()
+            .map(EmailParticipant::new)
+            .collect(Collectors.toSet());
+        return this.sendTextTemplated(recipients, subject, pathToTemplate, params, attachments);
+    }
+
+    /**
+     * The method is sending a message with attachments.
+     * A message body has a content type of text/plain.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param email          a recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    an array of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        String email,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        EmailAttachment... attachments
+    ) {
+        return this.sendTextTemplated(email, subject, pathToTemplate, params, Arrays.asList(attachments));
+    }
+
+    /**
+     * The method is sending a message with attachments.
+     * A message body has a content type of text/plain.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param email          a recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        String email,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        List<EmailAttachment> attachments
+    ) {
+        Set<EmailParticipant> recipients = new HashSet<>();
+        recipients.add(new EmailParticipant(email));
+        return this.sendTextTemplated(recipients, subject, pathToTemplate, params, attachments);
+    }
+
+    /**
+     * The method is distributing a message to a group of recipients with attachments.
+     * A message body has a content type of text/plain.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param recipients     the set of information about recipients ({@link EmailParticipant})
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        Set<EmailParticipant> recipients,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        List<EmailAttachment> attachments
+    ) {
+        return this.sendTemplatedMessage(
+            recipients,
+            subject,
+            pathToTemplate,
+            params,
+            TEXT_CONTENT_TYPE,
+            DEFAULT_ENCODING,
+            attachments
+        );
+    }
+
+    /**
+     * The method is distributing a message to a group of recipients with attachments.
+     * A message body has a content type of text/html.
+     * A message body is created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param recipients     the set of information about recipients ({@link EmailParticipant})
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtmlTemplated(
+        Set<EmailParticipant> recipients,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        List<EmailAttachment> attachments
+    ) {
+        return this.sendTemplatedMessage(
+            recipients,
+            subject,
+            pathToTemplate,
+            params,
+            HTML_CONTENT_TYPE,
+            DEFAULT_ENCODING,
+            attachments
+        );
+    }
+
+    /**
+     * The common method is sending a templated message.
+     * A message body created using the Apache Velocity Template engine.
+     * <p>
+     * For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     * <p>
+     * For simplifying attachment creation, use the {@link AttachmentUtils} utility class
+     *
+     * @param recipients     the set of information about recipients ({@link EmailParticipant})
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param contentType    the content type of content
+     * @param encoding       the encoding of content
+     * @param attachments    a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTemplatedMessage(
+        Set<EmailParticipant> recipients,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        String contentType,
+        String encoding,
+        List<EmailAttachment> attachments
+    ) {
+        OutgoingMessage message;
+        try {
+            message = TemplatedOutgoingMessage.builder()
+                .recipientEmail(recipients)
+                .subject(subject)
+                .template(pathToTemplate, params)
+                .contentType(contentType)
+                .encoding(encoding)
+                .attachments(attachments)
+                .build();
+        } catch (TemplateCreationException e) {
+            throw new CreateMessageException(e.getMessage(), e);
+        }
+        return this.send(message);
+    }
+
+    /**
+     * The common method is sending a text message.
+     * <p>
+     * For simplifying attachment creation, use the {@link AttachmentUtils} utility class
+     *
+     * @param recipients  the set of recipients
+     * @param subject     the message subject
+     * @param content     the message body
+     * @param attachments a list of attachments
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus send(
+        Set<EmailParticipant> recipients,
+        String subject,
+        String content,
+        String contentType,
+        String encoding,
+        List<EmailAttachment> attachments
+    ) {
+        OutgoingMessage message = DefaultOutgoingMessage.outgoingMessageBuilder()
             .recipientEmail(recipients)
             .subject(subject)
             .content(content)
+            .contentType(contentType)
+            .encoding(encoding)
             .attachments(attachments)
             .build();
         return this.send(message);
+    }
+
+    /**
+     * The common method for sending {@link OutgoingMessage} messages
+     *
+     * @param message an outgoing message
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus send(OutgoingMessage message) {
+        return this.senderClient.send(message);
     }
 }

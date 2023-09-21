@@ -14,6 +14,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
+import ru.dlabs.library.email.client.sender.SenderTestUtils;
 import ru.dlabs.library.email.dto.message.MessageView;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
@@ -46,7 +47,7 @@ public class IMAPClientCheckTests {
         this.sslImapProperties = properties[0];
         this.tlsImapProperties = properties[1];
         this.simpleImapProperties = properties[2];
-        this.emailSender = ReceiveTestUtils.createSender();
+        this.emailSender = SenderTestUtils.createSender();
 
         this.senderEmail = this.emailSender.sender().getEmail();
         this.recipientEmail = ReceiveTestUtils.getDefaultEmail(this.simpleImapProperties);

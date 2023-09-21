@@ -17,6 +17,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
+import ru.dlabs.library.email.client.sender.SenderTestUtils;
 import ru.dlabs.library.email.dto.message.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
@@ -42,7 +43,7 @@ public class IMAPClientPageableTests {
     public void loadConfig() throws IOException {
         ImapProperties[] properties = ReceiveTestUtils.loadProperties();
         ImapProperties sslImapProperties = properties[0];
-        this.emailSender = ReceiveTestUtils.createSender();
+        this.emailSender = SenderTestUtils.createSender();
         this.emailReceiver = DEmailReceiver.of(sslImapProperties);
 
         String email = ReceiveTestUtils.getDefaultEmail(sslImapProperties);

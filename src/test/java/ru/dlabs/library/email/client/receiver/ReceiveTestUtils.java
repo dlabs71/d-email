@@ -5,10 +5,9 @@ import java.util.HashMap;
 import java.util.Properties;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import ru.dlabs.library.email.DEmailSender;
-import ru.dlabs.library.email.type.EncryptionType;
+import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.property.ImapProperties;
-import ru.dlabs.library.email.property.SmtpProperties;
+import ru.dlabs.library.email.type.EncryptionType;
 
 /**
  * @author Ivanov Danila
@@ -18,48 +17,49 @@ import ru.dlabs.library.email.property.SmtpProperties;
 @UtilityClass
 public class ReceiveTestUtils {
 
-    public final static String CREDENTIAL_ID = "credentialId";
+    public final static String CREDENTIAL_ID_1 = "credentialId_1";
+    public final static String CREDENTIAL_ID_2 = "credentialId_2";
 
-    public DEmailSender createSender() throws IOException {
+    public DEmailReceiver createReceiver() {
+        ImapProperties properties = loadSslProperties();
+        return DEmailReceiver.of(properties);
+    }
+
+    @SneakyThrows
+    public Properties loadPropertiesFromFile() {
         Properties properties = new Properties();
-        properties.load(ReceiveTestUtils.class.getClassLoader().getResourceAsStream("smtp.properties"));
+        properties.load(ReceiveTestUtils.class.getClassLoader().getResourceAsStream("imap.properties"));
+        return properties;
+    }
 
-        SmtpProperties.SmtpPropertiesBuilder builder = SmtpProperties.builder()
+    public ImapProperties.ImapPropertiesBuilder loadCommonProperties(Properties properties) throws IOException {
+        HashMap<String, ImapProperties.Credentials> credentialsMap = new HashMap<>();
+        credentialsMap.put(
+            CREDENTIAL_ID_1,
+            new ImapProperties.Credentials(
+                properties.getProperty("email1"),
+                properties.getProperty("password1")
+            )
+        );
+        credentialsMap.put(
+            CREDENTIAL_ID_2,
+            new ImapProperties.Credentials(
+                properties.getProperty("email2"),
+                properties.getProperty("password2")
+            )
+        );
+        return ImapProperties.builder()
             .host(properties.getProperty("host"))
-            .email(properties.getProperty("email"))
-            .password(properties.getProperty("password"))
-            .name(properties.getProperty("name"))
-            .readTimeout(Integer.parseInt(properties.getProperty("readTimeout")))
-            .connectionTimeout(Integer.parseInt(properties.getProperty("connectionTimeout")))
-            .writeTimeout(Integer.parseInt(properties.getProperty("writeTimeout")))
+            .credentials(credentialsMap)
             .debug("true".equals(properties.getProperty("debug", "false")));
-
-        SmtpProperties smtpProperties = builder
-            .encryptionType(EncryptionType.SSL)
-            .port(Integer.parseInt(properties.getProperty("encryptionClient.port")))
-            .build();
-        return DEmailSender.of(smtpProperties);
     }
 
     @SneakyThrows
     public ImapProperties[] loadProperties() {
         ImapProperties[] result = new ImapProperties[3];
 
-        Properties properties = new Properties();
-        properties.load(ReceiveTestUtils.class.getClassLoader().getResourceAsStream("imap.properties"));
-
-        HashMap<String, ImapProperties.Credentials> credentialsMap = new HashMap<>();
-        credentialsMap.put(
-            CREDENTIAL_ID,
-            new ImapProperties.Credentials(
-                properties.getProperty("email"),
-                properties.getProperty("password")
-            )
-        );
-        ImapProperties.ImapPropertiesBuilder builder = ImapProperties.builder()
-            .host(properties.getProperty("host"))
-            .credentials(credentialsMap)
-            .debug("true".equals(properties.getProperty("debug", "false")));
+        Properties properties = loadPropertiesFromFile();
+        ImapProperties.ImapPropertiesBuilder builder = loadCommonProperties(properties);
 
         result[0] = builder
             .encryptionType(EncryptionType.SSL)
@@ -79,7 +79,17 @@ public class ReceiveTestUtils {
         return result;
     }
 
+    @SneakyThrows
+    public ImapProperties loadSslProperties() {
+        Properties properties = loadPropertiesFromFile();
+        ImapProperties.ImapPropertiesBuilder builder = loadCommonProperties(properties);
+        return builder
+            .encryptionType(EncryptionType.SSL)
+            .port(Integer.parseInt(properties.getProperty("encryptionClient.port")))
+            .build();
+    }
+
     public String getDefaultEmail(ImapProperties properties) {
-        return properties.getCredentials().get(ReceiveTestUtils.CREDENTIAL_ID).getEmail();
+        return properties.getCredentials().get(ReceiveTestUtils.CREDENTIAL_ID_1).getEmail();
     }
 }

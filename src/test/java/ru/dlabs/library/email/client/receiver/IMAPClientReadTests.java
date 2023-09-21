@@ -15,6 +15,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
+import ru.dlabs.library.email.client.sender.SenderTestUtils;
 import ru.dlabs.library.email.dto.message.MessageView;
 import ru.dlabs.library.email.dto.message.api.IncomingMessage;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
@@ -22,9 +23,12 @@ import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
 
 /**
- * @author Ivanov Danila
  * Project name: d-email
+ * <p>
  * Creation date: 2023-08-31
+ *
+ * @author Ivanov Danila
+ * @since 1.0.0
  */
 @Order(324)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -48,7 +52,7 @@ public class IMAPClientReadTests {
         this.sslImapProperties = properties[0];
         this.tlsImapProperties = properties[1];
         this.simpleImapProperties = properties[2];
-        this.emailSender = ReceiveTestUtils.createSender();
+        this.emailSender = SenderTestUtils.createSender();
 
         this.senderEmail = this.emailSender.sender().getEmail();
         this.recipientEmail = ReceiveTestUtils.getDefaultEmail(this.simpleImapProperties);

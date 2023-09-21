@@ -15,7 +15,7 @@ import ru.dlabs.library.email.exception.AttachmentException;
 import ru.dlabs.library.email.type.AttachmentType;
 
 /**
- * This is the utility class for creating {@link EmailAttachment} objects
+ * This is the utility class for creating {@link EmailAttachment} objects.
  *
  * @author Ivanov Danila
  * Project name: d-email

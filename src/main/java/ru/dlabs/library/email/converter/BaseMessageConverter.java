@@ -57,15 +57,14 @@ public class BaseMessageConverter {
 
         MessagePartConverter.ContentAndAttachments data = MessagePartConverter.getContent(message);
         baseMessage.setContent(data.getContentByType(TEXT_CONTENT_TYPE));
+        baseMessage.setContentType(TEXT_CONTENT_TYPE);
         if (baseMessage.getContent() == null || baseMessage.getContent().isEmpty()) {
             baseMessage.setContent(data.getContentByType(HTML_CONTENT_TYPE));
+            baseMessage.setContentType(HTML_CONTENT_TYPE);
         }
         baseMessage.setAttachments(data.getAttachments());
 
-        return new DefaultIncomingMessage(
-            baseMessage,
-            data.getContentByType(HTML_CONTENT_TYPE)
-        );
+        return new DefaultIncomingMessage(baseMessage, data.getContentByType(HTML_CONTENT_TYPE));
     }
 
     /**
@@ -76,17 +75,16 @@ public class BaseMessageConverter {
      * @return the instance of the BaseMessage class
      */
     public BaseMessage convertEnvelopData(Message message) {
-        BaseMessage.BaseMessageBuilder builder = BaseMessage.baseMessageBuilder();
-        builder.id(message.getMessageNumber());
-        builder.recipientEmail(MessagePartConverter.getParticipants(message));
+        BaseMessage baseMessage = new BaseMessage();
+        baseMessage.setId(message.getMessageNumber());
+        baseMessage.setRecipientEmail(MessagePartConverter.getParticipants(message));
 
         try {
             String decodedSubject = EmailMessageUtils.decodeData(message.getSubject());
-            builder.subject(decodedSubject);
+            baseMessage.setSubject(decodedSubject);
         } catch (MessagingException e) {
             throw new CheckEmailException(
-                "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage()
-            );
+                "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage());
         }
 
         Address[] froms;
@@ -94,29 +92,26 @@ public class BaseMessageConverter {
             froms = message.getFrom();
         } catch (MessagingException e) {
             throw new CheckEmailException(
-                "The attempt to get senders of the message has failed: " + e.getLocalizedMessage()
-            );
+                "The attempt to get senders of the message has failed: " + e.getLocalizedMessage());
         }
 
         if (froms.length > 0) {
             InternetAddress internetAddress = (InternetAddress) froms[0];
-            builder.sender(new EmailParticipant(internetAddress.getAddress(), internetAddress.getPersonal()));
+            baseMessage.setSender(new EmailParticipant(internetAddress.getAddress(), internetAddress.getPersonal()));
         }
 
         try {
             String encoding = ((IMAPMessage) message).getEncoding();
 
-            builder.contentType(message.getContentType());
-            builder.encoding(encoding != null ? encoding : StandardCharsets.UTF_8.name());
-            builder.size(message.getSize());
-            builder.sentDate(DateTimeUtils.convert(message.getSentDate()));
-            builder.receivedDate(DateTimeUtils.convert(message.getReceivedDate()));
+            baseMessage.setEncoding(encoding != null ? encoding : StandardCharsets.UTF_8.name());
+            baseMessage.setSize(message.getSize());
+            baseMessage.setSentDate(DateTimeUtils.convert(message.getSentDate()));
+            baseMessage.setReceivedDate(DateTimeUtils.convert(message.getReceivedDate()));
         } catch (MessagingException e) {
             throw new CheckEmailException(
-                "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage()
-            );
+                "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage());
         }
 
-        return builder.build();
+        return baseMessage;
     }
 }

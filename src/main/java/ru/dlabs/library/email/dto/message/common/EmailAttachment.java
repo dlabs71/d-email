@@ -3,9 +3,12 @@ package ru.dlabs.library.email.dto.message.common;
 import lombok.Builder;
 import lombok.Getter;
 import ru.dlabs.library.email.type.AttachmentType;
+import ru.dlabs.library.email.util.AttachmentUtils;
 
 /**
- * This class described an email attachment
+ * This class described an email attachment.
+ * <p>
+ * For simplifying attachment creation, use the {@link AttachmentUtils} utility class.
  *
  * @author Ivanov Danila
  * Project name: d-email

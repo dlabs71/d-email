@@ -17,7 +17,7 @@ import ru.dlabs.library.email.property.SmtpProperties;
 
 @Order(31)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class SMTPClientTests {
+public class SMTPClientConnectionTests {
 
     private SmtpProperties sslSmtpProperties;
     private SmtpProperties tlsSmtpProperties;

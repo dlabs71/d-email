@@ -18,18 +18,18 @@ import ru.dlabs.library.email.property.ImapProperties;
 
 /**
  * The class implements a facade pattern for receiving messages.
- * After creating the class, you must set a folder name using the {@code folder(String folderName)} method.
+ * After creating the class, you must set a folder name using the {@link DEmailReceiver#folder(String folderName)} method.
  * If you don't, then the client will try to use the "INBOX" folder.
  * <p>
  * If you use several accounts, you must clearly set credentialId by using
- * the {@code credentialId(String credentialId)} method. It creates the correct connection. But if you use only one
+ * the {@link DEmailReceiver#credentialId(String credentialId)} method. It creates the correct connection. But if you use only one
  * account to connect, the connection will create with creating the client (in a constructor).
  * <p>
  * Checking and reading emails executes as pageable. By the default page has a size = 50 elements. You can change it
- * by using the {@code pageSize(int pageSize)} method.
- * Then you call {@code nextCheckEmail()} or {@code nextReadEmail()} the page number increase by 1.
+ * by using the {@link DEmailReceiver#pageSize(int pageSize)} method.
+ * Then you call {@link DEmailReceiver#nextCheckEmail()} or {@link DEmailReceiver#nextReadEmail()} the page number increase by 1.
  * Accordingly, to read or check email messages from a 0 page, you must use
- * the {@code start(int start)} method before it.
+ * the {@link DEmailReceiver#start(int start)} method before it.
  *
  * @author Ivanov Danila
  * Project name: d-email
@@ -138,13 +138,27 @@ public final class DEmailReceiver {
     /**
      * Checks email. Returns only common information about messages. The messages won't have a read flag.
      * <p>
-     * This method supports page requests. After successful execution, the global {@code pageResuest} parameter
+     * This method supports page requests. After successful execution, the global {@link DEmailReceiver#pageRequest} parameter
      * will increase the page number.
-     * Use the {@code start(int start)} and {@code pageSize(int pageSize)} methods for managing page parameters.
+     * Use the {@link DEmailReceiver#start(int start)} and {@link DEmailReceiver#pageSize(int pageSize)} methods for managing page parameters.
      *
      * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link MessageView}.
      */
     public PageResponse<MessageView> nextCheckEmail() {
+        return this.сheckEmail(this.pageRequest);
+    }
+
+    /**
+     * Checks email. Returns only common information about messages. The messages won't have a read flag.
+     * <p>
+     * This method supports page requests. You need to manage a page request yourself.
+     * Use the pageRequest parameter for it.
+     *
+     * @param pageRequest the configuration of a page request
+     *
+     * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link MessageView}.
+     */
+    public PageResponse<MessageView> сheckEmail(PageRequest pageRequest) {
         int totalCount = this.receiverClient.getTotalCount(folderName);
         if (totalCount <= 0 || totalCount <= this.pageRequest.getStart()) {
             return PageResponse.of(new ArrayList<>(), totalCount);
@@ -158,13 +172,28 @@ public final class DEmailReceiver {
      * Reads email. Returns full information about messages (with a content and attachment). The read flag will be
      * set up in every message.
      * <p>
-     * This method supports page requests. After successful execution, the global {@code pageResuest} parameter
+     * This method supports page requests. After successful execution, the global {@link DEmailReceiver#pageRequest} parameter
      * will increase the page number.
-     * Use the {@code start(int start)} and {@code pageSize(int pageSize)} methods for managing page parameters.
+     * Use the {@link DEmailReceiver#start(int start)} and {@link DEmailReceiver#pageSize(int pageSize)} methods for managing page parameters.
      *
      * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link IncomingMessage}.
      */
     public PageResponse<IncomingMessage> nextReadEmail() {
+        return this.readEmail(this.pageRequest);
+    }
+
+    /**
+     * Reads email. Returns full information about messages (with a content and attachment). The read flag will be
+     * set up in every message.
+     * <p>
+     * This method supports page requests. You need to manage a page request yourself.
+     * Use the pageRequest parameter for it.
+     *
+     * @param pageRequest the configuration of a page request
+     *
+     * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link IncomingMessage}.
+     */
+    public PageResponse<IncomingMessage> readEmail(PageRequest pageRequest) {
         int totalCount = this.receiverClient.getTotalCount(folderName);
         if (totalCount <= 0 || totalCount <= this.pageRequest.getStart()) {
             return PageResponse.of(new ArrayList<>(), totalCount);
@@ -190,7 +219,7 @@ public final class DEmailReceiver {
 
     /**
      * Delete all messages in the current folder.
-     * Use the method {@code folder(String folderName)} to change folder. By default, it's "INBOX".
+     * Use the method {@link DEmailReceiver#folder(String folderName)} to change folder. By default, it's "INBOX".
      *
      * @return a map with a key is a message ID, and a value is the result of deletion (true or false).
      */

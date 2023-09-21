@@ -82,6 +82,9 @@ public class EmailMessageUtils {
     }
 
     public String contentTypeWithEncoding(String contentType, String encoding) {
+        if (contentType.contains("charset")) {
+            return contentType;
+        }
         return contentType + "; charset=" + encoding;
     }
 

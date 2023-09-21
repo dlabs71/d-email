@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.util.Properties;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import ru.dlabs.library.email.type.EncryptionType;
+import ru.dlabs.library.email.DEmailReceiver;
+import ru.dlabs.library.email.DEmailSender;
+import ru.dlabs.library.email.client.receiver.ReceiveTestUtils;
 import ru.dlabs.library.email.property.SmtpProperties;
+import ru.dlabs.library.email.type.EncryptionType;
 
 /**
  * @author Ivanov Danila
@@ -15,8 +18,13 @@ import ru.dlabs.library.email.property.SmtpProperties;
 @UtilityClass
 public class SenderTestUtils {
 
+    public DEmailSender createSender() {
+        SmtpProperties smtpProperties = loadSslProperties();
+        return DEmailSender.of(smtpProperties);
+    }
+
     @SneakyThrows
-    public Properties loadPropertiesFromFile(){
+    public Properties loadPropertiesFromFile() {
         Properties properties = new Properties();
         properties.load(SenderTestUtils.class.getClassLoader().getResourceAsStream("smtp.properties"));
         return properties;

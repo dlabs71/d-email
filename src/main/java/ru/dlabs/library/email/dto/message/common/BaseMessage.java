@@ -8,11 +8,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.dlabs.library.email.util.EmailMessageUtils;
 
 /**
  * @author Ivanov Danila
@@ -22,8 +21,6 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder(builderMethodName = "baseMessageBuilder")
 public class BaseMessage implements Message {
 
     private Integer id;
@@ -42,4 +39,49 @@ public class BaseMessage implements Message {
 
     private LocalDateTime sentDate;
     private LocalDateTime receivedDate;
+
+    public BaseMessage(
+        Integer id,
+        String subject,
+        String content,
+        Set<EmailParticipant> recipientEmail,
+        EmailParticipant sender,
+        List<EmailAttachment> attachments,
+        String encoding,
+        String contentType,
+        Integer size,
+        LocalDateTime sentDate,
+        LocalDateTime receivedDate
+    ) {
+        this.id = id;
+        this.subject = subject;
+        this.content = content;
+        this.recipientEmail = recipientEmail;
+        this.sender = sender;
+        this.attachments = attachments;
+        this.size = size;
+        this.sentDate = sentDate;
+        this.receivedDate = receivedDate;
+
+        if (encoding != null) {
+            this.encoding = encoding;
+        }
+        if (contentType != null) {
+            this.contentType = EmailMessageUtils.contentTypeWithEncoding(contentType, this.encoding);
+        }
+    }
+
+    public void setEncoding(String encoding) {
+        if (encoding == null) {
+            return;
+        }
+        this.encoding = encoding;
+    }
+
+    public void setContentType(String contentType) {
+        if (contentType == null) {
+            return;
+        }
+        this.contentType = EmailMessageUtils.contentTypeWithEncoding(contentType, this.encoding);
+    }
 }
