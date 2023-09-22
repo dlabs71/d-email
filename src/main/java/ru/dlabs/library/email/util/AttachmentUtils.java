@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -81,7 +82,7 @@ public class AttachmentUtils {
      */
     public EmailAttachment create(String pathToFile) throws AttachmentException {
         File file = createFile(pathToFile);
-        String contentType = URLConnection.guessContentTypeFromName(file.getName());
+        String contentType = findContentType(file);
         byte[] content;
         try {
             InputStream inputStream = new FileInputStream(file);
@@ -96,5 +97,27 @@ public class AttachmentUtils {
             .contentType(contentType)
             .type(AttachmentType.find(contentType))
             .build();
+    }
+
+    public String findContentType(File file) {
+        String contentType = URLConnection.guessContentTypeFromName(file.getName());
+
+        if (contentType == null) {
+            contentType = EmailMessageUtils.TEXT_CONTENT_TYPE;
+        }
+        if (AttachmentType.TEXT.equals(AttachmentType.find(contentType))) {
+            String encoding = null;
+            try {
+                FileInputStream is = new FileInputStream(file);
+                InputStreamReader reader = new InputStreamReader(is);
+                encoding = reader.getEncoding();
+            } catch (IOException ex) {
+                log.error(ex.getLocalizedMessage(), ex);
+            }
+            if (encoding != null) {
+                return EmailMessageUtils.contentTypeWithEncoding(contentType, encoding);
+            }
+        }
+        return contentType;
     }
 }

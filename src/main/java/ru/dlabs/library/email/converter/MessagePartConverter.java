@@ -106,24 +106,29 @@ public class MessagePartConverter {
 
     private void getContent(Part part, ContentAndAttachments result) {
         try {
-            if (part.isMimeType("text/*")) {
-                result.addContent(part.getContentType(), (String) part.getContent());
-                return;
-            }
-            // this is a nested message
-            if (part.isMimeType("message/rfc822")) {
-                getContent((Message) part.getContent(), result);
-                return;
-            }
-            // check if the content has several parts
-            if (part.isMimeType("multipart/*")) {
-                Multipart mp = (Multipart) part.getContent();
-                int count = mp.getCount();
-                for (int i = 0; i < count; i++) {
-                    getContent(mp.getBodyPart(i), result);
+            if (!Part.ATTACHMENT.equals(part.getDisposition())) {
+                if (part.isMimeType("text/*")) {
+                    result.addContent(part.getContentType(), (String) part.getContent());
+                    return;
                 }
-                return;
+
+                // this is a nested message
+                if (part.isMimeType("message/rfc822")) {
+                    getContent((Message) part.getContent(), result);
+                    return;
+                }
+
+                // check if the content has several parts
+                if (part.isMimeType("multipart/*")) {
+                    Multipart mp = (Multipart) part.getContent();
+                    int count = mp.getCount();
+                    for (int i = 0; i < count; i++) {
+                        getContent(mp.getBodyPart(i), result);
+                    }
+                    return;
+                }
             }
+
             // check if the part is attachment
             if (!AttachmentType.UNKNOWN.equals(AttachmentType.find(part.getContentType()))) {
                 EmailAttachment attachment = getAttachment(part);

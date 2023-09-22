@@ -1,10 +1,12 @@
 package ru.dlabs.library.email.client.sender;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -60,15 +62,7 @@ public class SMTPTextTests {
         assertEquals(result, SendingStatus.SUCCESS);
 
         Thread.sleep(1000);
-        PageResponse<IncomingMessage> inbox = this.receiver
-            .start(0)
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
-            .nextReadEmail();
-        assertEquals(inbox.getData().size(), 1);
-
-        IncomingMessage incomingMessage = inbox.getData().get(0);
-        assertIncomingMessage(incomingMessage);
-        assertIncomingMessageRecipients_1(incomingMessage);
+        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, false, false);
     }
 
 
@@ -92,25 +86,8 @@ public class SMTPTextTests {
         assertEquals(result, SendingStatus.SUCCESS);
 
         Thread.sleep(1000);
-        PageResponse<IncomingMessage> inbox1 = this.receiver
-            .start(0)
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
-            .nextReadEmail();
-        assertEquals(inbox1.getData().size(), 1);
-
-        PageResponse<IncomingMessage> inbox2 = this.receiver
-            .start(0)
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_2)
-            .nextReadEmail();
-        assertEquals(inbox2.getData().size(), 1);
-
-        IncomingMessage incomingMessage1 = inbox1.getData().get(0);
-        assertIncomingMessage(incomingMessage1);
-        assertIncomingMessageRecipients_2(incomingMessage1);
-
-        IncomingMessage incomingMessage2 = inbox1.getData().get(0);
-        assertIncomingMessage(incomingMessage2);
-        assertIncomingMessageRecipients_2(incomingMessage2);
+        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, false);
+        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_2, true, false);
     }
 
     @Test
@@ -134,28 +111,126 @@ public class SMTPTextTests {
 
         assertEquals(result, SendingStatus.SUCCESS);
 
-        Thread.sleep(1000);
-        PageResponse<IncomingMessage> inbox1 = this.receiver
-            .start(0)
+        Thread.sleep(3000);
+        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, true);
+        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_2, true, true);
+    }
+
+    @Test
+    @Order(4)
+    @SneakyThrows
+    public void sendTextTest_4() {
+        this.receiver
             .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
-            .nextReadEmail();
-        assertEquals(inbox1.getData().size(), 1);
-
-        PageResponse<IncomingMessage> inbox2 = this.receiver
-            .start(0)
+            .clearCurrentFolder();
+        this.receiver
             .credentialId(ReceiveTestUtils.CREDENTIAL_ID_2)
+            .clearCurrentFolder();
+
+        SendingStatus result = this.sender.sendText(
+            Arrays.asList(this.recipientEmail1, this.recipientEmail2),
+            SUBJECT,
+            BODY,
+            Arrays.asList(ATTACHMENT_1, ATTACHMENT_2)
+        );
+
+        assertEquals(result, SendingStatus.SUCCESS);
+
+        Thread.sleep(3000);
+        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, true);
+        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_2, true, true);
+    }
+
+    @Test
+    @Order(5)
+    @SneakyThrows
+    public void sendTextTest_5() {
+        this.receiver
+            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
+            .clearCurrentFolder();
+
+        SendingStatus result = this.sender.sendText(
+            this.recipientEmail1,
+            SUBJECT,
+            BODY,
+            ATTACHMENT_1,
+            ATTACHMENT_2
+        );
+
+        assertEquals(result, SendingStatus.SUCCESS);
+
+        Thread.sleep(3000);
+        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, false, true);
+    }
+
+    @Test
+    @Order(6)
+    @SneakyThrows
+    public void sendTextTest_6() {
+        this.receiver
+            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
+            .clearCurrentFolder();
+
+        SendingStatus result = this.sender.sendText(
+            this.recipientEmail1,
+            SUBJECT,
+            BODY,
+            Arrays.asList(ATTACHMENT_1, ATTACHMENT_2)
+        );
+
+        assertEquals(result, SendingStatus.SUCCESS);
+
+        Thread.sleep(3000);
+        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, false, true);
+    }
+
+    @Test
+    @Order(7)
+    @SneakyThrows
+    public void sendTextTest_7() {
+        this.receiver
+            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
+            .clearCurrentFolder();
+        this.receiver
+            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_2)
+            .clearCurrentFolder();
+
+
+        SendingStatus result = this.sender.sendText(
+            new HashSet<>(Arrays.asList(
+                EmailParticipant.of(this.recipientEmail1),
+                EmailParticipant.of(this.recipientEmail2)
+            )),
+            SUBJECT,
+            BODY,
+            Arrays.asList(ATTACHMENT_1, ATTACHMENT_2)
+        );
+
+        assertEquals(result, SendingStatus.SUCCESS);
+
+        Thread.sleep(3000);
+        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, true);
+        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_2, true, true);
+    }
+
+    private void assertMailbox(String credentialId, boolean twoRecipients, boolean withAttachments) {
+        PageResponse<IncomingMessage> inbox = this.receiver
+            .start(0)
+            .credentialId(credentialId)
             .nextReadEmail();
-        assertEquals(inbox2.getData().size(), 1);
+        assertEquals(inbox.getData().size(), 1);
 
-        IncomingMessage incomingMessage1 = inbox1.getData().get(0);
-        assertIncomingMessage(incomingMessage1);
-        assertIncomingMessageRecipients_2(incomingMessage1);
-        assertIncomingMessageAttachments(incomingMessage1);
+        IncomingMessage incomingMessage = inbox.getData().get(0);
+        assertIncomingMessage(incomingMessage);
+        if (twoRecipients) {
+            assertIncomingMessageRecipients_2(incomingMessage);
+        } else {
+            assertIncomingMessageRecipients_1(incomingMessage);
+        }
 
-        IncomingMessage incomingMessage2 = inbox1.getData().get(0);
-        assertIncomingMessage(incomingMessage2);
-        assertIncomingMessageRecipients_2(incomingMessage2);
-        assertIncomingMessageAttachments(incomingMessage2);
+        if (withAttachments) {
+            assertIncomingMessageAttachments(incomingMessage);
+        }
     }
 
     private void assertIncomingMessage(IncomingMessage incomingMessage) {
@@ -199,12 +274,12 @@ public class SMTPTextTests {
                 assertEquals(ATTACHMENT_1.getSize(), attachment.getSize());
                 assertEquals(ATTACHMENT_1.getType(), attachment.getType());
                 assertEquals(ATTACHMENT_1.getContentType(), attachment.getContentType());
-                assertEquals(ATTACHMENT_1.getData(), attachment.getData());
+                assertArrayEquals(ATTACHMENT_1.getData(), attachment.getData());
             } else if (ATTACHMENT_2.getName().equals(attachment.getName())) {
                 assertEquals(ATTACHMENT_2.getSize(), attachment.getSize());
                 assertEquals(ATTACHMENT_2.getType(), attachment.getType());
                 assertEquals(ATTACHMENT_2.getContentType(), attachment.getContentType());
-                assertEquals(ATTACHMENT_2.getData(), attachment.getData());
+                assertArrayEquals(ATTACHMENT_2.getData(), attachment.getData());
             }
         });
     }

@@ -6,6 +6,7 @@ import static ru.dlabs.library.email.util.EmailMessageUtils.CONTENT_TYPE_HDR;
 import static ru.dlabs.library.email.util.EmailMessageUtils.FORMAT_HDR;
 
 import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
 import jakarta.mail.Authenticator;
 import jakarta.mail.BodyPart;
 import jakarta.mail.Message;
@@ -29,8 +30,8 @@ import ru.dlabs.library.email.dto.message.api.OutgoingMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.exception.CreateMessageException;
 import ru.dlabs.library.email.exception.SessionException;
-import ru.dlabs.library.email.type.Protocol;
 import ru.dlabs.library.email.property.SmtpProperties;
+import ru.dlabs.library.email.type.Protocol;
 import ru.dlabs.library.email.util.EmailMessageUtils;
 import ru.dlabs.library.email.util.MessageValidator;
 import ru.dlabs.library.email.util.SessionUtils;
@@ -187,8 +188,8 @@ public class SMTPDClient implements SenderDClient {
         }
         try {
             MimeBodyPart attachmentPart = new MimeBodyPart();
-            ByteArrayDataSource bds = new ByteArrayDataSource(attachment.getData(), attachment.getContentType());
-            attachmentPart.setDataHandler(new DataHandler(bds));
+            DataSource dataSource = new ByteArrayDataSource(attachment.getData(), attachment.getContentType());
+            attachmentPart.setDataHandler(new DataHandler(dataSource));
             attachmentPart.setFileName(attachment.getName());
             attachmentPart.setHeader(CONTENT_TYPE_HDR, attachment.getContentType());
             return attachmentPart;

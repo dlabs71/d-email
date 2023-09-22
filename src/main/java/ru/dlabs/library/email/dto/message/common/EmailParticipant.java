@@ -27,4 +27,12 @@ public class EmailParticipant {
         }
         this.email = email;
     }
+
+    public static EmailParticipant of(String email, String name) {
+        return new EmailParticipant(email, name);
+    }
+
+    public static EmailParticipant of(String email) {
+        return new EmailParticipant(email);
+    }
 }
