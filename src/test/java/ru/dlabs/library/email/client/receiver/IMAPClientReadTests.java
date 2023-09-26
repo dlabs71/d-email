@@ -21,6 +21,7 @@ import ru.dlabs.library.email.dto.message.api.IncomingMessage;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
+import ru.dlabs.library.email.support.AbstractTestsClass;
 
 /**
  * Project name: d-email
@@ -33,10 +34,9 @@ import ru.dlabs.library.email.property.ImapProperties;
 @Order(324)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class IMAPClientReadTests {
+public class IMAPClientReadTests extends AbstractTestsClass {
 
     private final static Integer COUNT_OF_MESSAGES = 3;
-    private final static Integer delayAfterSend = 1000;
 
     private ImapProperties sslImapProperties;
     private ImapProperties tlsImapProperties;
@@ -66,7 +66,7 @@ public class IMAPClientReadTests {
         this.emailSender.sendText(email, "Тестовое сообщение 1", "Содержание тестового сообщения");
         this.emailSender.sendText(email, "Тестовое сообщение 2", "Содержание тестового сообщения");
         this.emailSender.sendText(email, "Тестовое сообщение 3", "Содержание тестового сообщения");
-        Thread.sleep(delayAfterSend);
+        Thread.sleep(sendDelayAfter);
     }
 
     @Test
@@ -158,7 +158,7 @@ public class IMAPClientReadTests {
     public void seenMessagesTest() throws InterruptedException {
         DEmailReceiver.of(this.simpleImapProperties).clearCurrentFolder();
         this.emailSender.sendText(this.recipientEmail, "Тестовое сообщение 1", "Содержание тестового сообщения");
-        Thread.sleep(delayAfterSend);
+        Thread.sleep(sendDelayAfter);
         DEmailReceiver client = DEmailReceiver.of(this.sslImapProperties);
 
         client.start(0);

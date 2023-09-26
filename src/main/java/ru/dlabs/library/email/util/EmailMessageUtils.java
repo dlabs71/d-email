@@ -28,6 +28,7 @@ public class EmailMessageUtils {
     public final static String DEFAULT_CONTENT_TYPE = "text/plain; charset=" + DEFAULT_ENCODING;
     public final static String TEXT_CONTENT_TYPE = "text/plain";
     public final static String HTML_CONTENT_TYPE = "text/html";
+    public final static String DEFAULT_BINARY_CONTENT_TYPE = "application/octet-stream";
 
     /**
      * It's creating an {@link InternetAddress} object from email and name strings

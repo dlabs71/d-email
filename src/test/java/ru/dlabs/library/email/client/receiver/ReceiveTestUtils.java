@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.property.ImapProperties;
+import ru.dlabs.library.email.support.PropUtils;
 import ru.dlabs.library.email.type.EncryptionType;
 
 /**
@@ -17,19 +18,13 @@ import ru.dlabs.library.email.type.EncryptionType;
 @UtilityClass
 public class ReceiveTestUtils {
 
+    public final static String PROP_FILE_NAME = "imap.properties";
     public final static String CREDENTIAL_ID_1 = "credentialId_1";
     public final static String CREDENTIAL_ID_2 = "credentialId_2";
 
     public DEmailReceiver createReceiver() {
         ImapProperties properties = loadSslProperties();
         return DEmailReceiver.of(properties);
-    }
-
-    @SneakyThrows
-    public Properties loadPropertiesFromFile() {
-        Properties properties = new Properties();
-        properties.load(ReceiveTestUtils.class.getClassLoader().getResourceAsStream("imap.properties"));
-        return properties;
     }
 
     public ImapProperties.ImapPropertiesBuilder loadCommonProperties(Properties properties) throws IOException {
@@ -58,7 +53,7 @@ public class ReceiveTestUtils {
     public ImapProperties[] loadProperties() {
         ImapProperties[] result = new ImapProperties[3];
 
-        Properties properties = loadPropertiesFromFile();
+        Properties properties = PropUtils.loadPropertiesFromFile(PROP_FILE_NAME);
         ImapProperties.ImapPropertiesBuilder builder = loadCommonProperties(properties);
 
         result[0] = builder
@@ -81,7 +76,7 @@ public class ReceiveTestUtils {
 
     @SneakyThrows
     public ImapProperties loadSslProperties() {
-        Properties properties = loadPropertiesFromFile();
+        Properties properties = PropUtils.loadPropertiesFromFile(PROP_FILE_NAME);
         ImapProperties.ImapPropertiesBuilder builder = loadCommonProperties(properties);
         return builder
             .encryptionType(EncryptionType.SSL)

@@ -10,18 +10,20 @@ import org.junit.jupiter.api.TestInstance;
 import ru.dlabs.library.email.DEmailSender;
 import ru.dlabs.library.email.client.SendingStatus;
 import ru.dlabs.library.email.property.SmtpProperties;
+import ru.dlabs.library.email.support.AbstractTestsClass;
+import ru.dlabs.library.email.support.PropUtils;
 import ru.dlabs.library.email.util.AttachmentUtils;
 
 @Order(31)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class SMTPAttachmentTests {
+public class SMTPAttachmentTests extends AbstractTestsClass {
 
     private SmtpProperties sslSmtpProperties;
     private String recipientEmail;
 
     @BeforeEach
     public void loadConfig() {
-        Properties props = SenderTestUtils.loadPropertiesFromFile();
+        Properties props = PropUtils.loadPropertiesFromFile(SenderTestUtils.PROP_FILE_NAME);
         this.recipientEmail = props.getProperty("recipientEmail");
         this.sslSmtpProperties = SenderTestUtils.loadSslProperties();
     }

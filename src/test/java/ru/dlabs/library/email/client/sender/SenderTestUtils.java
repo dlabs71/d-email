@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.util.Properties;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
-import ru.dlabs.library.email.client.receiver.ReceiveTestUtils;
 import ru.dlabs.library.email.property.SmtpProperties;
+import ru.dlabs.library.email.support.PropUtils;
 import ru.dlabs.library.email.type.EncryptionType;
 
 /**
@@ -18,16 +17,11 @@ import ru.dlabs.library.email.type.EncryptionType;
 @UtilityClass
 public class SenderTestUtils {
 
+    public final static String PROP_FILE_NAME = "smtp.properties";
+
     public DEmailSender createSender() {
         SmtpProperties smtpProperties = loadSslProperties();
         return DEmailSender.of(smtpProperties);
-    }
-
-    @SneakyThrows
-    public Properties loadPropertiesFromFile() {
-        Properties properties = new Properties();
-        properties.load(SenderTestUtils.class.getClassLoader().getResourceAsStream("smtp.properties"));
-        return properties;
     }
 
     public SmtpProperties.SmtpPropertiesBuilder loadCommonProperties(Properties properties) throws IOException {
@@ -46,7 +40,7 @@ public class SenderTestUtils {
     public SmtpProperties[] loadProperties() {
         SmtpProperties[] result = new SmtpProperties[3];
 
-        Properties properties = loadPropertiesFromFile();
+        Properties properties = PropUtils.loadPropertiesFromFile(PROP_FILE_NAME);
         SmtpProperties.SmtpPropertiesBuilder builder = loadCommonProperties(properties);
 
         result[0] = builder
@@ -68,7 +62,7 @@ public class SenderTestUtils {
 
     @SneakyThrows
     public SmtpProperties loadSslProperties() {
-        Properties properties = loadPropertiesFromFile();
+        Properties properties = PropUtils.loadPropertiesFromFile(PROP_FILE_NAME);
         SmtpProperties.SmtpPropertiesBuilder builder = loadCommonProperties(properties);
 
         return builder

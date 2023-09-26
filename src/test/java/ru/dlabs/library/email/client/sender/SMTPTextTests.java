@@ -23,12 +23,14 @@ import ru.dlabs.library.email.dto.message.api.IncomingMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
+import ru.dlabs.library.email.support.AbstractTestsClass;
+import ru.dlabs.library.email.support.PropUtils;
 import ru.dlabs.library.email.util.AttachmentUtils;
 import ru.dlabs.library.email.util.EmailMessageUtils;
 
 @Order(31)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class SMTPTextTests {
+public class SMTPTextTests extends AbstractTestsClass {
 
     private final static String BODY = "It's the body of this message. Please don't reply to this one.";
     private final static String SUBJECT = "Test of sending";
@@ -42,7 +44,7 @@ public class SMTPTextTests {
 
     @BeforeEach
     public void loadConfig() {
-        Properties props = SenderTestUtils.loadPropertiesFromFile();
+        Properties props = PropUtils.loadPropertiesFromFile(SenderTestUtils.PROP_FILE_NAME);
         this.recipientEmail1 = props.getProperty("recipientEmail1");
         this.recipientEmail2 = props.getProperty("recipientEmail2");
         this.receiver = ReceiveTestUtils.createReceiver();
@@ -61,7 +63,7 @@ public class SMTPTextTests {
 
         assertEquals(result, SendingStatus.SUCCESS);
 
-        Thread.sleep(1000);
+        Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, false, false);
     }
 
@@ -85,7 +87,7 @@ public class SMTPTextTests {
 
         assertEquals(result, SendingStatus.SUCCESS);
 
-        Thread.sleep(1000);
+        Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, false);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_2, true, false);
     }
@@ -111,7 +113,7 @@ public class SMTPTextTests {
 
         assertEquals(result, SendingStatus.SUCCESS);
 
-        Thread.sleep(3000);
+        Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, true);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_2, true, true);
     }
@@ -136,7 +138,7 @@ public class SMTPTextTests {
 
         assertEquals(result, SendingStatus.SUCCESS);
 
-        Thread.sleep(3000);
+        Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, true);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_2, true, true);
     }
@@ -159,7 +161,7 @@ public class SMTPTextTests {
 
         assertEquals(result, SendingStatus.SUCCESS);
 
-        Thread.sleep(3000);
+        Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, false, true);
     }
 
@@ -180,7 +182,7 @@ public class SMTPTextTests {
 
         assertEquals(result, SendingStatus.SUCCESS);
 
-        Thread.sleep(3000);
+        Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, false, true);
     }
 
@@ -208,7 +210,7 @@ public class SMTPTextTests {
 
         assertEquals(result, SendingStatus.SUCCESS);
 
-        Thread.sleep(3000);
+        Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, true);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_2, true, true);
     }

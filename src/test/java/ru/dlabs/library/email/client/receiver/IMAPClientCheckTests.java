@@ -19,6 +19,7 @@ import ru.dlabs.library.email.dto.message.MessageView;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
+import ru.dlabs.library.email.support.AbstractTestsClass;
 
 /**
  * @author Ivanov Danila
@@ -28,10 +29,9 @@ import ru.dlabs.library.email.property.ImapProperties;
 @Order(323)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class IMAPClientCheckTests {
+public class IMAPClientCheckTests extends AbstractTestsClass {
 
     private final static Integer COUNT_OF_MESSAGES = 3;
-    private final static Integer delayAfterSend = 1000;
 
     private ImapProperties sslImapProperties;
     private ImapProperties tlsImapProperties;
@@ -61,7 +61,7 @@ public class IMAPClientCheckTests {
         this.emailSender.sendText(email, "Тестовое сообщение 1", "Содержание тестового сообщения 1");
         this.emailSender.sendText(email, "Тестовое сообщение 2", "Содержание тестового сообщения 2");
         this.emailSender.sendText(email, "Тестовое сообщение 3", "Содержание тестового сообщения 3");
-        Thread.sleep(delayAfterSend);
+        Thread.sleep(sendDelayAfter);
     }
 
     @Test

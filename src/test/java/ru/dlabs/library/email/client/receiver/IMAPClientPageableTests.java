@@ -21,6 +21,7 @@ import ru.dlabs.library.email.client.sender.SenderTestUtils;
 import ru.dlabs.library.email.dto.message.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
+import ru.dlabs.library.email.support.AbstractTestsClass;
 
 /**
  * @author Ivanov Danila
@@ -30,9 +31,8 @@ import ru.dlabs.library.email.property.ImapProperties;
 @Order(322)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class IMAPClientPageableTests {
+public class IMAPClientPageableTests extends AbstractTestsClass {
 
-    private final static Integer delayAfterSend = 2000;
     private final static Integer countMessages = 20;
     private final static Integer pageSize = 5;
 
@@ -62,7 +62,7 @@ public class IMAPClientPageableTests {
             this.emailSender.sendText(email, "Тестовое сообщение " + i, "Содержание тестового сообщения " + i);
             Thread.sleep(500);
         }
-        Thread.sleep(delayAfterSend);
+        Thread.sleep(sendDelayAfter);
     }
 
     @Test

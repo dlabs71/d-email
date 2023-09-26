@@ -20,6 +20,7 @@ import ru.dlabs.library.email.client.sender.SenderTestUtils;
 import ru.dlabs.library.email.dto.message.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
+import ru.dlabs.library.email.support.AbstractTestsClass;
 
 /**
  * @author Ivanov Danila
@@ -29,9 +30,7 @@ import ru.dlabs.library.email.property.ImapProperties;
 @Order(321)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class IMAPClientDeleteTests {
-
-    private final static Integer delayAfterSend = 1000;
+public class IMAPClientDeleteTests extends AbstractTestsClass {
 
     private DEmailSender emailSender;
     private DEmailReceiver emailReceiver;
@@ -54,7 +53,7 @@ public class IMAPClientDeleteTests {
         this.emailSender.sendText(email, "Тестовое сообщение 3", "Содержание тестового сообщения 3");
         this.emailSender.sendText(email, "Тестовое сообщение 4", "Содержание тестового сообщения 4");
         this.emailSender.sendText(email, "Тестовое сообщение 5", "Содержание тестового сообщения 5");
-        Thread.sleep(delayAfterSend);
+        Thread.sleep(sendDelayAfter);
     }
 
     @Test

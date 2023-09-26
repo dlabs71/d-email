@@ -20,6 +20,7 @@
         <velocity-tools.version>3.1</velocity-tools.version>
         <junit.version>5.10.0</junit.version>
         <log4j.version>2.20.0</log4j.version>
+        <tika-core.version>2.9.0</tika-core.version>
     </properties>
 
     <dependencies>
@@ -72,6 +73,12 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
             <version>${log4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>${tika-core.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

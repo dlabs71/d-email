@@ -14,10 +14,12 @@ import ru.dlabs.library.email.DEmailSender;
 import ru.dlabs.library.email.client.SendingStatus;
 import ru.dlabs.library.email.exception.ValidationMessageException;
 import ru.dlabs.library.email.property.SmtpProperties;
+import ru.dlabs.library.email.support.AbstractTestsClass;
+import ru.dlabs.library.email.support.PropUtils;
 
 @Order(31)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class SMTPClientConnectionTests {
+public class SMTPClientConnectionTests extends AbstractTestsClass {
 
     private SmtpProperties sslSmtpProperties;
     private SmtpProperties tlsSmtpProperties;
@@ -26,7 +28,7 @@ public class SMTPClientConnectionTests {
 
     @BeforeEach
     public void loadConfig() {
-        Properties props = SenderTestUtils.loadPropertiesFromFile();
+        Properties props = PropUtils.loadPropertiesFromFile(SenderTestUtils.PROP_FILE_NAME);
         this.recipientEmail = props.getProperty("recipientEmail");
 
         SmtpProperties[] properties = SenderTestUtils.loadProperties();
