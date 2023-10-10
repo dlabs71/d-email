@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static ru.dlabs.library.email.client.receiver.ReceiveTestUtils.CREDENTIAL_ID_1;
 
 import java.io.IOException;
 import lombok.SneakyThrows;
@@ -62,7 +63,9 @@ public class IMAPClientReadTests extends AbstractTestsClass {
 
     @SneakyThrows
     private void sendData(String email) {
-        DEmailReceiver.of(this.simpleImapProperties).clearCurrentFolder();
+        DEmailReceiver.of(this.simpleImapProperties)
+            .credentialId(CREDENTIAL_ID_1)
+            .clearCurrentFolder();
         this.emailSender.sendText(email, "Тестовое сообщение 1", "Содержание тестового сообщения");
         this.emailSender.sendText(email, "Тестовое сообщение 2", "Содержание тестового сообщения");
         this.emailSender.sendText(email, "Тестовое сообщение 3", "Содержание тестового сообщения");
@@ -72,7 +75,9 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     @Test
     @Order(1)
     public void readSimpleEmailTest() {
-        PageResponse<IncomingMessage> response = DEmailReceiver.of(this.simpleImapProperties).nextReadEmail();
+        PageResponse<IncomingMessage> response = DEmailReceiver.of(this.simpleImapProperties)
+            .credentialId(CREDENTIAL_ID_1)
+            .nextReadEmail();
         assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
 
@@ -100,7 +105,9 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     @Test
     @Order(2)
     public void readSSLEmailTest() {
-        PageResponse<IncomingMessage> response = DEmailReceiver.of(this.sslImapProperties).nextReadEmail();
+        PageResponse<IncomingMessage> response = DEmailReceiver.of(this.sslImapProperties)
+            .credentialId(CREDENTIAL_ID_1)
+            .nextReadEmail();
         assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
 
@@ -128,7 +135,9 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     @Test
     @Order(3)
     public void readTLSEmailTest() {
-        PageResponse<IncomingMessage> response = DEmailReceiver.of(this.tlsImapProperties).nextReadEmail();
+        PageResponse<IncomingMessage> response = DEmailReceiver.of(this.tlsImapProperties)
+            .credentialId(CREDENTIAL_ID_1)
+            .nextReadEmail();
         assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
 
@@ -156,10 +165,12 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     @Test
     @Order(4)
     public void seenMessagesTest() throws InterruptedException {
-        DEmailReceiver.of(this.simpleImapProperties).clearCurrentFolder();
+        DEmailReceiver.of(this.simpleImapProperties)
+            .credentialId(CREDENTIAL_ID_1)
+            .clearCurrentFolder();
         this.emailSender.sendText(this.recipientEmail, "Тестовое сообщение 1", "Содержание тестового сообщения");
         Thread.sleep(sendDelayAfter);
-        DEmailReceiver client = DEmailReceiver.of(this.sslImapProperties);
+        DEmailReceiver client = DEmailReceiver.of(this.sslImapProperties).credentialId(CREDENTIAL_ID_1);
 
         client.start(0);
         PageResponse<MessageView> checkEmailResponse1 = client.nextCheckEmail();

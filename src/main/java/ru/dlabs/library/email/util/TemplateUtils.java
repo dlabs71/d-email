@@ -3,6 +3,7 @@ package ru.dlabs.library.email.util;
 import java.io.File;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 import lombok.Getter;
@@ -85,7 +86,7 @@ public class TemplateUtils {
      */
     public Template createClasspathTemplate(String pathTemplate) {
         VelocityEngine velocityEngine = new VelocityEngine();
-        TemplatePath templatePath = normalizeClasspathTemplatePath(pathTemplate);
+        TemplatePath templatePath = normalizeTemplatePath(pathTemplate);
         velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
         velocityEngine.setProperty("file.resource.loader.path", templatePath.getPathToDir());
@@ -102,7 +103,7 @@ public class TemplateUtils {
      */
     public Template createFileTemplate(String pathTemplate) {
         VelocityEngine velocityEngine = new VelocityEngine();
-        TemplatePath templatePath = normalizeFileTemplatePath(pathTemplate);
+        TemplatePath templatePath = normalizeTemplatePath(pathTemplate);
         velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "file");
         velocityEngine.setProperty("classpath.resource.loader.class", FileResourceLoader.class.getName());
         velocityEngine.setProperty("file.resource.loader.path", templatePath.getPathToDir());
@@ -113,34 +114,25 @@ public class TemplateUtils {
     }
 
     /**
-     * This method normalizes a template path, assuming it's the classpath resource
+     * This method normalizes a template path. It'll remove different prefixes and split the incoming string
+     * into a path to a directory and the name of a file in this directory.
+     * <p>
+     * Prefixes are supported: 'file:///', 'classpath:'
      *
      * @param source a path to the resource
      *
-     * @return the normalized path
-     */
-    public TemplatePath normalizeClasspathTemplatePath(String source) {
-        if (source.startsWith("classpath:")) {
-            source = source.replace("classpath:", "");
-        }
-        if (!source.contains(File.separator)) {
-            return new TemplatePath(source, "");
-        }
-
-        return createTemplatePath(source);
-    }
-
-    /**
-     * This method normalizes a template path, assuming it's the file system resource
+     * @return the normalized path as object {@link TemplatePath}
      *
-     * @param source a path to the resource
-     *
-     * @return the normalized path
+     * @throws java.nio.file.InvalidPathException if the parameter 'source' has incorrect value
      */
-    public TemplatePath normalizeFileTemplatePath(String source) {
+    public TemplatePath normalizeTemplatePath(String source) {
         if (source.startsWith("file://")) {
             source = source.replace("file://", "");
         }
+        if (source.startsWith("classpath:")) {
+            source = source.replace("classpath:", "");
+        }
+        source = Paths.get(source).toString();
         if (!source.contains(File.separator)) {
             return new TemplatePath(source, "");
         }

@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import lombok.SneakyThrows;
 import org.apache.tika.Tika;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.exception.AttachmentException;
@@ -28,6 +27,12 @@ import ru.dlabs.library.email.type.AttachmentType;
  */
 public class AttachmentUtilTests {
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link AttachmentUtils#createFile(String)}</li>
+     * </ul>
+     */
     @Test
     public void createFileTest() throws IOException {
         assertThrows(
@@ -60,20 +65,62 @@ public class AttachmentUtilTests {
         assertTrue(result2.length() > 0);
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link AttachmentUtils#create(String)}</li>
+     *     <li>{@link AttachmentUtils#create(String, MimeTypeDetector)}</li>
+     * </ul>
+     */
     @Test
     public void createAttachmentTest() throws URISyntaxException {
-        URL urlFile = AttachmentUtilTests.class.getClassLoader().getResource("template.txt");
-        File sourceFile = new File(urlFile.toURI());
+        MimeTypeDetector detector = new TikaMimeTypeDetector();
+
+        URL urlFile1 = AttachmentUtilTests.class.getClassLoader().getResource("template.txt");
+        File sourceFile1 = new File(urlFile1.toURI());
+
+        URL urlFile2 = AttachmentUtilTests.class.getClassLoader().getResource("attachments/file.jpg");
+        File sourceFile2 = new File(urlFile2.toURI());
 
         EmailAttachment result1 = assertDoesNotThrow(
             () -> AttachmentUtils.create("classpath:template.txt")
         );
-        assertEquals(result1.getSize(), sourceFile.length());
-        assertEquals(result1.getName(), sourceFile.getName());
+        assertEquals(result1.getSize(), sourceFile1.length());
+        assertEquals(result1.getName(), sourceFile1.getName());
         assertEquals(result1.getType(), AttachmentType.TEXT);
-        assertEquals(result1.getData().length, sourceFile.length());
+        assertEquals(result1.getData().length, sourceFile1.length());
+
+        EmailAttachment result2 = assertDoesNotThrow(
+            () -> AttachmentUtils.create("classpath:attachments/file.jpg")
+        );
+        assertEquals(result2.getSize(), sourceFile2.length());
+        assertEquals(result2.getName(), sourceFile2.getName());
+        assertEquals(result2.getType(), AttachmentType.IMAGE);
+        assertEquals(result2.getData().length, sourceFile2.length());
+
+        EmailAttachment result3 = assertDoesNotThrow(
+            () -> AttachmentUtils.create("classpath:template.txt", detector)
+        );
+        assertEquals(result3.getSize(), sourceFile1.length());
+        assertEquals(result3.getName(), sourceFile1.getName());
+        assertEquals(result3.getType(), AttachmentType.TEXT);
+        assertEquals(result3.getData().length, sourceFile1.length());
+
+        EmailAttachment result4 = assertDoesNotThrow(
+            () -> AttachmentUtils.create("classpath:attachments/file.jpg", detector)
+        );
+        assertEquals(result4.getSize(), sourceFile2.length());
+        assertEquals(result4.getName(), sourceFile2.getName());
+        assertEquals(result4.getType(), AttachmentType.IMAGE);
+        assertEquals(result4.getData().length, sourceFile2.length());
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link AttachmentUtils#createContentTypeString(File, MimeTypeDetector)}</li>
+     * </ul>
+     */
     @Test
     public void createContentTypeStringTikaTest() {
         MimeTypeDetector detector = new TikaMimeTypeDetector();
@@ -112,7 +159,7 @@ public class AttachmentUtilTests {
         assertEquals(contentType, "application/gzip");
 
         contentType = AttachmentUtils.createContentTypeString(this.getResource("attachments/file.txt"), detector);
-        assertEquals(contentType, "text/plain; charset=UTF8");
+        assertEquals(contentType, "text/plain; charset=utf8");
 
         contentType = AttachmentUtils.createContentTypeString(this.getResource("attachments/file.xls"), detector);
         assertEquals(contentType, "application/vnd.ms-excel");
@@ -124,6 +171,12 @@ public class AttachmentUtilTests {
         assertEquals(contentType, "application/zip");
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link AttachmentUtils#createContentTypeString(File)}</li>
+     * </ul>
+     */
     @Test
     public void createContentTypeStringDefaultTest() {
         String contentType = AttachmentUtils.createContentTypeString(this.getResource("attachments/file.djvu"));
@@ -157,7 +210,7 @@ public class AttachmentUtilTests {
         assertTrue(Arrays.asList("application/gzip", "application/x-compressed-tar").contains(contentType));
 
         contentType = AttachmentUtils.createContentTypeString(this.getResource("attachments/file.txt"));
-        assertEquals(contentType, "text/plain; charset=UTF8");
+        assertEquals(contentType, "text/plain; charset=utf8");
 
         contentType = AttachmentUtils.createContentTypeString(this.getResource("attachments/file.xls"));
         assertEquals(contentType, "application/vnd.ms-excel");

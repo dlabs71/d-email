@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import lombok.Getter;
 
 /**
  * <p>
@@ -16,12 +17,9 @@ import java.nio.file.Files;
  */
 public class DefaultMimeTypeDetector implements MimeTypeDetector {
 
+    @Getter
     public final static DefaultMimeTypeDetector instance = new DefaultMimeTypeDetector();
     public final static String DEFAULT_CONTENT_TYPE = "application/octet-stream";
-
-    public static DefaultMimeTypeDetector getInstance() {
-        return instance;
-    }
 
     @Override
     public String detect(File file) {

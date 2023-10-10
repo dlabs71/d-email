@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
@@ -19,9 +20,13 @@ import ru.dlabs.library.email.type.AttachmentType;
 /**
  * This is the utility class for creating {@link EmailAttachment} objects.
  *
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-11</div>
+ * </p>
+ *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-09-11
+ * @since 1.0.0
  */
 @Slf4j
 @UtilityClass
@@ -87,10 +92,10 @@ public class AttachmentUtils {
      */
     public EmailAttachment create(String pathToFile, MimeTypeDetector detector) throws AttachmentException {
         File file = createFile(pathToFile);
-        String contentType = createContentTypeString(file);
+        String contentType = createContentTypeString(file, detector);
         byte[] content;
         try {
-            InputStream inputStream = new FileInputStream(file);
+            InputStream inputStream = Files.newInputStream(file.toPath());
             content = IOUtils.toByteArray(inputStream);
         } catch (IOException ex) {
             throw new AttachmentException("Read the file was failed. " + ex.getLocalizedMessage());
