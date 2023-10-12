@@ -39,7 +39,7 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
         this.setContent(content);
         this.setContentType(contentType);
         this.setEncoding(encoding);
-        this.setRecipientEmail(recipientEmail);
+        this.setRecipients(recipientEmail);
         this.setAttachments(attachments);
     }
 

@@ -6,10 +6,13 @@ import lombok.Setter;
 
 /**
  * The page request class. This class contains information about the start and end of data selection.
+ * </p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-02</div>
+ * </p>
  *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-09-02
+ * @since 1.0.0
  */
 @Getter
 @Setter

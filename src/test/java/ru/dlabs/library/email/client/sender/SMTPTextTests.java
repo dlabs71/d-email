@@ -246,18 +246,18 @@ public class SMTPTextTests extends AbstractTestsClass {
     }
 
     private void assertIncomingMessageRecipients_1(IncomingMessage incomingMessage) {
-        assertEquals(incomingMessage.getRecipientEmail().size(), 1);
-        EmailParticipant recipient = incomingMessage.getRecipientEmail().stream().findFirst().get();
+        assertEquals(incomingMessage.getRecipients().size(), 1);
+        EmailParticipant recipient = incomingMessage.getRecipients().stream().findFirst().get();
         assertEquals(recipient.getEmail(), this.recipientEmail1);
         assertEquals(recipient.getName(), this.recipientEmail1);
     }
 
     private void assertIncomingMessageRecipients_2(IncomingMessage incomingMessage) {
-        assertEquals(incomingMessage.getRecipientEmail().size(), 2);
-        Set<String> emails = incomingMessage.getRecipientEmail().stream()
+        assertEquals(incomingMessage.getRecipients().size(), 2);
+        Set<String> emails = incomingMessage.getRecipients().stream()
             .map(EmailParticipant::getEmail)
             .collect(Collectors.toSet());
-        Set<String> names = incomingMessage.getRecipientEmail().stream()
+        Set<String> names = incomingMessage.getRecipients().stream()
             .map(EmailParticipant::getName)
             .collect(Collectors.toSet());
 

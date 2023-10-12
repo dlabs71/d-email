@@ -32,7 +32,7 @@ import ru.dlabs.library.email.util.IOUtils;
 
 /**
  * Utility class for converting different parts of a message {@link Message} for using in
- * a message DTO implement {@link ru.dlabs.library.email.dto.message.common.Message} interface.
+ * a message DTO implement {@link ru.dlabs.library.email.dto.message.api.Message} interface.
  *
  * @author Ivanov Danila
  * Project name: d-email

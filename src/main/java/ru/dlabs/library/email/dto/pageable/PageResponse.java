@@ -6,10 +6,13 @@ import lombok.Getter;
 
 /**
  * The page response class. This class contains the selected data and the total count of all the data
+ * </p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-02</div>
+ * </p>
  *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-09-02
+ * @since 1.0.0
  */
 @Getter
 @AllArgsConstructor

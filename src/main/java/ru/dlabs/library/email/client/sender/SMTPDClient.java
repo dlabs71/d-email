@@ -151,7 +151,7 @@ public class SMTPDClient implements SenderDClient {
             envelop.setSentDate(new Date());
             envelop.setRecipients(
                 Message.RecipientType.TO,
-                EmailMessageUtils.createAddresses(message.getRecipientEmail())
+                EmailMessageUtils.createAddresses(message.getRecipients())
             );
             return envelop;
         } catch (MessagingException | UnsupportedEncodingException ex) {

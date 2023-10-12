@@ -23,7 +23,7 @@ public class DefaultIncomingMessage extends BaseMessage implements IncomingMessa
             baseMessage.getId(),
             baseMessage.getSubject(),
             baseMessage.getContent(),
-            baseMessage.getRecipientEmail(),
+            baseMessage.getRecipients(),
             baseMessage.getSender(),
             baseMessage.getAttachments(),
             baseMessage.getEncoding(),

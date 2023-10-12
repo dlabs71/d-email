@@ -1,7 +1,5 @@
 package ru.dlabs.library.email.dto.message.api;
 
-import ru.dlabs.library.email.dto.message.common.Message;
-
 /**
  * Interface an incoming message
  *

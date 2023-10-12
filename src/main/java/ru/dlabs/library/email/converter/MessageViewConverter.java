@@ -35,7 +35,7 @@ public class MessageViewConverter {
     public MessageView convert(Message message) {
         MessageView.MessageViewBuilder builder = MessageView.builder();
         builder.id(message.getMessageNumber());
-        builder.recipientEmail(MessagePartConverter.getParticipants(message));
+        builder.recipients(MessagePartConverter.getParticipants(message));
 
         // Extraction of the subject
         try {

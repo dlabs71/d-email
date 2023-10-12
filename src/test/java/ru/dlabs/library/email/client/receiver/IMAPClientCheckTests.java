@@ -84,10 +84,10 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
         assertNotNull(incomingMessage.getReceivedDate());
         assertNotNull(incomingMessage.getSentDate());
         assertNotNull(incomingMessage.getSize());
-        assertNotNull(incomingMessage.getRecipientEmail());
-        assertEquals(incomingMessage.getRecipientEmail().size(), 1);
+        assertNotNull(incomingMessage.getRecipients());
+        assertEquals(incomingMessage.getRecipients().size(), 1);
 
-        EmailParticipant recipient = incomingMessage.getRecipientEmail().stream().findFirst().orElse(null);
+        EmailParticipant recipient = incomingMessage.getRecipients().stream().findFirst().orElse(null);
         assertNotNull(recipient);
         assertEquals(recipient.getEmail(), this.recipientEmail);
         assertEquals(incomingMessage.getSender().getEmail(), this.senderEmail);
@@ -110,10 +110,10 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
         assertNotNull(incomingMessage.getReceivedDate());
         assertNotNull(incomingMessage.getSentDate());
         assertNotNull(incomingMessage.getSize());
-        assertNotNull(incomingMessage.getRecipientEmail());
-        assertEquals(incomingMessage.getRecipientEmail().size(), 1);
+        assertNotNull(incomingMessage.getRecipients());
+        assertEquals(incomingMessage.getRecipients().size(), 1);
 
-        EmailParticipant recipient = incomingMessage.getRecipientEmail().stream().findFirst().orElse(null);
+        EmailParticipant recipient = incomingMessage.getRecipients().stream().findFirst().orElse(null);
         assertNotNull(recipient);
         assertEquals(recipient.getEmail(), this.recipientEmail);
         assertEquals(incomingMessage.getSender().getEmail(), this.senderEmail);
@@ -136,10 +136,10 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
         assertNotNull(incomingMessage.getReceivedDate());
         assertNotNull(incomingMessage.getSentDate());
         assertNotNull(incomingMessage.getSize());
-        assertNotNull(incomingMessage.getRecipientEmail());
-        assertEquals(incomingMessage.getRecipientEmail().size(), 1);
+        assertNotNull(incomingMessage.getRecipients());
+        assertEquals(incomingMessage.getRecipients().size(), 1);
 
-        EmailParticipant recipient = incomingMessage.getRecipientEmail().stream().findFirst().orElse(null);
+        EmailParticipant recipient = incomingMessage.getRecipients().stream().findFirst().orElse(null);
         assertNotNull(recipient);
         assertEquals(recipient.getEmail(), this.recipientEmail);
         assertEquals(incomingMessage.getSender().getEmail(), this.senderEmail);

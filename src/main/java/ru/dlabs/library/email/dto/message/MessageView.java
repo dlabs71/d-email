@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.ToString;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
-import ru.dlabs.library.email.dto.message.common.Message;
+import ru.dlabs.library.email.dto.message.api.Message;
 
 /**
  * This class described common data about an email message. Without a message body and message attachments.
@@ -26,7 +26,7 @@ import ru.dlabs.library.email.dto.message.common.Message;
 public class MessageView implements Message {
 
     private final EmailParticipant sender;
-    private final Set<EmailParticipant> recipientEmail;
+    private final Set<EmailParticipant> recipients;
     private final String subject;
 
     private Integer id;

@@ -11,6 +11,7 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.dlabs.library.email.dto.message.api.Message;
 import ru.dlabs.library.email.util.EmailMessageUtils;
 
 /**
@@ -28,7 +29,7 @@ public class BaseMessage implements Message {
     private String subject;
     private String content;
 
-    private Set<EmailParticipant> recipientEmail = new HashSet<>();
+    private Set<EmailParticipant> recipients = new HashSet<>();
     private EmailParticipant sender = null;
 
     private List<EmailAttachment> attachments = new ArrayList<>();
@@ -44,7 +45,7 @@ public class BaseMessage implements Message {
         Integer id,
         String subject,
         String content,
-        Set<EmailParticipant> recipientEmail,
+        Set<EmailParticipant> recipients,
         EmailParticipant sender,
         List<EmailAttachment> attachments,
         String encoding,
@@ -56,7 +57,7 @@ public class BaseMessage implements Message {
         this.id = id;
         this.subject = subject;
         this.content = content;
-        this.recipientEmail = recipientEmail;
+        this.recipients = recipients;
         this.sender = sender;
         this.attachments = attachments;
         this.size = size;
