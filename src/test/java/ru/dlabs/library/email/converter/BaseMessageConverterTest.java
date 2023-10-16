@@ -14,7 +14,6 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
-import ru.dlabs.library.email.util.AttachmentUtils;
 
 /**
  * <p>
@@ -81,6 +80,11 @@ public class BaseMessageConverterTest {
         }
 
         assertEquals(baseMessage.getSubject(), subject);
+        if (message.getEncoding() != null) {
+            assertEquals(baseMessage.getTransferEncoder().getName(), message.getEncoding());
+        } else {
+            assertNull(baseMessage.getTransferEncoder());
+        }
 
         if (message.getFrom() != null) {
             assertNotNull(baseMessage.getSender());

@@ -1,5 +1,6 @@
 package ru.dlabs.library.email.converter;
 
+import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TRANSFER_ENCODING_HDR;
 import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TYPE_HDR;
 
 import jakarta.activation.DataHandler;
@@ -19,6 +20,7 @@ import java.util.List;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
+import ru.dlabs.library.email.dto.message.common.TransferEncoder;
 import ru.dlabs.library.email.util.AttachmentUtils;
 
 /**
@@ -100,7 +102,7 @@ public class TestConverterUtils {
             ByteArrayInputStream is = new ByteArrayInputStream(textContent.getBytes(StandardCharsets.UTF_8));
 
             MimeBodyPart part = new MimeBodyPart(is);
-            part.addHeader("Content-Type", "text/plain; charset=windows-1251");
+            part.addHeader(CONTENT_TYPE_HDR, "text/plain; charset=windows-1251");
             content.addBodyPart(part);
         }
 
@@ -111,6 +113,7 @@ public class TestConverterUtils {
         }
 
         mimeMessage.setContent(content);
+        mimeMessage.addHeader(CONTENT_TRANSFER_ENCODING_HDR, TransferEncoder.EIGHT_BIT.getName());
         return mimeMessage;
     }
 

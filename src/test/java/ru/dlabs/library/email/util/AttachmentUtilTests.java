@@ -131,43 +131,82 @@ public class AttachmentUtilTests {
         );
         assertEquals(contentType, "image/vnd.djvu");
 
-        contentType = AttachmentUtils.createContentTypeForAttachment(this.getResource("attachments/file.doc"), detector);
+        contentType = AttachmentUtils.createContentTypeForAttachment(
+            this.getResource("attachments/file.doc"),
+            detector
+        );
         assertEquals(contentType, "application/msword");
 
-        contentType = AttachmentUtils.createContentTypeForAttachment(this.getResource("attachments/file.docx"), detector);
+        contentType = AttachmentUtils.createContentTypeForAttachment(
+            this.getResource("attachments/file.docx"),
+            detector
+        );
         assertEquals(contentType, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 
-        contentType = AttachmentUtils.createContentTypeForAttachment(this.getResource("attachments/file.jpg"), detector);
+        contentType = AttachmentUtils.createContentTypeForAttachment(
+            this.getResource("attachments/file.jpg"),
+            detector
+        );
         assertEquals(contentType, "image/jpeg");
 
-        contentType = AttachmentUtils.createContentTypeForAttachment(this.getResource("attachments/file.pdf"), detector);
+        contentType = AttachmentUtils.createContentTypeForAttachment(
+            this.getResource("attachments/file.pdf"),
+            detector
+        );
         assertEquals(contentType, "application/pdf");
 
-        contentType = AttachmentUtils.createContentTypeForAttachment(this.getResource("attachments/file.png"), detector);
+        contentType = AttachmentUtils.createContentTypeForAttachment(
+            this.getResource("attachments/file.png"),
+            detector
+        );
         assertEquals(contentType, "image/png");
 
-        contentType = AttachmentUtils.createContentTypeForAttachment(this.getResource("attachments/file.rar"), detector);
+        contentType = AttachmentUtils.createContentTypeForAttachment(
+            this.getResource("attachments/file.rar"),
+            detector
+        );
         assertEquals(contentType, "application/x-rar-compressed; version=5");
 
-        contentType = AttachmentUtils.createContentTypeForAttachment(this.getResource("attachments/file.rtf"), detector);
+        contentType = AttachmentUtils.createContentTypeForAttachment(
+            this.getResource("attachments/file.rtf"),
+            detector
+        );
         assertEquals(contentType, "application/rtf");
 
-        contentType = AttachmentUtils.createContentTypeForAttachment(this.getResource("attachments/file.svg"), detector);
+        contentType = AttachmentUtils.createContentTypeForAttachment(
+            this.getResource("attachments/file.svg"),
+            detector
+        );
         assertEquals(contentType, "image/svg+xml");
 
-        contentType = AttachmentUtils.createContentTypeForAttachment(this.getResource("attachments/file.tgz"), detector);
+        contentType = AttachmentUtils.createContentTypeForAttachment(
+            this.getResource("attachments/file.tgz"),
+            detector
+        );
         assertEquals(contentType, "application/gzip");
 
-        contentType = AttachmentUtils.createContentTypeForAttachment(this.getResource("attachments/file.txt"), detector);
+        contentType = AttachmentUtils.createContentTypeForAttachment(
+            this.getResource("attachments/file.txt"),
+            detector
+        );
         assertEquals(contentType, "text/plain; charset=utf8");
 
-        contentType = AttachmentUtils.createContentTypeForAttachment(this.getResource("attachments/file.xls"), detector);
+        contentType = AttachmentUtils.createContentTypeForAttachment(
+            this.getResource("attachments/file.xls"),
+            detector
+        );
         assertEquals(contentType, "application/vnd.ms-excel");
 
-        contentType = AttachmentUtils.createContentTypeForAttachment(this.getResource("attachments/file.xlsx"), detector);
+        contentType = AttachmentUtils.createContentTypeForAttachment(
+            this.getResource("attachments/file.xlsx"),
+            detector
+        );
         assertEquals(contentType, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
-        contentType = AttachmentUtils.createContentTypeForAttachment(this.getResource("attachments/file.zip"), detector);
+        contentType = AttachmentUtils.createContentTypeForAttachment(
+            this.getResource("attachments/file.zip"),
+            detector
+        );
         assertEquals(contentType, "application/zip");
     }
 

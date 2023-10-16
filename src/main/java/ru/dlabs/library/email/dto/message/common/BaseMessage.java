@@ -1,7 +1,5 @@
 package ru.dlabs.library.email.dto.message.common;
 
-import static ru.dlabs.library.email.util.HttpUtils.DEFAULT_ENCODING;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,7 +30,7 @@ public class BaseMessage implements Message {
 
     private List<EmailAttachment> attachments = new ArrayList<>();
 
-    private String encoding = DEFAULT_ENCODING;
+    private TransferEncoder transferEncoder = TransferEncoder.byDefault();
     private Integer size;
 
     private LocalDateTime sentDate;
@@ -45,6 +43,7 @@ public class BaseMessage implements Message {
         Set<EmailParticipant> recipients,
         EmailParticipant sender,
         List<EmailAttachment> attachments,
+        TransferEncoder transferEncoder,
         Integer size,
         LocalDateTime sentDate,
         LocalDateTime receivedDate
@@ -55,6 +54,7 @@ public class BaseMessage implements Message {
         this.recipients = recipients;
         this.sender = sender;
         this.attachments = attachments;
+        this.transferEncoder = transferEncoder;
         this.size = size;
         this.sentDate = sentDate;
         this.receivedDate = receivedDate;

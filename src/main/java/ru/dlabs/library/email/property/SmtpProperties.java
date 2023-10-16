@@ -1,5 +1,6 @@
 package ru.dlabs.library.email.property;
 
+import java.nio.charset.Charset;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,9 +33,10 @@ public class SmtpProperties extends CommonProperties {
         Integer readTimeout,
         Integer connectionTimeout,
         Integer writeTimeout,
-        boolean debug
+        boolean debug,
+        Charset charset
     ) {
-        super(host, port, encryptionType, readTimeout, connectionTimeout, writeTimeout, debug);
+        super(host, port, encryptionType, readTimeout, connectionTimeout, writeTimeout, debug, charset);
         this.email = email;
         this.password = password;
         this.name = name;
@@ -58,6 +60,7 @@ public class SmtpProperties extends CommonProperties {
         private Integer connectionTimeout = 30000;
         private Integer writeTimeout = 30000;
         private boolean debug = false;
+        private Charset charset = Charset.defaultCharset();
 
         public SmtpProperties build() {
             return new SmtpProperties(
@@ -70,7 +73,8 @@ public class SmtpProperties extends CommonProperties {
                 readTimeout,
                 connectionTimeout,
                 writeTimeout,
-                debug
+                debug,
+                charset
             );
         }
     }

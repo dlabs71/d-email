@@ -1,7 +1,6 @@
 package ru.dlabs.library.email.dto.message.outgoing;
 
 import ru.dlabs.library.email.dto.message.common.Message;
-import ru.dlabs.library.email.dto.message.outgoing.OutgoingContentType;
 
 /**
  * Interface an outgoing message

@@ -5,12 +5,12 @@ import jakarta.mail.Flags;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
-import java.nio.charset.StandardCharsets;
+import jakarta.mail.internet.MimeMessage;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.angus.mail.imap.IMAPMessage;
-import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
+import ru.dlabs.library.email.dto.message.common.TransferEncoder;
+import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.exception.CheckEmailException;
 import ru.dlabs.library.email.util.DateTimeUtils;
 
@@ -72,9 +72,9 @@ public class MessageViewConverter {
 
         // Set a metadata of the message
         try {
-            String encoding = ((IMAPMessage) message).getEncoding();
+            String transferEncoder = ((MimeMessage) message).getEncoding();
 
-            builder.encoding(encoding != null ? encoding : StandardCharsets.UTF_8.name());
+            builder.transferEncoder(TransferEncoder.forName(transferEncoder));
             builder.size(message.getSize());
             builder.sentDate(DateTimeUtils.convert(message.getSentDate()));
             builder.receivedDate(DateTimeUtils.convert(message.getReceivedDate()));

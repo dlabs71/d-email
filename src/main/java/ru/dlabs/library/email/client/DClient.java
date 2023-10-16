@@ -15,6 +15,7 @@ public interface DClient {
      * It connects to email server
      *
      * @return {@link Session} object
+     *
      * @throws SessionException The connection to the server has failed. The properties are broken.
      */
     Session connect() throws SessionException;

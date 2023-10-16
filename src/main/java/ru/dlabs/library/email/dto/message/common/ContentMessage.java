@@ -1,5 +1,6 @@
 package ru.dlabs.library.email.dto.message.common;
 
+import java.nio.charset.Charset;
 import lombok.Getter;
 import ru.dlabs.library.email.util.HttpUtils;
 
@@ -16,22 +17,33 @@ import ru.dlabs.library.email.util.HttpUtils;
 public class ContentMessage {
 
     private final String data;
-    private final String encoding;
+    private final Charset charset;
 
     private String contentType;
 
     public ContentMessage(String data, String contentType) {
         this.data = data;
         this.contentType = contentType;
-        this.encoding = HttpUtils.defineEncodingFromHeaderValue(contentType);
+        String charset = HttpUtils.defineCharsetFromHeaderValue(contentType);
+        if (charset != null) {
+            this.charset = Charset.forName(charset);
+        } else {
+            this.charset = null;
+        }
     }
 
-    public ContentMessage(String data, String contentType, String encoding) {
+    public ContentMessage(String data, String contentType, Charset charset) {
         this.data = data;
         this.contentType = contentType;
-        this.encoding = encoding;
-        if (encoding != null) {
-            this.contentType = HttpUtils.contentTypeWithEncoding(contentType, encoding);
+
+        if (charset == null) {
+            this.charset = Charset.defaultCharset();
+        } else {
+            this.charset = charset;
+        }
+
+        if (charset != null) {
+            this.contentType = HttpUtils.contentTypeWithCharset(contentType, charset);
         }
     }
 }

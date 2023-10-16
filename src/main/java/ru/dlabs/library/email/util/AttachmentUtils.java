@@ -127,7 +127,7 @@ public class AttachmentUtils {
         if (AttachmentType.TEXT.equals(attachmentType)) {
             String encoding = FileSystemUtils.defineFileEncoding(file);
             if (encoding != null) {
-                return HttpUtils.contentTypeWithEncoding(mimeType, encoding);
+                return HttpUtils.contentTypeWithCharset(mimeType, encoding);
             }
         }
         return mimeType;

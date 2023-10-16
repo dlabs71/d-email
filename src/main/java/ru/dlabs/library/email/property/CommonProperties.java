@@ -1,5 +1,6 @@
 package ru.dlabs.library.email.property;
 
+import java.nio.charset.Charset;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,4 +27,5 @@ public abstract class CommonProperties {
     private Integer connectionTimeout = 30000;
     private Integer writeTimeout = 30000;
     private boolean debug = false;
+    private Charset charset = Charset.defaultCharset();
 }

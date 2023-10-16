@@ -1,5 +1,6 @@
 package ru.dlabs.library.email.property;
 
+import java.nio.charset.Charset;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,9 +44,10 @@ public class ImapProperties extends CommonProperties {
         Integer readTimeout,
         Integer connectionTimeout,
         Integer writeTimeout,
-        boolean debug
+        boolean debug,
+        Charset charset
     ) {
-        super(host, port, encryptionType, readTimeout, connectionTimeout, writeTimeout, debug);
+        super(host, port, encryptionType, readTimeout, connectionTimeout, writeTimeout, debug, charset);
         this.credentials = credentials;
         this.partialFetch = partialFetch;
         this.fetchSize = fetchSize;
@@ -85,6 +87,7 @@ public class ImapProperties extends CommonProperties {
         private Integer connectionTimeout = 30000;
         private Integer writeTimeout = 30000;
         private boolean debug = false;
+        private Charset charset = Charset.defaultCharset();
 
         public ImapProperties build() {
             return new ImapProperties(
@@ -101,7 +104,8 @@ public class ImapProperties extends CommonProperties {
                 readTimeout,
                 connectionTimeout,
                 writeTimeout,
-                debug
+                debug,
+                charset
             );
         }
     }

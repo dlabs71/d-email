@@ -26,9 +26,9 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import ru.dlabs.library.email.client.SendingStatus;
-import ru.dlabs.library.email.dto.message.outgoing.OutgoingMessage;
 import ru.dlabs.library.email.dto.message.common.ContentMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
+import ru.dlabs.library.email.dto.message.outgoing.OutgoingMessage;
 import ru.dlabs.library.email.exception.CreateMessageException;
 import ru.dlabs.library.email.exception.SessionException;
 import ru.dlabs.library.email.property.SmtpProperties;
@@ -147,10 +147,10 @@ public class SMTPDClient implements SenderDClient {
         try {
             MimeMessage envelop = new MimeMessage(session);
             envelop.addHeader(FORMAT_HDR, "flowed");
-            envelop.addHeader(CONTENT_TRANSFER_ENCODING_HDR, "8bit");
+            envelop.addHeader(CONTENT_TRANSFER_ENCODING_HDR, message.getTransferEncoder().getName());
             envelop.setFrom(EmailMessageUtils.createAddress(smtpProperties.getEmail(), smtpProperties.getName()));
             envelop.reply(false);
-            envelop.setSubject(message.getSubject(), message.getEncoding());
+            envelop.setSubject(message.getSubject());
             envelop.setSentDate(new Date());
             envelop.setRecipients(
                 Message.RecipientType.TO,

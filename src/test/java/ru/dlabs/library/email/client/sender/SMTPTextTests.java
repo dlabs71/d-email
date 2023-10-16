@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ru.dlabs.library.email.util.HttpUtils.DEFAULT_ENCODING;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,6 +22,7 @@ import ru.dlabs.library.email.client.SendingStatus;
 import ru.dlabs.library.email.client.receiver.ReceiveTestUtils;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
+import ru.dlabs.library.email.dto.message.common.TransferEncoder;
 import ru.dlabs.library.email.dto.message.incoming.DefaultIncomingMessage;
 import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
@@ -246,7 +246,7 @@ public class SMTPTextTests extends AbstractTestsClass {
 
         assertEquals(incomingMessage.getTextContentsAsString(), BODY);
         assertEquals(incomingMessage.getSubject(), SUBJECT);
-        assertEquals(incomingMessage.getEncoding(), DEFAULT_ENCODING);
+        assertEquals(incomingMessage.getTransferEncoder(), TransferEncoder.byDefault());
     }
 
     private void assertIncomingMessageRecipients_1(IncomingMessage incomingMessage) {

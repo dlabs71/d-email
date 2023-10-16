@@ -1,7 +1,6 @@
 package ru.dlabs.library.email;
 
-import static ru.dlabs.library.email.util.HttpUtils.DEFAULT_ENCODING;
-
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,12 +12,12 @@ import java.util.stream.Collectors;
 import ru.dlabs.library.email.client.SendingStatus;
 import ru.dlabs.library.email.client.sender.SMTPDClient;
 import ru.dlabs.library.email.client.sender.SenderDClient;
-import ru.dlabs.library.email.dto.message.outgoing.DefaultOutgoingMessage;
-import ru.dlabs.library.email.dto.message.outgoing.OutgoingContentType;
-import ru.dlabs.library.email.dto.message.outgoing.TemplatedOutgoingMessage;
-import ru.dlabs.library.email.dto.message.outgoing.OutgoingMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
+import ru.dlabs.library.email.dto.message.outgoing.DefaultOutgoingMessage;
+import ru.dlabs.library.email.dto.message.outgoing.OutgoingContentType;
+import ru.dlabs.library.email.dto.message.outgoing.OutgoingMessage;
+import ru.dlabs.library.email.dto.message.outgoing.TemplatedOutgoingMessage;
 import ru.dlabs.library.email.exception.CreateMessageException;
 import ru.dlabs.library.email.exception.TemplateCreationException;
 import ru.dlabs.library.email.property.SmtpProperties;
@@ -211,7 +210,7 @@ public final class DEmailSender {
         String content,
         List<EmailAttachment> attachments
     ) {
-        return this.send(recipients, subject, content, OutgoingContentType.TEXT, DEFAULT_ENCODING, attachments);
+        return this.send(recipients, subject, content, OutgoingContentType.TEXT, null, attachments);
     }
 
     /**
@@ -359,7 +358,7 @@ public final class DEmailSender {
         String content,
         List<EmailAttachment> attachments
     ) {
-        return this.send(recipients, subject, content, OutgoingContentType.HTML, DEFAULT_ENCODING, attachments);
+        return this.send(recipients, subject, content, OutgoingContentType.HTML, null, attachments);
     }
 
     /**
@@ -705,7 +704,7 @@ public final class DEmailSender {
             pathToTemplate,
             params,
             OutgoingContentType.TEXT,
-            DEFAULT_ENCODING,
+            null,
             attachments
         );
     }
@@ -739,7 +738,7 @@ public final class DEmailSender {
             pathToTemplate,
             params,
             OutgoingContentType.HTML,
-            DEFAULT_ENCODING,
+            null,
             attachments
         );
     }
@@ -758,7 +757,7 @@ public final class DEmailSender {
      * @param pathToTemplate a path to template
      * @param params         parameters for the template
      * @param contentType    the content type of content
-     * @param encoding       the encoding of content
+     * @param charsetContent the encoding of content
      * @param attachments    a list of attachments ({@link EmailAttachment})
      *
      * @return a sending status {@link SendingStatus}
@@ -769,7 +768,7 @@ public final class DEmailSender {
         String pathToTemplate,
         Map<String, Object> params,
         OutgoingContentType contentType,
-        String encoding,
+        Charset charsetContent,
         List<EmailAttachment> attachments
     ) {
         OutgoingMessage message;
@@ -778,7 +777,7 @@ public final class DEmailSender {
                 .recipientEmail(recipients)
                 .subject(subject)
                 .template(pathToTemplate, params)
-                .encoding(encoding)
+                .charsetContent(charsetContent == null ? properties.getCharset() : charsetContent)
                 .contentType(contentType)
                 .attachments(attachments)
                 .build();
@@ -805,7 +804,7 @@ public final class DEmailSender {
         String subject,
         String content,
         OutgoingContentType contentType,
-        String encoding,
+        Charset charsetContent,
         List<EmailAttachment> attachments
     ) {
         OutgoingMessage message = DefaultOutgoingMessage.outgoingMessageBuilder()
@@ -813,7 +812,7 @@ public final class DEmailSender {
             .subject(subject)
             .content(content)
             .contentType(contentType)
-            .encoding(encoding)
+            .charsetContent(charsetContent == null ? properties.getCharset() : charsetContent)
             .attachments(attachments)
             .build();
         return this.send(message);

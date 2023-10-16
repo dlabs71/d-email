@@ -7,11 +7,13 @@ import jakarta.mail.Address;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import ru.dlabs.library.email.dto.message.incoming.DefaultIncomingMessage;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
+import ru.dlabs.library.email.dto.message.common.TransferEncoder;
+import ru.dlabs.library.email.dto.message.incoming.DefaultIncomingMessage;
 import ru.dlabs.library.email.exception.CheckEmailException;
 import ru.dlabs.library.email.util.DateTimeUtils;
 import ru.dlabs.library.email.util.EmailMessageUtils;
@@ -105,6 +107,9 @@ public class BaseMessageConverter {
         }
 
         try {
+            String transferEncoder = ((MimeMessage) message).getEncoding();
+            baseMessage.setTransferEncoder(TransferEncoder.forName(transferEncoder));
+
             baseMessage.setSize(message.getSize());
             if (message.getSentDate() != null) {
                 baseMessage.setSentDate(DateTimeUtils.convert(message.getSentDate()));

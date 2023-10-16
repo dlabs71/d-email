@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.outgoing.DefaultOutgoingMessage;
 import ru.dlabs.library.email.dto.message.outgoing.TemplatedOutgoingMessage;
-import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.exception.ValidationMessageException;
 
 public class MessageValidatorTests {

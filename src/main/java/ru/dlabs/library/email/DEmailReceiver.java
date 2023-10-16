@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import ru.dlabs.library.email.client.receiver.IMAPDClient;
 import ru.dlabs.library.email.client.receiver.ReceiverDClient;
-import ru.dlabs.library.email.dto.message.incoming.MessageView;
-import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
+import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;
+import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageRequest;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.exception.SessionException;
@@ -198,9 +198,9 @@ public final class DEmailReceiver {
         if (totalCount <= 0 || totalCount <= this.pageRequest.getStart()) {
             return PageResponse.of(new ArrayList<>(), totalCount);
         }
-        List<IncomingMessage> messageViews = this.receiverClient.readMessages(folderName, pageRequest);
+        List<IncomingMessage> messages = this.receiverClient.readMessages(folderName, pageRequest);
         pageRequest.incrementStart();
-        return PageResponse.of(messageViews, totalCount);
+        return PageResponse.of(messages, totalCount);
     }
 
     /**

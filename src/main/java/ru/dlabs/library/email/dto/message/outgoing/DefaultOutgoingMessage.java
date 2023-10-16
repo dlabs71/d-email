@@ -1,7 +1,6 @@
 package ru.dlabs.library.email.dto.message.outgoing;
 
-import static ru.dlabs.library.email.util.HttpUtils.DEFAULT_ENCODING;
-
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +12,7 @@ import ru.dlabs.library.email.dto.message.common.BaseMessage;
 import ru.dlabs.library.email.dto.message.common.ContentMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
+import ru.dlabs.library.email.dto.message.common.TransferEncoder;
 
 /**
  * Class describe a simple outgoing email message
@@ -34,25 +34,43 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
         Set<EmailParticipant> recipientEmail,
         List<EmailAttachment> attachments
     ) {
-        this(subject, DEFAULT_ENCODING, content, OutgoingContentType.TEXT, recipientEmail, attachments);
+        this(
+            subject,
+            content,
+            Charset.defaultCharset(),
+            OutgoingContentType.TEXT,
+            recipientEmail,
+            attachments,
+            TransferEncoder.byDefault()
+        );
     }
 
     public DefaultOutgoingMessage(
         String subject,
-        String encoding,
         String content,
+        Charset charsetContent,
         OutgoingContentType contentType,
         Set<EmailParticipant> recipientEmail,
-        List<EmailAttachment> attachments
+        List<EmailAttachment> attachments,
+        TransferEncoder transferEncoder
     ) {
         this.setSubject(subject);
-        this.setEncoding(encoding);
+        this.setTransferEncoder(transferEncoder == null ? TransferEncoder.byDefault() : transferEncoder);
         this.setRecipients(recipientEmail);
         this.setAttachments(attachments);
         this.contentType = contentType;
 
-        ContentMessage contentMessage = new ContentMessage(content, contentType.getContentType(), encoding);
-        this.addContent(contentMessage);
+
+        if (content != null) {
+            ContentMessage contentMessage = new ContentMessage(
+                content,
+                contentType.getContentType(),
+                charsetContent
+            );
+            this.addContent(contentMessage);
+        } else {
+            this.setContents(new ArrayList<>());
+        }
     }
 
     public static Builder outgoingMessageBuilder() {
@@ -65,19 +83,21 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
 
         private String subject;
         private String content;
+        private Charset charsetContent = Charset.defaultCharset();
         private OutgoingContentType contentType;
-        private String encoding = DEFAULT_ENCODING;
+        private TransferEncoder transferEncoder = TransferEncoder.byDefault();
         private Set<EmailParticipant> recipientEmail = new HashSet<>();
         private List<EmailAttachment> attachments = new ArrayList<>();
 
         public DefaultOutgoingMessage build() {
             return new DefaultOutgoingMessage(
                 subject,
-                encoding,
                 content,
+                charsetContent,
                 contentType,
                 recipientEmail,
-                attachments
+                attachments,
+                transferEncoder
             );
         }
 
@@ -91,8 +111,13 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
             return this;
         }
 
-        public Builder encoding(String encoding) {
-            this.encoding = encoding;
+        public Builder charsetContent(Charset charsetContent) {
+            this.charsetContent = charsetContent;
+            return this;
+        }
+
+        public Builder transferEncoder(TransferEncoder encoding) {
+            this.transferEncoder = encoding;
             return this;
         }
 
