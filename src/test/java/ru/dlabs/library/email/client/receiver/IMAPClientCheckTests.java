@@ -16,7 +16,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
 import ru.dlabs.library.email.client.sender.SenderTestUtils;
-import ru.dlabs.library.email.dto.message.MessageView;
+import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
@@ -77,7 +77,6 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
 
         MessageView incomingMessage = response.getData().get(0);
         assertNotNull(incomingMessage.getSender());
-        assertNotNull(incomingMessage.getContentType());
         assertNotNull(incomingMessage.getEncoding());
         assertNotNull(incomingMessage.getSubject());
         assertNotNull(incomingMessage.getId());
@@ -103,7 +102,6 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
 
         MessageView incomingMessage = response.getData().get(0);
         assertNotNull(incomingMessage.getSender());
-        assertNotNull(incomingMessage.getContentType());
         assertNotNull(incomingMessage.getEncoding());
         assertNotNull(incomingMessage.getSubject());
         assertNotNull(incomingMessage.getId());
@@ -129,7 +127,6 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
 
         MessageView incomingMessage = response.getData().get(0);
         assertNotNull(incomingMessage.getSender());
-        assertNotNull(incomingMessage.getContentType());
         assertNotNull(incomingMessage.getEncoding());
         assertNotNull(incomingMessage.getSubject());
         assertNotNull(incomingMessage.getId());

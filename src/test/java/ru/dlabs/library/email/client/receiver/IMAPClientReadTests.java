@@ -2,6 +2,7 @@ package ru.dlabs.library.email.client.receiver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ru.dlabs.library.email.client.receiver.ReceiveTestUtils.CREDENTIAL_ID_1;
@@ -17,9 +18,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
 import ru.dlabs.library.email.client.sender.SenderTestUtils;
-import ru.dlabs.library.email.dto.message.MessageView;
-import ru.dlabs.library.email.dto.message.api.IncomingMessage;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
+import ru.dlabs.library.email.dto.message.incoming.DefaultIncomingMessage;
+import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;
+import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
 import ru.dlabs.library.email.support.AbstractTestsClass;
@@ -81,12 +83,14 @@ public class IMAPClientReadTests extends AbstractTestsClass {
         assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
 
-        response.getData().forEach(incomingMessage -> {
+        response.getData().forEach(item -> {
+            assertInstanceOf(DefaultIncomingMessage.class, item);
+            DefaultIncomingMessage incomingMessage = (DefaultIncomingMessage) item;
+
             assertNotNull(incomingMessage.getSender());
-            assertNotNull(incomingMessage.getContentType());
             assertNotNull(incomingMessage.getEncoding());
             assertNotNull(incomingMessage.getSubject());
-            assertNotNull(incomingMessage.getContent());
+            assertNotNull(incomingMessage.getContents());
             assertNotNull(incomingMessage.getId());
             assertNotNull(incomingMessage.getReceivedDate());
             assertNotNull(incomingMessage.getSentDate());
@@ -94,11 +98,12 @@ public class IMAPClientReadTests extends AbstractTestsClass {
             assertNotNull(incomingMessage.getRecipients());
             assertEquals(incomingMessage.getRecipients().size(), 1);
 
+
             EmailParticipant recipient = incomingMessage.getRecipients().stream().findFirst().orElse(null);
             assertNotNull(recipient);
             assertEquals(recipient.getEmail(), this.recipientEmail);
             assertEquals(incomingMessage.getSender().getEmail(), this.senderEmail);
-            assertEquals(incomingMessage.getContent(), "Содержание тестового сообщения");
+            assertEquals(incomingMessage.getTextContentsAsString(), "Содержание тестового сообщения");
         });
     }
 
@@ -111,12 +116,14 @@ public class IMAPClientReadTests extends AbstractTestsClass {
         assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
 
-        response.getData().forEach(incomingMessage -> {
+        response.getData().forEach(item -> {
+            assertInstanceOf(DefaultIncomingMessage.class, item);
+            DefaultIncomingMessage incomingMessage = (DefaultIncomingMessage) item;
+
             assertNotNull(incomingMessage.getSender());
-            assertNotNull(incomingMessage.getContentType());
             assertNotNull(incomingMessage.getEncoding());
             assertNotNull(incomingMessage.getSubject());
-            assertNotNull(incomingMessage.getContent());
+            assertNotNull(incomingMessage.getContents());
             assertNotNull(incomingMessage.getId());
             assertNotNull(incomingMessage.getReceivedDate());
             assertNotNull(incomingMessage.getSentDate());
@@ -124,11 +131,12 @@ public class IMAPClientReadTests extends AbstractTestsClass {
             assertNotNull(incomingMessage.getRecipients());
             assertEquals(incomingMessage.getRecipients().size(), 1);
 
+
             EmailParticipant recipient = incomingMessage.getRecipients().stream().findFirst().orElse(null);
             assertNotNull(recipient);
             assertEquals(recipient.getEmail(), this.recipientEmail);
             assertEquals(incomingMessage.getSender().getEmail(), this.senderEmail);
-            assertEquals(incomingMessage.getContent(), "Содержание тестового сообщения");
+            assertEquals(incomingMessage.getTextContentsAsString(), "Содержание тестового сообщения");
         });
     }
 
@@ -141,12 +149,14 @@ public class IMAPClientReadTests extends AbstractTestsClass {
         assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
 
-        response.getData().forEach(incomingMessage -> {
+        response.getData().forEach(item -> {
+            assertInstanceOf(DefaultIncomingMessage.class, item);
+            DefaultIncomingMessage incomingMessage = (DefaultIncomingMessage) item;
+
             assertNotNull(incomingMessage.getSender());
-            assertNotNull(incomingMessage.getContentType());
             assertNotNull(incomingMessage.getEncoding());
             assertNotNull(incomingMessage.getSubject());
-            assertNotNull(incomingMessage.getContent());
+            assertNotNull(incomingMessage.getContents());
             assertNotNull(incomingMessage.getId());
             assertNotNull(incomingMessage.getReceivedDate());
             assertNotNull(incomingMessage.getSentDate());
@@ -154,11 +164,12 @@ public class IMAPClientReadTests extends AbstractTestsClass {
             assertNotNull(incomingMessage.getRecipients());
             assertEquals(incomingMessage.getRecipients().size(), 1);
 
+
             EmailParticipant recipient = incomingMessage.getRecipients().stream().findFirst().orElse(null);
             assertNotNull(recipient);
             assertEquals(recipient.getEmail(), this.recipientEmail);
             assertEquals(incomingMessage.getSender().getEmail(), this.senderEmail);
-            assertEquals(incomingMessage.getContent(), "Содержание тестового сообщения");
+            assertEquals(incomingMessage.getTextContentsAsString(), "Содержание тестового сообщения");
         });
     }
 

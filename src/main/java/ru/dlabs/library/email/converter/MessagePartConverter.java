@@ -1,5 +1,6 @@
 package ru.dlabs.library.email.converter;
 
+import jakarta.mail.Address;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
@@ -15,6 +16,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
+import ru.dlabs.library.email.dto.message.common.ContentMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.exception.CheckEmailException;
@@ -32,7 +35,7 @@ import ru.dlabs.library.email.util.IOUtils;
 
 /**
  * Utility class for converting different parts of a message {@link Message} for using in
- * a message DTO implement {@link ru.dlabs.library.email.dto.message.api.Message} interface.
+ * a message DTO implement {@link ru.dlabs.library.email.dto.message.common.Message} interface.
  *
  * @author Ivanov Danila
  * Project name: d-email
@@ -49,8 +52,15 @@ public class MessagePartConverter {
      * @return Set of {@link EmailParticipant}
      */
     public Set<EmailParticipant> getParticipants(Message message) {
+        if (message == null) {
+            return null;
+        }
         try {
-            return Arrays.stream(message.getRecipients(Message.RecipientType.TO))
+            Address[] recipients = message.getRecipients(Message.RecipientType.TO);
+            if (recipients == null || recipients.length == 0) {
+                return new HashSet<>();
+            }
+            return Arrays.stream(recipients)
                 .map(address -> {
                     if (address instanceof InternetAddress) {
                         InternetAddress internetAddress = (InternetAddress) address;
@@ -225,11 +235,11 @@ public class MessagePartConverter {
          *
          * @return string from contents separated by the '\n'
          */
-        public String getContentByType(String contentType) {
+        public List<ContentMessage> getContentByType(String contentType) {
             return this.contents.stream()
                 .filter(item -> item.isMimeType(contentType))
-                .map(Content::getData)
-                .collect(Collectors.joining("\n"));
+                .map(item -> new ContentMessage(item.getData(), item.getContentType()))
+                .collect(Collectors.toList());
         }
     }
 

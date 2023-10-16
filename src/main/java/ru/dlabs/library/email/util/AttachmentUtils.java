@@ -1,10 +1,8 @@
 package ru.dlabs.library.email.util;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -92,7 +90,7 @@ public class AttachmentUtils {
      */
     public EmailAttachment create(String pathToFile, MimeTypeDetector detector) throws AttachmentException {
         File file = createFile(pathToFile);
-        String contentType = createContentTypeString(file, detector);
+        String contentType = createContentTypeForAttachment(file, detector);
         byte[] content;
         try {
             InputStream inputStream = Files.newInputStream(file.toPath());
@@ -109,8 +107,8 @@ public class AttachmentUtils {
             .build();
     }
 
-    public String createContentTypeString(File file) {
-        return createContentTypeString(file, DefaultMimeTypeDetector.getInstance());
+    public String createContentTypeForAttachment(File file) {
+        return createContentTypeForAttachment(file, null);
     }
 
     /**
@@ -122,25 +120,16 @@ public class AttachmentUtils {
      *
      * @return
      */
-    public String createContentTypeString(File file, MimeTypeDetector detector) {
-        String contentType = detector.detect(file);
+    public String createContentTypeForAttachment(File file, MimeTypeDetector detector) {
+        String mimeType = FileSystemUtils.defineFileMimeType(file, detector);
+        AttachmentType attachmentType = AttachmentType.find(mimeType);
 
-        if (contentType == null) {
-            contentType = EmailMessageUtils.DEFAULT_BINARY_CONTENT_TYPE;
-        }
-        if (AttachmentType.TEXT.equals(AttachmentType.find(contentType))) {
-            String encoding = null;
-            try {
-                FileInputStream is = new FileInputStream(file);
-                InputStreamReader reader = new InputStreamReader(is);
-                encoding = reader.getEncoding();
-            } catch (IOException ex) {
-                log.error(ex.getLocalizedMessage(), ex);
-            }
+        if (AttachmentType.TEXT.equals(attachmentType)) {
+            String encoding = FileSystemUtils.defineFileEncoding(file);
             if (encoding != null) {
-                return EmailMessageUtils.contentTypeWithEncoding(contentType, encoding);
+                return HttpUtils.contentTypeWithEncoding(mimeType, encoding);
             }
         }
-        return contentType;
+        return mimeType;
     }
 }

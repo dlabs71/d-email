@@ -1,8 +1,6 @@
 package ru.dlabs.library.email;
 
-import static ru.dlabs.library.email.util.EmailMessageUtils.DEFAULT_ENCODING;
-import static ru.dlabs.library.email.util.EmailMessageUtils.HTML_CONTENT_TYPE;
-import static ru.dlabs.library.email.util.EmailMessageUtils.TEXT_CONTENT_TYPE;
+import static ru.dlabs.library.email.util.HttpUtils.DEFAULT_ENCODING;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,9 +13,10 @@ import java.util.stream.Collectors;
 import ru.dlabs.library.email.client.SendingStatus;
 import ru.dlabs.library.email.client.sender.SMTPDClient;
 import ru.dlabs.library.email.client.sender.SenderDClient;
-import ru.dlabs.library.email.dto.message.DefaultOutgoingMessage;
-import ru.dlabs.library.email.dto.message.TemplatedOutgoingMessage;
-import ru.dlabs.library.email.dto.message.api.OutgoingMessage;
+import ru.dlabs.library.email.dto.message.outgoing.DefaultOutgoingMessage;
+import ru.dlabs.library.email.dto.message.outgoing.OutgoingContentType;
+import ru.dlabs.library.email.dto.message.outgoing.TemplatedOutgoingMessage;
+import ru.dlabs.library.email.dto.message.outgoing.OutgoingMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.exception.CreateMessageException;
@@ -212,7 +211,7 @@ public final class DEmailSender {
         String content,
         List<EmailAttachment> attachments
     ) {
-        return this.send(recipients, subject, content, TEXT_CONTENT_TYPE, DEFAULT_ENCODING, attachments);
+        return this.send(recipients, subject, content, OutgoingContentType.TEXT, DEFAULT_ENCODING, attachments);
     }
 
     /**
@@ -360,7 +359,7 @@ public final class DEmailSender {
         String content,
         List<EmailAttachment> attachments
     ) {
-        return this.send(recipients, subject, content, HTML_CONTENT_TYPE, DEFAULT_ENCODING, attachments);
+        return this.send(recipients, subject, content, OutgoingContentType.HTML, DEFAULT_ENCODING, attachments);
     }
 
     /**
@@ -705,7 +704,7 @@ public final class DEmailSender {
             subject,
             pathToTemplate,
             params,
-            TEXT_CONTENT_TYPE,
+            OutgoingContentType.TEXT,
             DEFAULT_ENCODING,
             attachments
         );
@@ -739,7 +738,7 @@ public final class DEmailSender {
             subject,
             pathToTemplate,
             params,
-            HTML_CONTENT_TYPE,
+            OutgoingContentType.HTML,
             DEFAULT_ENCODING,
             attachments
         );
@@ -769,7 +768,7 @@ public final class DEmailSender {
         String subject,
         String pathToTemplate,
         Map<String, Object> params,
-        String contentType,
+        OutgoingContentType contentType,
         String encoding,
         List<EmailAttachment> attachments
     ) {
@@ -779,8 +778,8 @@ public final class DEmailSender {
                 .recipientEmail(recipients)
                 .subject(subject)
                 .template(pathToTemplate, params)
-                .contentType(contentType)
                 .encoding(encoding)
+                .contentType(contentType)
                 .attachments(attachments)
                 .build();
         } catch (TemplateCreationException e) {
@@ -805,7 +804,7 @@ public final class DEmailSender {
         Set<EmailParticipant> recipients,
         String subject,
         String content,
-        String contentType,
+        OutgoingContentType contentType,
         String encoding,
         List<EmailAttachment> attachments
     ) {

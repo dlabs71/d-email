@@ -1,7 +1,6 @@
-package ru.dlabs.library.email.dto.message;
+package ru.dlabs.library.email.dto.message.outgoing;
 
-import static ru.dlabs.library.email.util.EmailMessageUtils.DEFAULT_CONTENT_TYPE;
-import static ru.dlabs.library.email.util.EmailMessageUtils.DEFAULT_ENCODING;
+import static ru.dlabs.library.email.util.HttpUtils.DEFAULT_ENCODING;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,8 +9,8 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import ru.dlabs.library.email.dto.message.api.OutgoingMessage;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
+import ru.dlabs.library.email.dto.message.common.ContentMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 
@@ -27,21 +26,7 @@ import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 @ToString
 public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessage {
 
-    public DefaultOutgoingMessage(
-        String subject,
-        String content,
-        String contentType,
-        String encoding,
-        Set<EmailParticipant> recipientEmail,
-        List<EmailAttachment> attachments
-    ) {
-        this.setSubject(subject);
-        this.setContent(content);
-        this.setContentType(contentType);
-        this.setEncoding(encoding);
-        this.setRecipients(recipientEmail);
-        this.setAttachments(attachments);
-    }
+    private final OutgoingContentType contentType;
 
     public DefaultOutgoingMessage(
         String subject,
@@ -49,7 +34,25 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
         Set<EmailParticipant> recipientEmail,
         List<EmailAttachment> attachments
     ) {
-        this(subject, content, null, null, recipientEmail, attachments);
+        this(subject, DEFAULT_ENCODING, content, OutgoingContentType.TEXT, recipientEmail, attachments);
+    }
+
+    public DefaultOutgoingMessage(
+        String subject,
+        String encoding,
+        String content,
+        OutgoingContentType contentType,
+        Set<EmailParticipant> recipientEmail,
+        List<EmailAttachment> attachments
+    ) {
+        this.setSubject(subject);
+        this.setEncoding(encoding);
+        this.setRecipients(recipientEmail);
+        this.setAttachments(attachments);
+        this.contentType = contentType;
+
+        ContentMessage contentMessage = new ContentMessage(content, contentType.getContentType(), encoding);
+        this.addContent(contentMessage);
     }
 
     public static Builder outgoingMessageBuilder() {
@@ -62,7 +65,7 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
 
         private String subject;
         private String content;
-        private String contentType = DEFAULT_CONTENT_TYPE;
+        private OutgoingContentType contentType;
         private String encoding = DEFAULT_ENCODING;
         private Set<EmailParticipant> recipientEmail = new HashSet<>();
         private List<EmailAttachment> attachments = new ArrayList<>();
@@ -70,9 +73,9 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
         public DefaultOutgoingMessage build() {
             return new DefaultOutgoingMessage(
                 subject,
+                encoding,
                 content,
                 contentType,
-                encoding,
                 recipientEmail,
                 attachments
             );
@@ -88,13 +91,13 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
             return this;
         }
 
-        public Builder contentType(String contentType) {
-            this.contentType = contentType;
+        public Builder encoding(String encoding) {
+            this.encoding = encoding;
             return this;
         }
 
-        public Builder encoding(String encoding) {
-            this.encoding = encoding;
+        public Builder contentType(OutgoingContentType contentType) {
+            this.contentType = contentType;
             return this;
         }
 

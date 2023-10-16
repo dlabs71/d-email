@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.angus.mail.imap.IMAPMessage;
-import ru.dlabs.library.email.dto.message.MessageView;
+import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.exception.CheckEmailException;
 import ru.dlabs.library.email.util.DateTimeUtils;
@@ -74,7 +74,6 @@ public class MessageViewConverter {
         try {
             String encoding = ((IMAPMessage) message).getEncoding();
 
-            builder.contentType(message.getContentType());
             builder.encoding(encoding != null ? encoding : StandardCharsets.UTF_8.name());
             builder.size(message.getSize());
             builder.sentDate(DateTimeUtils.convert(message.getSentDate()));

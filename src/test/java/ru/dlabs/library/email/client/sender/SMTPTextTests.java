@@ -2,8 +2,10 @@ package ru.dlabs.library.email.client.sender;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static ru.dlabs.library.email.util.HttpUtils.DEFAULT_ENCODING;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,14 +21,14 @@ import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
 import ru.dlabs.library.email.client.SendingStatus;
 import ru.dlabs.library.email.client.receiver.ReceiveTestUtils;
-import ru.dlabs.library.email.dto.message.api.IncomingMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
+import ru.dlabs.library.email.dto.message.incoming.DefaultIncomingMessage;
+import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.support.AbstractTestsClass;
 import ru.dlabs.library.email.support.PropUtils;
 import ru.dlabs.library.email.util.AttachmentUtils;
-import ru.dlabs.library.email.util.EmailMessageUtils;
 
 @Order(31)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -235,14 +237,16 @@ public class SMTPTextTests extends AbstractTestsClass {
         }
     }
 
-    private void assertIncomingMessage(IncomingMessage incomingMessage) {
+    private void assertIncomingMessage(IncomingMessage message) {
+        assertInstanceOf(DefaultIncomingMessage.class, message);
+        DefaultIncomingMessage incomingMessage = (DefaultIncomingMessage) message;
+
         assertEquals(incomingMessage.getSender(), this.sender.sender());
         assertEquals(incomingMessage.getSender().getName(), this.sender.sender().getName());
 
-        assertEquals(incomingMessage.getContent(), BODY);
+        assertEquals(incomingMessage.getTextContentsAsString(), BODY);
         assertEquals(incomingMessage.getSubject(), SUBJECT);
-        assertTrue(incomingMessage.getContentType().contains(EmailMessageUtils.TEXT_CONTENT_TYPE));
-        assertEquals(incomingMessage.getEncoding(), EmailMessageUtils.DEFAULT_ENCODING);
+        assertEquals(incomingMessage.getEncoding(), DEFAULT_ENCODING);
     }
 
     private void assertIncomingMessageRecipients_1(IncomingMessage incomingMessage) {

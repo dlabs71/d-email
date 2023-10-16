@@ -1,10 +1,11 @@
 package ru.dlabs.library.email.util;
 
+import static ru.dlabs.library.email.util.HttpUtils.DEFAULT_ENCODING;
+
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeUtility;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.Objects;
 import java.util.Set;
@@ -26,15 +27,6 @@ import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 @Slf4j
 @UtilityClass
 public class EmailMessageUtils {
-
-    public final static String CONTENT_TYPE_HDR = "Content-type";
-    public final static String FORMAT_HDR = "format";
-    public final static String CONTENT_TRANSFER_ENCODING_HDR = "Content-Transfer-Encoding";
-    public final static String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
-    public final static String DEFAULT_CONTENT_TYPE = "text/plain; charset=" + DEFAULT_ENCODING;
-    public final static String TEXT_CONTENT_TYPE = "text/plain";
-    public final static String HTML_CONTENT_TYPE = "text/html";
-    public final static String DEFAULT_BINARY_CONTENT_TYPE = "application/octet-stream";
 
     /**
      * It's creating an {@link InternetAddress} object from email and name strings
@@ -91,37 +83,5 @@ public class EmailMessageUtils {
             decoded = data;
         }
         return Normalizer.normalize(decoded, Normalizer.Form.NFC);
-    }
-
-    /**
-     * Returns the string value for the Content-Type header with the 'charset' directive.
-     * For example: text/html; charset=utf-8
-     *
-     * @param contentType data for the 'media-type' directive. A MIME type of resource.
-     * @param encoding    the charset encoding standard.
-     *
-     * @return a prepared string for use as a Content-Type header value
-     */
-    public String contentTypeWithEncoding(String contentType, String encoding) {
-        if (contentType.contains("charset")) {
-            return contentType;
-        }
-        if (encoding == null) {
-            return contentType;
-        }
-        return contentType + "; charset=" + encoding.toLowerCase();
-    }
-
-    /**
-     * Returns the string value for the Content-Type header with the 'charset' directive.
-     * For example: text/html; charset=utf-8
-     * It uses the {@link EmailMessageUtils#DEFAULT_ENCODING} constant value
-     *
-     * @param contentType data for the 'media-type' directive. A MIME type of resource.
-     *
-     * @return a prepared string for use as a Content-Type header value
-     */
-    public String contentTypeWithEncoding(String contentType) {
-        return contentTypeWithEncoding(contentType, DEFAULT_ENCODING);
     }
 }

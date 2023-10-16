@@ -1,8 +1,9 @@
-package ru.dlabs.library.email.dto.message.api;
+package ru.dlabs.library.email.dto.message.common;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import ru.dlabs.library.email.dto.message.common.ContentMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 
@@ -18,15 +19,13 @@ public interface Message {
 
     String getSubject();
 
-    String getContent();
+    List<ContentMessage> getContents();
 
     Set<EmailParticipant> getRecipients();
 
     EmailParticipant getSender();
 
     String getEncoding();
-
-    String getContentType();
 
     List<EmailAttachment> getAttachments();
 

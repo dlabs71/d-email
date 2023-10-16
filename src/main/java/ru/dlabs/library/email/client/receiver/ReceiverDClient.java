@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import ru.dlabs.library.email.client.DClient;
-import ru.dlabs.library.email.dto.message.MessageView;
-import ru.dlabs.library.email.dto.message.api.IncomingMessage;
+import ru.dlabs.library.email.dto.message.incoming.MessageView;
+import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;
 import ru.dlabs.library.email.dto.pageable.PageRequest;
 
 /**

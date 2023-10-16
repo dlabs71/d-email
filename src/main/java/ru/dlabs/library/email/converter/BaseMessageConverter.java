@@ -1,17 +1,15 @@
 package ru.dlabs.library.email.converter;
 
-import static ru.dlabs.library.email.util.EmailMessageUtils.HTML_CONTENT_TYPE;
-import static ru.dlabs.library.email.util.EmailMessageUtils.TEXT_CONTENT_TYPE;
+import static ru.dlabs.library.email.util.HttpUtils.HTML_CONTENT_TYPE;
+import static ru.dlabs.library.email.util.HttpUtils.TEXT_CONTENT_TYPE;
 
 import jakarta.mail.Address;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimePart;
-import java.nio.charset.StandardCharsets;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import ru.dlabs.library.email.dto.message.DefaultIncomingMessage;
+import ru.dlabs.library.email.dto.message.incoming.DefaultIncomingMessage;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.exception.CheckEmailException;
@@ -43,7 +41,7 @@ public class BaseMessageConverter {
         BaseMessage baseMessage = convertEnvelopData(message);
 
         MessagePartConverter.ContentAndAttachments data = MessagePartConverter.getContent(message);
-        baseMessage.setContent(data.getContentByType(TEXT_CONTENT_TYPE));
+        baseMessage.setContents(data.getContentByType(TEXT_CONTENT_TYPE));
         baseMessage.setAttachments(data.getAttachments());
         return baseMessage;
     }
@@ -59,10 +57,9 @@ public class BaseMessageConverter {
         BaseMessage baseMessage = convertEnvelopData(message);
 
         MessagePartConverter.ContentAndAttachments data = MessagePartConverter.getContent(message);
-        baseMessage.setContent(data.getContentByType(TEXT_CONTENT_TYPE));
-        if (baseMessage.getContent() == null || baseMessage.getContent().isEmpty()) {
-            baseMessage.setContent(data.getContentByType(HTML_CONTENT_TYPE));
-            baseMessage.setContentType(HTML_CONTENT_TYPE);
+        baseMessage.setContents(data.getContentByType(TEXT_CONTENT_TYPE));
+        if (baseMessage.getContents() == null || baseMessage.getContents().isEmpty()) {
+            baseMessage.setContents(data.getContentByType(HTML_CONTENT_TYPE));
         }
         baseMessage.setAttachments(data.getAttachments());
 
@@ -77,13 +74,18 @@ public class BaseMessageConverter {
      * @return the instance of the BaseMessage class
      */
     public BaseMessage convertEnvelopData(Message message) {
+        if (message == null) {
+            return null;
+        }
         BaseMessage baseMessage = new BaseMessage();
         baseMessage.setId(message.getMessageNumber());
         baseMessage.setRecipients(MessagePartConverter.getParticipants(message));
 
         try {
-            String decodedSubject = EmailMessageUtils.decodeData(message.getSubject());
-            baseMessage.setSubject(decodedSubject);
+            if (message.getSubject() != null) {
+                String decodedSubject = EmailMessageUtils.decodeData(message.getSubject());
+                baseMessage.setSubject(decodedSubject);
+            }
         } catch (MessagingException e) {
             throw new CheckEmailException(
                 "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage());
@@ -97,7 +99,7 @@ public class BaseMessageConverter {
                 "The attempt to get senders of the message has failed: " + e.getLocalizedMessage());
         }
 
-        if (froms.length > 0) {
+        if (froms != null && froms.length > 0) {
             InternetAddress internetAddress = (InternetAddress) froms[0];
             baseMessage.setSender(new EmailParticipant(internetAddress.getAddress(), internetAddress.getPersonal()));
         }

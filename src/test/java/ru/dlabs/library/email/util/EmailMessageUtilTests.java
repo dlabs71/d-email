@@ -2,13 +2,11 @@ package ru.dlabs.library.email.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static ru.dlabs.library.email.util.EmailMessageUtils.DEFAULT_ENCODING;
 
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeUtility;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
@@ -111,31 +109,5 @@ public class EmailMessageUtilTests {
 
         String result2 = EmailMessageUtils.decodeData(data2);
         assertEquals(result2, "йцукенгшqwertyui123");
-    }
-
-    /**
-     * The test for:
-     * <ul>
-     *     <li>{@link EmailMessageUtils#contentTypeWithEncoding(String)}</li>
-     *     <li>{@link EmailMessageUtils#contentTypeWithEncoding(String, String)}</li>
-     * </ul>
-     */
-    @Test
-    public void contentTypeWithEncodingTest() {
-        String testValue1 = "text/html; charset=" + DEFAULT_ENCODING.toLowerCase();
-        String result1 = EmailMessageUtils.contentTypeWithEncoding("text/html");
-        assertEquals(result1, testValue1);
-
-        String testValue2 = "text/html; charset=" + DEFAULT_ENCODING.toLowerCase();
-        String result2 = EmailMessageUtils.contentTypeWithEncoding(testValue2);
-        assertEquals(result2, testValue2);
-
-        String testValue3 = "text/html; charset=" + StandardCharsets.ISO_8859_1.name().toLowerCase();
-        String result3 = EmailMessageUtils.contentTypeWithEncoding("text/html", StandardCharsets.ISO_8859_1.name());
-        assertEquals(result3, testValue3);
-
-        String testValue4 = "text/html; charset=" + StandardCharsets.ISO_8859_1.name().toLowerCase();
-        String result4 = EmailMessageUtils.contentTypeWithEncoding(testValue4);
-        assertEquals(result4, testValue4);
     }
 }

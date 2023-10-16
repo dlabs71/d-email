@@ -1,7 +1,6 @@
-package ru.dlabs.library.email.dto.message;
+package ru.dlabs.library.email.dto.message.outgoing;
 
-import static ru.dlabs.library.email.util.EmailMessageUtils.DEFAULT_CONTENT_TYPE;
-import static ru.dlabs.library.email.util.EmailMessageUtils.DEFAULT_ENCODING;
+import static ru.dlabs.library.email.util.HttpUtils.DEFAULT_ENCODING;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +11,7 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import ru.dlabs.library.email.dto.message.common.ContentMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.exception.TemplateCreationException;
@@ -39,13 +39,15 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
      */
     private final Map<String, Object> params;
 
+    private final OutgoingContentType contentType;
+
     public TemplatedOutgoingMessage(
         String subject,
         String pathToTemplate,
         Map<String, Object> params,
         Set<EmailParticipant> recipientEmail
     ) throws TemplateCreationException {
-        this(subject, pathToTemplate, params, null, null, recipientEmail, null);
+        this(subject, pathToTemplate, params, null, OutgoingContentType.HTML, recipientEmail, null);
     }
 
     public TemplatedOutgoingMessage(
@@ -55,33 +57,35 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
         Set<EmailParticipant> recipientEmail,
         List<EmailAttachment> attachments
     ) throws TemplateCreationException {
-        this(subject, pathToTemplate, params, null, null, recipientEmail, attachments);
+        this(subject, pathToTemplate, params, null, OutgoingContentType.HTML, recipientEmail, attachments);
     }
 
     public TemplatedOutgoingMessage(
         String subject,
         String pathToTemplate,
         Map<String, Object> params,
-        String contentType,
         String encoding,
+        OutgoingContentType contentType,
         Set<EmailParticipant> recipientEmail
     ) throws TemplateCreationException {
-        this(subject, pathToTemplate, params, contentType, encoding, recipientEmail, null);
+        this(subject, pathToTemplate, params, encoding, contentType, recipientEmail, null);
     }
 
     public TemplatedOutgoingMessage(
         String subject,
         String pathToTemplate,
         Map<String, Object> params,
-        String contentType,
         String encoding,
+        OutgoingContentType contentType,
         Set<EmailParticipant> recipientEmail,
         List<EmailAttachment> attachments
     ) throws TemplateCreationException {
-        super(subject, null, contentType, encoding, recipientEmail, attachments);
+        super(subject, encoding, null, contentType, recipientEmail, attachments);
         this.pathToTemplate = pathToTemplate;
         this.params = params;
-        this.setContent(this.constructContent());
+        this.contentType = contentType;
+        String content = this.constructContent();
+        this.addContent(new ContentMessage(content, contentType.getContentType(), encoding));
     }
 
     public static TemplatedMessageBuilder builder() { return new TemplatedMessageBuilder(); }
@@ -100,9 +104,9 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
         private String pathToTemplate;
         private Map<String, Object> params = new HashMap<>();
         private String subject;
+        private OutgoingContentType contentType = OutgoingContentType.HTML;
         private Set<EmailParticipant> recipientEmail = new HashSet<>();
         private List<EmailAttachment> attachments = new ArrayList<>();
-        private String contentType = DEFAULT_CONTENT_TYPE;
         private String encoding = DEFAULT_ENCODING;
 
 
@@ -111,8 +115,8 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
                 subject,
                 pathToTemplate,
                 params,
-                contentType,
                 encoding,
+                contentType,
                 recipientEmail,
                 attachments
             );
@@ -144,7 +148,7 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
             return this;
         }
 
-        public TemplatedMessageBuilder contentType(String contentType) {
+        public TemplatedMessageBuilder contentType(OutgoingContentType contentType) {
             this.contentType = contentType;
             return this;
         }

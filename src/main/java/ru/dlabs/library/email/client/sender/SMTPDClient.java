@@ -1,9 +1,9 @@
 package ru.dlabs.library.email.client.sender;
 
 
-import static ru.dlabs.library.email.util.EmailMessageUtils.CONTENT_TRANSFER_ENCODING_HDR;
-import static ru.dlabs.library.email.util.EmailMessageUtils.CONTENT_TYPE_HDR;
-import static ru.dlabs.library.email.util.EmailMessageUtils.FORMAT_HDR;
+import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TRANSFER_ENCODING_HDR;
+import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TYPE_HDR;
+import static ru.dlabs.library.email.util.HttpUtils.FORMAT_HDR;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
@@ -26,7 +26,8 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import ru.dlabs.library.email.client.SendingStatus;
-import ru.dlabs.library.email.dto.message.api.OutgoingMessage;
+import ru.dlabs.library.email.dto.message.outgoing.OutgoingMessage;
+import ru.dlabs.library.email.dto.message.common.ContentMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.exception.CreateMessageException;
 import ru.dlabs.library.email.exception.SessionException;
@@ -102,8 +103,10 @@ public class SMTPDClient implements SenderDClient {
         MimeMultipart multipart = new MimeMultipart();
         // It's creating and adding a content of the message
         try {
-            BodyPart content = createBodyPart(message);
-            multipart.addBodyPart(content);
+            List<BodyPart> parts = this.createBodyPart(message);
+            for (BodyPart part : parts) {
+                multipart.addBodyPart(part);
+            }
         } catch (CreateMessageException | MessagingException ex) {
             log.error(ex.getLocalizedMessage(), ex);
             return SendingStatus.ERROR_IN_MESSAGE;
@@ -160,11 +163,17 @@ public class SMTPDClient implements SenderDClient {
         }
     }
 
-    private BodyPart createBodyPart(OutgoingMessage message) throws CreateMessageException {
+    private List<BodyPart> createBodyPart(OutgoingMessage message) throws CreateMessageException {
+        return message.getContents().stream()
+            .map(this::createBodyPart)
+            .collect(Collectors.toList());
+    }
+
+    private BodyPart createBodyPart(ContentMessage content) throws CreateMessageException {
         try {
             BodyPart messageBodyPart = new MimeBodyPart();
-            messageBodyPart.setText(message.getContent());
-            messageBodyPart.setHeader(CONTENT_TYPE_HDR, message.getContentType());
+            messageBodyPart.setText(content.getData());
+            messageBodyPart.setHeader(CONTENT_TYPE_HDR, content.getContentType());
             return messageBodyPart;
         } catch (MessagingException ex) {
             throw new CreateMessageException(
