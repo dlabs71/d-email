@@ -1,5 +1,7 @@
 package ru.dlabs.library.email.converter;
 
+import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TRANSFER_ENCODING_HDR;
+
 import jakarta.mail.Address;
 import jakarta.mail.Flags;
 import jakarta.mail.Message;
@@ -72,9 +74,9 @@ public class MessageViewConverter {
 
         // Set a metadata of the message
         try {
-            String transferEncoder = ((MimeMessage) message).getEncoding();
-
+            String transferEncoder = ((MimeMessage) message).getHeader(CONTENT_TRANSFER_ENCODING_HDR, null);
             builder.transferEncoder(TransferEncoder.forName(transferEncoder));
+
             builder.size(message.getSize());
             builder.sentDate(DateTimeUtils.convert(message.getSentDate()));
             builder.receivedDate(DateTimeUtils.convert(message.getReceivedDate()));

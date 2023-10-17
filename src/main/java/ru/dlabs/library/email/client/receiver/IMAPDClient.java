@@ -84,6 +84,11 @@ public class IMAPDClient implements ReceiverDClient {
     }
 
     @Override
+    public String getProtocolName() {
+        return PROTOCOL_NAME;
+    }
+
+    @Override
     public void setStore(String credentialId) {
         if (!imapProperties.getCredentials().containsKey(credentialId)) {
             throw new SessionException("The credential with id=" + credentialId + " doesn't exist");

@@ -2,23 +2,26 @@ package ru.dlabs.library.email.converter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
-import jakarta.mail.Address;
 import jakarta.mail.Message;
-import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
-import ru.dlabs.library.email.dto.message.common.EmailParticipant;
+import ru.dlabs.library.email.dto.message.common.ContentMessage;
+import ru.dlabs.library.email.dto.message.common.EmailAttachment;
+import ru.dlabs.library.email.type.AttachmentType;
+import ru.dlabs.library.email.util.IOUtils;
 
 /**
  * <p>
  * <div><strong>Project name:</strong> d-email</div>
- * <div><strong>Creation date:</strong> 2023-10-12</div>
+ * <div><strong>Creation date:</strong> 2023-10-17</div>
  * </p>
  *
  * @author Ivanov Danila
@@ -29,7 +32,7 @@ public class BaseMessageConverterTest {
     /**
      * The test for:
      * <ul>
-     *     <li>{@link BaseMessageConverter#convertEnvelopData(Message)}</li>
+     *     <li>{@link BaseMessageConverter#convert(Message)}</li>
      * </ul>
      */
     @Test
@@ -37,78 +40,100 @@ public class BaseMessageConverterTest {
         String subject = "Captain Flint's Map";
         String content = "Treasure Island";
 
-        MimeMessage message = TestConverterUtils.createMessage(subject, content);
-        BaseMessage baseMessage = BaseMessageConverter.convertEnvelopData(message);
-        this.assertMessages(baseMessage, message, subject);
+        MimeMessage message = TestConverterUtils.createSimpleMessage(subject, content);
+        BaseMessage baseMessage = BaseMessageConverter.convertToIncomingMessage(message);
+        MessageAsserts.assertMessagesAsEnvelop(baseMessage, message, subject);
+
+        assertContentMessage(baseMessage, content);
     }
 
     /**
      * The test for:
      * <ul>
-     *     <li>{@link BaseMessageConverter#convertEnvelopData(Message)}</li>
+     *     <li>{@link BaseMessageConverter#convert(Message)}</li>
      * </ul>
      */
     @Test
     public void convertEnvelopDataTest_2() {
-        MimeMessage message = TestConverterUtils.createEmptyMessage();
-        BaseMessage baseMessage = BaseMessageConverter.convertEnvelopData(message);
-        this.assertMessages(baseMessage, message, null);
+        String subject = "Captain Flint's Map";
+        String content = "Treasure Island";
+        String contentHtml = "<div>Treasure Island</div>";
+
+        MimeMessage message = TestConverterUtils.createMessageWithHtml(subject, content, contentHtml);
+        BaseMessage baseMessage = BaseMessageConverter.convert(message);
+        MessageAsserts.assertMessagesAsEnvelop(baseMessage, message, subject);
+
+        assertContentMessage(baseMessage, content);
+    }
+
+    @Test
+    public void convertEnvelopDataTest_3() {
+        String subject = "Captain Flint's Map";
+        String content = "Treasure Island";
+        String contentHtml = "<div>Treasure Island</div>";
+        List<String> attachments = Arrays.asList(
+            "classpath:attachments/file.jpg",
+            "classpath:attachments/file.txt",
+            "classpath:attachments/file.html",
+            "classpath:attachments/file.docx",
+            "classpath:attachments/file.zip"
+        );
+
+        MimeMessage message = TestConverterUtils.createMessageWithHtml(subject, content, contentHtml);
+        BaseMessage baseMessage = BaseMessageConverter.convert(message);
+        MessageAsserts.assertMessagesAsEnvelop(baseMessage, message, subject);
+
+        assertContentMessage(baseMessage, content);
+        assertAttachmentsMessage(baseMessage, attachments);
+    }
+
+    private void assertContentMessage(BaseMessage baseMessage, String content) {
+        assertNotNull(baseMessage.getContents());
+        assertEquals(baseMessage.getContents().size(), 1);
+
+        ContentMessage contentMessage = baseMessage.getContents().get(0);
+        assertEquals(contentMessage.getData(), content);
+        assertEquals(contentMessage.getCharset(), StandardCharsets.UTF_8);
+        assertEquals(contentMessage.getContentType(), "text/plain; charset=utf-8");
     }
 
     @SneakyThrows
-    private void assertMessages(BaseMessage baseMessage, MimeMessage message, String subject) {
-        assertEquals(baseMessage.getId(), message.getMessageNumber());
-        assertEquals(baseMessage.getSize(), message.getSize());
+    private void assertAttachmentsMessage(BaseMessage baseMessage, List<String> emailAttachments) {
+        assertNotNull(baseMessage.getAttachments());
+        assertEquals(baseMessage.getAttachments().size(), emailAttachments.size());
 
-        if (baseMessage.getSentDate() == null) {
-            assertNull(message.getSentDate());
-        } else {
-            Long sendDateAfterConvert = baseMessage.getSentDate()
-                .atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli();
-            Long sendDateBeforeConvert = message.getSentDate().getTime();
-            assertEquals(sendDateAfterConvert, sendDateBeforeConvert);
-        }
-
-        if (baseMessage.getReceivedDate() == null) {
-            assertNull(message.getReceivedDate());
-        } else {
-            Long sendDateAfterConvert = baseMessage.getReceivedDate().toEpochSecond(ZoneOffset.UTC);
-            Long sendDateBeforeConvert = message.getReceivedDate().getTime();
-            assertEquals(sendDateAfterConvert, sendDateBeforeConvert);
-        }
-
-        assertEquals(baseMessage.getSubject(), subject);
-        if (message.getEncoding() != null) {
-            assertEquals(baseMessage.getTransferEncoder().getName(), message.getEncoding());
-        } else {
-            assertNull(baseMessage.getTransferEncoder());
-        }
-
-        if (message.getFrom() != null) {
-            assertNotNull(baseMessage.getSender());
-            InternetAddress from = (InternetAddress) message.getFrom()[0];
-            assertEquals(baseMessage.getSender().getEmail(), from.getAddress());
-            assertEquals(baseMessage.getSender().getName(), from.getPersonal());
-        } else {
-            assertNull(baseMessage.getSender());
-        }
-
-        if (message.getRecipients(Message.RecipientType.TO) != null) {
-            for (Address address : message.getRecipients(Message.RecipientType.TO)) {
-                InternetAddress internetAddress = (InternetAddress) address;
-                EmailParticipant participant = baseMessage.getRecipients().stream()
-                    .filter(item -> item.getEmail().equals(internetAddress.getAddress()))
-                    .findFirst()
-                    .orElse(null);
-                assertNotNull(participant);
-                assertEquals(participant.getEmail(), internetAddress.getAddress());
-                assertEquals(participant.getName(), internetAddress.getPersonal());
+        for (String attachment : emailAttachments) {
+            File sourceFile = new File(this.getClass().getClassLoader().getResource(attachment).toURI());
+            AttachmentType attachmentType = null;
+            switch (sourceFile.getName()) {
+                case "file.jpg":
+                    attachmentType = AttachmentType.IMAGE;
+                    break;
+                case "file.txt":
+                    attachmentType = AttachmentType.TEXT;
+                    break;
+                case "file.html":
+                    attachmentType = AttachmentType.TEXT;
+                    break;
+                case "file.docx":
+                    attachmentType = AttachmentType.APPLICATION;
+                    break;
+                case "file.zip":
+                    attachmentType = AttachmentType.APPLICATION;
+                    break;
             }
-        } else {
-            assertNotNull(baseMessage.getRecipients());
-            assertEquals(baseMessage.getRecipients().size(), 0);
+            byte[] contentOfFile = IOUtils.toByteArray(Files.newInputStream(sourceFile.toPath()));
+
+            EmailAttachment messageAttachment = baseMessage.getAttachments().stream()
+                .filter(item -> item.getName().equals(sourceFile.getName()))
+                .findFirst()
+                .orElse(null);
+
+            assertNotNull(messageAttachment);
+            assertNotNull(attachmentType);
+            assertEquals(messageAttachment.getSize(), sourceFile.length());
+            assertEquals(messageAttachment.getType(), attachmentType);
+            assertEquals(messageAttachment.getData(), contentOfFile);
         }
     }
 

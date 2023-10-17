@@ -145,7 +145,7 @@ public final class DEmailReceiver {
      * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link MessageView}.
      */
     public PageResponse<MessageView> nextCheckEmail() {
-        return this.сheckEmail(this.pageRequest);
+        return this.checkEmail(this.pageRequest);
     }
 
     /**
@@ -158,7 +158,7 @@ public final class DEmailReceiver {
      *
      * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link MessageView}.
      */
-    public PageResponse<MessageView> сheckEmail(PageRequest pageRequest) {
+    public PageResponse<MessageView> checkEmail(PageRequest pageRequest) {
         int totalCount = this.receiverClient.getTotalCount(folderName);
         if (totalCount <= 0 || totalCount <= this.pageRequest.getStart()) {
             return PageResponse.of(new ArrayList<>(), totalCount);

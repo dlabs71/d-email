@@ -13,8 +13,8 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.util.ByteArrayDataSource;
-import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import lombok.SneakyThrows;
@@ -35,10 +35,11 @@ import ru.dlabs.library.email.util.AttachmentUtils;
 @UtilityClass
 public class TestConverterUtils {
 
-    public MimeMessage createMessage(String subject, String textContent) {
+    public MimeMessage createSimpleMessage(String subject, String textContent) {
         return constructMessage(
             subject,
-            textContent,
+            Arrays.asList(textContent),
+            null,
             new InternetAddress[] {
                 createAddress("john007@island.com", "John Silver"),
                 createAddress("smollet@island.com", "Captain Smollett")
@@ -55,7 +56,8 @@ public class TestConverterUtils {
     public MimeMessage createMessageWithAttachments(String subject, String textContent, List<String> paths) {
         return constructMessage(
             subject,
-            textContent,
+            Arrays.asList(textContent),
+            null,
             new InternetAddress[] {
                 createAddress("john007@island.com", "John Silver"),
                 createAddress("smollet@island.com", "Captain Smollett")
@@ -73,10 +75,60 @@ public class TestConverterUtils {
         return new MimeMessage((Session) null);
     }
 
+    public MimeMessage createMessageWithoutSenders(String subject, String textContent) {
+        return constructMessage(
+            subject,
+            Arrays.asList(textContent),
+            null,
+            new InternetAddress[] { },
+            new InternetAddress[] {
+                createAddress("billy@island.com", "Billy Bones"),
+                createAddress("livesey@island.com", "Dr. Livesey"),
+                createAddress("pew@island.com", "Blind Pew")
+            },
+            null
+        );
+    }
+
+    public MimeMessage createMessageWithHtml(String subject, String textContent, String htmlContent) {
+        return constructMessage(
+            subject,
+            Arrays.asList(textContent),
+            Arrays.asList(htmlContent),
+            new InternetAddress[] {
+                createAddress("john007@island.com", "John Silver"),
+                },
+            new InternetAddress[] {
+                createAddress("billy@island.com", "Billy Bones"),
+                createAddress("livesey@island.com", "Dr. Livesey"),
+                createAddress("pew@island.com", "Blind Pew")
+            },
+            null
+        );
+    }
+
+    public MimeMessage createMessageWithDuplicateContent(String subject, String textContent) {
+        return constructMessage(
+            subject,
+            Arrays.asList(textContent, textContent),
+            null,
+            new InternetAddress[] {
+                createAddress("john007@island.com", "John Silver"),
+                },
+            new InternetAddress[] {
+                createAddress("billy@island.com", "Billy Bones"),
+                createAddress("livesey@island.com", "Dr. Livesey"),
+                createAddress("pew@island.com", "Blind Pew")
+            },
+            null
+        );
+    }
+
     @SneakyThrows
     public MimeMessage constructMessage(
         String subject,
-        String textContent,
+        List<String> textContents,
+        List<String> htmlContents,
         InternetAddress[] from,
         InternetAddress[] to,
         List<String> attachments
@@ -94,16 +146,28 @@ public class TestConverterUtils {
         mimeMessage.addHeader("Custom-header-2", "данные-второго-заголовка");
 
         MimeMultipart content = new MimeMultipart();
-        if (textContent == null && (attachments == null || attachments.isEmpty())) {
+        if ((textContents == null || textContents.isEmpty())
+            && (htmlContents == null || htmlContents.isEmpty())
+            && (attachments == null || attachments.isEmpty())
+        ) {
+            mimeMessage.setHeader(CONTENT_TYPE_HDR, content.getContentType());
             return mimeMessage;
         }
 
-        if (textContent != null) {
-            ByteArrayInputStream is = new ByteArrayInputStream(textContent.getBytes(StandardCharsets.UTF_8));
+        if (textContents != null) {
+            for (String textContent : textContents) {
+                MimeBodyPart part = new MimeBodyPart();
+                part.setText(textContent, StandardCharsets.UTF_8.displayName());
+                content.addBodyPart(part);
+            }
+        }
 
-            MimeBodyPart part = new MimeBodyPart(is);
-            part.addHeader(CONTENT_TYPE_HDR, "text/plain; charset=windows-1251");
-            content.addBodyPart(part);
+        if (htmlContents != null) {
+            for (String htmlContent : htmlContents) {
+                MimeBodyPart part = new MimeBodyPart();
+                part.setText(htmlContent, StandardCharsets.UTF_8.displayName(), "html");
+                content.addBodyPart(part);
+            }
         }
 
         if (attachments != null) {
@@ -114,6 +178,7 @@ public class TestConverterUtils {
 
         mimeMessage.setContent(content);
         mimeMessage.addHeader(CONTENT_TRANSFER_ENCODING_HDR, TransferEncoder.EIGHT_BIT.getName());
+        mimeMessage.setHeader(CONTENT_TYPE_HDR, content.getContentType());
         return mimeMessage;
     }
 

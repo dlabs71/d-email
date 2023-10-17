@@ -1,5 +1,6 @@
 package ru.dlabs.library.email.converter;
 
+import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TRANSFER_ENCODING_HDR;
 import static ru.dlabs.library.email.util.HttpUtils.HTML_CONTENT_TYPE;
 import static ru.dlabs.library.email.util.HttpUtils.TEXT_CONTENT_TYPE;
 
@@ -7,9 +8,11 @@ import jakarta.mail.Address;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.angus.mail.imap.IMAPMessage;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.common.TransferEncoder;
@@ -107,7 +110,7 @@ public class BaseMessageConverter {
         }
 
         try {
-            String transferEncoder = ((MimeMessage) message).getEncoding();
+            String transferEncoder = ((MimeMessage) message).getHeader(CONTENT_TRANSFER_ENCODING_HDR, null);
             baseMessage.setTransferEncoder(TransferEncoder.forName(transferEncoder));
 
             baseMessage.setSize(message.getSize());

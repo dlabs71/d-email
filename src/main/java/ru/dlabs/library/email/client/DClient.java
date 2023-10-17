@@ -19,4 +19,6 @@ public interface DClient {
      * @throws SessionException The connection to the server has failed. The properties are broken.
      */
     Session connect() throws SessionException;
+
+    String getProtocolName();
 }
