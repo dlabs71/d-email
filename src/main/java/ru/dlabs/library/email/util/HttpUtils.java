@@ -16,13 +16,13 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class HttpUtils {
 
-    public final static String CONTENT_TYPE_HDR = "Content-type";
-    public final static String FORMAT_HDR = "format";
-    public final static String CONTENT_TRANSFER_ENCODING_HDR = "Content-Transfer-Encoding";
-    public final static String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
-    public final static String TEXT_CONTENT_TYPE = "text/plain";
-    public final static String HTML_CONTENT_TYPE = "text/html";
-    public final static String DEFAULT_BINARY_CONTENT_TYPE = "application/octet-stream";
+    public static final String CONTENT_TYPE_HDR = "Content-type";
+    public static final String FORMAT_HDR = "format";
+    public static final String CONTENT_TRANSFER_ENCODING_HDR = "Content-Transfer-Encoding";
+    public static final String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
+    public static final String TEXT_CONTENT_TYPE = "text/plain";
+    public static final String HTML_CONTENT_TYPE = "text/html";
+    public static final String DEFAULT_BINARY_CONTENT_TYPE = "application/octet-stream";
 
     public String contentTypeWithCharset(String contentType, Charset charset) {
         return contentTypeWithCharset(contentType, charset.displayName());

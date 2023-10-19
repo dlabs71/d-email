@@ -28,7 +28,7 @@ import ru.dlabs.library.email.util.SessionUtils;
 @Slf4j
 public class SMTPDClient implements SenderDClient {
 
-    public final static String PROTOCOL_NAME = "smtp";
+    public static final String PROTOCOL_NAME = "smtp";
 
     private final SmtpProperties smtpProperties;
     private final Session session;

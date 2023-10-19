@@ -35,7 +35,7 @@ import ru.dlabs.library.email.util.EmailMessageUtils;
 public class BaseMessageConverter {
 
     /**
-     * It converts a message to a BaseMessage instance
+     * It converts a message to a BaseMessage instance.
      *
      * @param message the source message
      *
@@ -55,7 +55,7 @@ public class BaseMessageConverter {
     }
 
     /**
-     * It converts a message to a DefaultIncomingMessage instance
+     * It converts a message to a DefaultIncomingMessage instance.
      *
      * @param message the source message
      *
@@ -70,7 +70,7 @@ public class BaseMessageConverter {
     }
 
     /**
-     * It converts a message to a BaseMessage instance without the content and attachments
+     * It converts a message to a BaseMessage instance without the content and attachments.
      *
      * @param message the source message
      *

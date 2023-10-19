@@ -40,9 +40,9 @@ import ru.dlabs.library.email.util.SessionUtils;
 @Slf4j
 public class IMAPDClient implements ReceiverDClient {
 
-    public final static String PROTOCOL_NAME = "imap";
-    public final static String DEFAULT_INBOX_FOLDER_NAME = "INBOX";
-    public final static String DEFAULT_OUTBOX_FOLDER_NAME = "OUTBOX";
+    public static final String PROTOCOL_NAME = "imap";
+    public static final String DEFAULT_INBOX_FOLDER_NAME = "INBOX";
+    public static final String DEFAULT_OUTBOX_FOLDER_NAME = "OUTBOX";
 
     private final ImapProperties imapProperties;
     private final Session session;
@@ -113,8 +113,10 @@ public class IMAPDClient implements ReceiverDClient {
             return folder.getMessageCount();
         } catch (MessagingException e) {
             throw new FolderOperationException(
-                "Getting a count of messages in the folder with the name " + folderName + " finished with the error: " +
-                    e.getLocalizedMessage(), e);
+                "Getting a count of messages in the folder with the name "
+                    + folderName
+                    + " finished with the error: "
+                    + e.getLocalizedMessage(), e);
         }
     }
 
@@ -148,8 +150,8 @@ public class IMAPDClient implements ReceiverDClient {
             message = folder.getMessage(id);
         } catch (MessagingException e) {
             throw new FolderOperationException(
-                "Reading the message with id=" + id + " in the folder with name " + folderName +
-                    " finished the error: " + e.getLocalizedMessage(), e);
+                "Reading the message with id=" + id + " in the folder with name " + folderName
+                    + " finished the error: " + e.getLocalizedMessage(), e);
         }
 
         IncomingMessage incomingMessage = BaseMessageConverter.convertToIncomingMessage(message);
@@ -184,8 +186,8 @@ public class IMAPDClient implements ReceiverDClient {
             folder.open(mode);
         } catch (MessagingException e) {
             throw new FolderOperationException(
-                "The folder with the name " + folderName + " couldn't be opened because of the following error: " +
-                    e.getLocalizedMessage(), e);
+                "The folder with the name " + folderName + " couldn't be opened because of the following error: "
+                    + e.getLocalizedMessage(), e);
         }
         return folder;
     }
@@ -198,9 +200,9 @@ public class IMAPDClient implements ReceiverDClient {
         try {
             folder.close();
         } catch (MessagingException e) {
-            throw new FolderOperationException("The folder with the name " + folder.getName() +
-                                                   " couldn't be closed because of the following error: " +
-                                                   e.getLocalizedMessage(), e);
+            throw new FolderOperationException(
+                "The folder with the name " + folder.getName()
+                    + " couldn't be closed because of the following error: " + e.getLocalizedMessage(), e);
         }
     }
 
@@ -212,8 +214,8 @@ public class IMAPDClient implements ReceiverDClient {
             Message message = folder.getMessage(id);
             message.setFlag(Flags.Flag.DELETED, true);
         } catch (MessagingException e) {
-            log.warn("The message with id=" + id + " wasn't marked as deleted because of the following error: " +
-                         e.getLocalizedMessage());
+            log.warn("The message with id=" + id
+                         + " wasn't marked as deleted because of the following error: " + e.getLocalizedMessage());
             this.closeFolder(folder);
             return false;
         }
@@ -221,9 +223,9 @@ public class IMAPDClient implements ReceiverDClient {
         try {
             folder.expunge();
         } catch (MessagingException e) {
-            throw new FolderOperationException("The folder with the name " + folder.getName() +
-                                                   " couldn't be expunge because of the following error: " +
-                                                   e.getLocalizedMessage());
+            throw new FolderOperationException(
+                "The folder with the name " + folder.getName()
+                    + " couldn't be expunge because of the following error: " + e.getLocalizedMessage());
         }
 
         this.closeFolder(folder);
@@ -240,8 +242,8 @@ public class IMAPDClient implements ReceiverDClient {
                 message.setFlag(Flags.Flag.DELETED, true);
                 result.put(id, true);
             } catch (MessagingException e) {
-                log.warn("The message with id=" + id + " wasn't marked as deleted because of the following error: " +
-                             e.getLocalizedMessage());
+                log.warn("The message with id=" + id + " wasn't marked as deleted because of the following error: "
+                             + e.getLocalizedMessage());
                 result.put(id, false);
             }
         });
@@ -249,9 +251,10 @@ public class IMAPDClient implements ReceiverDClient {
         try {
             folder.expunge();
         } catch (MessagingException e) {
-            throw new FolderOperationException("The folder with the name " + folder.getName() +
-                                                   " couldn't be expunge because of the following error: " +
-                                                   e.getLocalizedMessage());
+            throw new FolderOperationException(
+                "The folder with the name " + folder.getName()
+                    + " couldn't be expunge because of the following error: "
+                    + e.getLocalizedMessage());
         }
 
         this.closeFolder(folder);
@@ -267,8 +270,8 @@ public class IMAPDClient implements ReceiverDClient {
                 message.setFlag(Flags.Flag.DELETED, true);
                 result.put(message.getMessageNumber(), true);
             } catch (MessagingException e) {
-                log.warn("The message with id=" + message.getMessageNumber() +
-                             " wasn't marked as deleted because of the following error: " + e.getLocalizedMessage());
+                log.warn("The message with id=" + message.getMessageNumber()
+                             + " wasn't marked as deleted because of the following error: " + e.getLocalizedMessage());
                 result.put(message.getMessageNumber(), false);
             }
         });
@@ -276,9 +279,10 @@ public class IMAPDClient implements ReceiverDClient {
         try {
             folder.expunge();
         } catch (MessagingException e) {
-            throw new FolderOperationException("The folder with the name " + folder.getName() +
-                                                   " couldn't be expunge because of the following error: " +
-                                                   e.getLocalizedMessage());
+            throw new FolderOperationException(
+                "The folder with the name " + folder.getName()
+                    + " couldn't be expunge because of the following error: "
+                    + e.getLocalizedMessage());
         }
 
         this.closeFolder(folder);

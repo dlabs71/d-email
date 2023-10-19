@@ -18,16 +18,18 @@ import ru.dlabs.library.email.property.ImapProperties;
 
 /**
  * The class implements a facade pattern for receiving messages.
- * After creating the class, you must set a folder name using the {@link DEmailReceiver#folder(String folderName)} method.
+ * After creating the class, you must set a folder name using
+ * the {@link DEmailReceiver#folder(String folderName)} method.
  * If you don't, then the client will try to use the "INBOX" folder.
  * <p>
  * If you use several accounts, you must clearly set credentialId by using
- * the {@link DEmailReceiver#credentialId(String credentialId)} method. It creates the correct connection. But if you use only one
- * account to connect, the connection will create with creating the client (in a constructor).
+ * the {@link DEmailReceiver#credentialId(String credentialId)} method. It creates the correct connection.
+ * But if you use only one account to connect, the connection will create with creating the client (in a constructor).
  * <p>
  * Checking and reading emails executes as pageable. By the default page has a size = 50 elements. You can change it
  * by using the {@link DEmailReceiver#pageSize(int pageSize)} method.
- * Then you call {@link DEmailReceiver#nextCheckEmail()} or {@link DEmailReceiver#nextReadEmail()} the page number increase by 1.
+ * Then you call {@link DEmailReceiver#nextCheckEmail()} or {@link DEmailReceiver#nextReadEmail()}
+ * the page number increase by 1.
  * Accordingly, to read or check email messages from a 0 page, you must use
  * the {@link DEmailReceiver#start(int start)} method before it.
  *
@@ -128,7 +130,9 @@ public final class DEmailReceiver {
         if (this.credentialId == null) {
             throw new SessionException("Store is not set");
         }
-        ImapProperties.Credentials credentials = this.properties.getCredentials().getOrDefault(this.credentialId, null);
+        ImapProperties.Credentials credentials = this.properties.getCredentials()
+            .getOrDefault(this.credentialId, null);
+
         if (credentials == null) {
             throw new SessionException("The credential with id=" + credentialId + " doesn't exist");
         }
@@ -138,9 +142,11 @@ public final class DEmailReceiver {
     /**
      * Checks email. Returns only common information about messages. The messages won't have a read flag.
      * <p>
-     * This method supports page requests. After successful execution, the global {@link DEmailReceiver#pageRequest} parameter
+     * This method supports page requests. After successful execution,
+     * the global {@link DEmailReceiver#pageRequest} parameter
      * will increase the page number.
-     * Use the {@link DEmailReceiver#start(int start)} and {@link DEmailReceiver#pageSize(int pageSize)} methods for managing page parameters.
+     * Use the {@link DEmailReceiver#start(int start)} and {@link DEmailReceiver#pageSize(int pageSize)}
+     * methods for managing page parameters.
      *
      * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link MessageView}.
      */
@@ -172,9 +178,11 @@ public final class DEmailReceiver {
      * Reads email. Returns full information about messages (with a content and attachment). The read flag will be
      * set up in every message.
      * <p>
-     * This method supports page requests. After successful execution, the global {@link DEmailReceiver#pageRequest} parameter
+     * This method supports page requests. After successful execution,
+     * the global {@link DEmailReceiver#pageRequest} parameter
      * will increase the page number.
-     * Use the {@link DEmailReceiver#start(int start)} and {@link DEmailReceiver#pageSize(int pageSize)} methods for managing page parameters.
+     * Use the {@link DEmailReceiver#start(int start)} and {@link DEmailReceiver#pageSize(int pageSize)}
+     * methods for managing page parameters.
      *
      * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link IncomingMessage}.
      */

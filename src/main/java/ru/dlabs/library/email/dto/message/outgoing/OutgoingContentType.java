@@ -14,9 +14,12 @@ import ru.dlabs.library.email.util.HttpUtils;
  */
 @Getter
 public enum OutgoingContentType {
-    TEXT(HttpUtils.TEXT_CONTENT_TYPE), HTML(HttpUtils.HTML_CONTENT_TYPE);
+    TEXT(HttpUtils.TEXT_CONTENT_TYPE),
+    HTML(HttpUtils.HTML_CONTENT_TYPE);
 
     private final String contentType;
 
-    OutgoingContentType(String contentType) { this.contentType = contentType; }
+    OutgoingContentType(String contentType) {
+        this.contentType = contentType;
+    }
 }

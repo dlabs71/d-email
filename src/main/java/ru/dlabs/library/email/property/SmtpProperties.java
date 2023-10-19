@@ -42,7 +42,9 @@ public class SmtpProperties extends CommonProperties {
         this.name = name;
     }
 
-    public static SmtpPropertiesBuilder builder() { return new SmtpPropertiesBuilder(); }
+    public static SmtpPropertiesBuilder builder() {
+        return new SmtpPropertiesBuilder();
+    }
 
     @Setter
     @ToString

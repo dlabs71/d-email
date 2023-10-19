@@ -31,7 +31,9 @@ public enum AttachmentType {
      * @return {@link AttachmentType}
      */
     public static AttachmentType find(String mimeType) {
-        return Arrays.stream(AttachmentType.values()).filter(item -> !item.equals(UNKNOWN) &&
-            mimeType.matches(item.getMimeTypePattern())).findFirst().orElse(UNKNOWN);
+        return Arrays.stream(AttachmentType.values())
+            .filter(item -> !item.equals(UNKNOWN) && mimeType.matches(item.getMimeTypePattern()))
+            .findFirst()
+            .orElse(UNKNOWN);
     }
 }

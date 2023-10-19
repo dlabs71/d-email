@@ -57,7 +57,9 @@ public class ImapProperties extends CommonProperties {
         this.connectionPoolTimeout = connectionPoolTimeout;
     }
 
-    public static ImapProperties.ImapPropertiesBuilder builder() { return new ImapProperties.ImapPropertiesBuilder(); }
+    public static ImapProperties.ImapPropertiesBuilder builder() {
+        return new ImapProperties.ImapPropertiesBuilder();
+    }
 
     @Getter
     @AllArgsConstructor

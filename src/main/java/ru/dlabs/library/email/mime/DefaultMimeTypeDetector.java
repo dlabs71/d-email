@@ -16,7 +16,8 @@ import lombok.Getter;
  * </ol>
  * <p>
  * These methods are used in the same order as above in the text. If its can't define MIMEType
- * then the {@link DefaultMimeTypeDetector#detect(File)} method will return the default value (application/octet-stream).
+ * then the {@link DefaultMimeTypeDetector#detect(File)} method will return
+ * the default value (application/octet-stream).
  *
  *
  * <p>
@@ -30,8 +31,8 @@ import lombok.Getter;
 public class DefaultMimeTypeDetector implements MimeTypeDetector {
 
     @Getter
-    public final static DefaultMimeTypeDetector instance = new DefaultMimeTypeDetector();
-    public final static String DEFAULT_CONTENT_TYPE = "application/octet-stream";
+    public static final DefaultMimeTypeDetector instance = new DefaultMimeTypeDetector();
+    public static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
     /**
      * Returns MIMEType by a file.

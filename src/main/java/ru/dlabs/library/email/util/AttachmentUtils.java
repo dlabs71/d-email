@@ -55,8 +55,10 @@ public class AttachmentUtils {
 
             if (url == null) {
                 throw new AttachmentException(
-                    "The resource cannot be loaded. The parameter pathToFile must start with a: 'file://'; 'classpath:' or '/'. The pathToFile = " +
-                        pathToFile);
+                    "The resource cannot be loaded. "
+                        + "The parameter pathToFile must start with a: 'file://'; 'classpath:' or '/'. "
+                        + "The pathToFile = " + pathToFile
+                );
             }
 
             File file = new File(url.toURI());
@@ -67,8 +69,9 @@ public class AttachmentUtils {
         } catch (URISyntaxException | MalformedURLException ex) {
             log.error(ex.getLocalizedMessage(), ex);
             throw new AttachmentException(
-                "The resource cannot be loaded. The parameter pathToFile must start with a: 'file://'; 'classpath:' or '/'. The pathToFile = " +
-                    pathToFile + ". The error: " + ex.getLocalizedMessage());
+                "The resource cannot be loaded. "
+                    + "The parameter pathToFile must start with a: 'file://'; 'classpath:' or '/'. "
+                    + "The pathToFile = " + pathToFile + ". The error: " + ex.getLocalizedMessage());
         }
     }
 

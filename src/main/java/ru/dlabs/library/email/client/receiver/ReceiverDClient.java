@@ -17,7 +17,8 @@ public interface ReceiverDClient extends DClient {
     /**
      * It creates a store for the account using the credential ID
      *
-     * @param credentialId the credential ID of a credentials map from properties (For example {@link ru.dlabs.library.email.property.ImapProperties})
+     * @param credentialId the credential ID of a credentials map from properties
+     *                     (For example {@link ru.dlabs.library.email.property.ImapProperties})
      */
     void setStore(String credentialId);
 
