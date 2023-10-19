@@ -11,9 +11,7 @@ import lombok.Getter;
  */
 @Getter
 public enum Protocol {
-    SMTP("smtp", null),
-    IMAP("imap", null),
-    POP3("pop3", null);
+    SMTP("smtp", null), IMAP("imap", null), POP3("pop3", null);
 
     private final String propName;
     private final String storeProtocolName;

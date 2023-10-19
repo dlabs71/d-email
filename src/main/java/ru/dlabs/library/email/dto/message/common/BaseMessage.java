@@ -59,8 +59,6 @@ public class BaseMessage implements Message {
     }
 
     public String getAllContentsAsString(String delimiter) {
-        return this.getContents().stream()
-            .map(ContentMessage::getData)
-            .collect(Collectors.joining(delimiter));
+        return this.getContents().stream().map(ContentMessage::getData).collect(Collectors.joining(delimiter));
     }
 }

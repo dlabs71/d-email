@@ -123,8 +123,7 @@ public class IMAPDClient implements ReceiverDClient {
         Folder folder = this.openFolderForRead(folderName);
         Stream<Message> messages = this.getMessages(folder, pageRequest);
 
-        List<MessageView> result = messages.map(MessageViewConverter::convert)
-            .collect(Collectors.toList());
+        List<MessageView> result = messages.map(MessageViewConverter::convert).collect(Collectors.toList());
         closeFolder(folder);
         return result;
     }
@@ -134,8 +133,8 @@ public class IMAPDClient implements ReceiverDClient {
         Folder folder = this.openFolderForWrite(folderName);
         Stream<Message> messages = this.getMessages(folder, pageRequest);
 
-        List<IncomingMessage> result = messages.map(BaseMessageConverter::convertToIncomingMessage)
-            .collect(Collectors.toList());
+        List<IncomingMessage> result =
+            messages.map(BaseMessageConverter::convertToIncomingMessage).collect(Collectors.toList());
         closeFolder(folder);
         return result;
     }
@@ -150,8 +149,7 @@ public class IMAPDClient implements ReceiverDClient {
         } catch (MessagingException e) {
             throw new FolderOperationException(
                 "Reading the message with id=" + id + " in the folder with name " + folderName +
-                    " finished the error: " +
-                    e.getLocalizedMessage(), e);
+                    " finished the error: " + e.getLocalizedMessage(), e);
         }
 
         IncomingMessage incomingMessage = BaseMessageConverter.convertToIncomingMessage(message);
@@ -214,8 +212,7 @@ public class IMAPDClient implements ReceiverDClient {
             Message message = folder.getMessage(id);
             message.setFlag(Flags.Flag.DELETED, true);
         } catch (MessagingException e) {
-            log.warn("The message with id=" + id +
-                         " wasn't marked as deleted because of the following error: " +
+            log.warn("The message with id=" + id + " wasn't marked as deleted because of the following error: " +
                          e.getLocalizedMessage());
             this.closeFolder(folder);
             return false;
@@ -243,8 +240,7 @@ public class IMAPDClient implements ReceiverDClient {
                 message.setFlag(Flags.Flag.DELETED, true);
                 result.put(id, true);
             } catch (MessagingException e) {
-                log.warn("The message with id=" + id +
-                             " wasn't marked as deleted because of the following error: " +
+                log.warn("The message with id=" + id + " wasn't marked as deleted because of the following error: " +
                              e.getLocalizedMessage());
                 result.put(id, false);
             }
@@ -266,18 +262,16 @@ public class IMAPDClient implements ReceiverDClient {
     public Map<Integer, Boolean> deleteAllMessages(String folderName) {
         Folder folder = this.openFolderForWrite(folderName);
         Map<Integer, Boolean> result = new HashMap<>();
-        this.getMessages(folder, PageRequest.of(0, Integer.MAX_VALUE))
-            .forEach(message -> {
-                try {
-                    message.setFlag(Flags.Flag.DELETED, true);
-                    result.put(message.getMessageNumber(), true);
-                } catch (MessagingException e) {
-                    log.warn("The message with id=" + message.getMessageNumber() +
-                                 " wasn't marked as deleted because of the following error: " +
-                                 e.getLocalizedMessage());
-                    result.put(message.getMessageNumber(), false);
-                }
-            });
+        this.getMessages(folder, PageRequest.of(0, Integer.MAX_VALUE)).forEach(message -> {
+            try {
+                message.setFlag(Flags.Flag.DELETED, true);
+                result.put(message.getMessageNumber(), true);
+            } catch (MessagingException e) {
+                log.warn("The message with id=" + message.getMessageNumber() +
+                             " wasn't marked as deleted because of the following error: " + e.getLocalizedMessage());
+                result.put(message.getMessageNumber(), false);
+            }
+        });
 
         try {
             folder.expunge();
@@ -309,8 +303,7 @@ public class IMAPDClient implements ReceiverDClient {
             message.setFlag(Flags.Flag.SEEN, true);
             message.saveChanges();
         } catch (MessagingException e) {
-            log.warn(
-                "The message wasn't marked as seen because of the following error: " + e.getLocalizedMessage());
+            log.warn("The message wasn't marked as seen because of the following error: " + e.getLocalizedMessage());
         }
     }
 }

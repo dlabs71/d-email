@@ -32,16 +32,14 @@ public class DefaultIncomingMessage extends BaseMessage implements IncomingMessa
 
     @Override
     public List<ContentMessage> getHtmlContents() {
-        return this.getContents().stream()
-            .filter(item -> ContentMessageType.HTML.equals(item.getType()))
-            .collect(Collectors.toList());
+        return this.getContents().stream().filter(item -> ContentMessageType.HTML.equals(item.getType())).collect(
+            Collectors.toList());
     }
 
     @Override
     public List<ContentMessage> getTextContents() {
-        return this.getContents().stream()
-            .filter(item -> ContentMessageType.TEXT.equals(item.getType()))
-            .collect(Collectors.toList());
+        return this.getContents().stream().filter(item -> ContentMessageType.TEXT.equals(item.getType())).collect(
+            Collectors.toList());
     }
 
     public String getHtmlContentsAsString() {
@@ -49,9 +47,7 @@ public class DefaultIncomingMessage extends BaseMessage implements IncomingMessa
     }
 
     public String getHtmlContentsAsString(String delimiter) {
-        return this.getHtmlContents().stream()
-            .map(ContentMessage::getData)
-            .collect(Collectors.joining(delimiter));
+        return this.getHtmlContents().stream().map(ContentMessage::getData).collect(Collectors.joining(delimiter));
     }
 
     public String getTextContentsAsString() {
@@ -59,8 +55,6 @@ public class DefaultIncomingMessage extends BaseMessage implements IncomingMessa
     }
 
     public String getTextContentsAsString(String delimiter) {
-        return this.getTextContents().stream()
-            .map(ContentMessage::getData)
-            .collect(Collectors.joining(delimiter));
+        return this.getTextContents().stream().map(ContentMessage::getData).collect(Collectors.joining(delimiter));
     }
 }

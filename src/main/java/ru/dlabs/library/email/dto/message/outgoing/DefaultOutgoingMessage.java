@@ -29,19 +29,15 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
     private final OutgoingContentType contentType;
 
     public DefaultOutgoingMessage(
-        String subject,
-        String content,
-        Set<EmailParticipant> recipientEmail,
-        List<EmailAttachment> attachments
+        String subject, String content, Set<EmailParticipant> recipientEmail, List<EmailAttachment> attachments
     ) {
-        this(
-            subject,
-            content,
-            Charset.defaultCharset(),
-            OutgoingContentType.TEXT,
-            recipientEmail,
-            attachments,
-            TransferEncoder.byDefault()
+        this(subject,
+             content,
+             Charset.defaultCharset(),
+             OutgoingContentType.TEXT,
+             recipientEmail,
+             attachments,
+             TransferEncoder.byDefault()
         );
     }
 
@@ -62,11 +58,7 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
 
 
         if (content != null) {
-            ContentMessage contentMessage = new ContentMessage(
-                content,
-                contentType.getContentType(),
-                charsetContent
-            );
+            ContentMessage contentMessage = new ContentMessage(content, contentType.getContentType(), charsetContent);
             this.addContent(contentMessage);
         } else {
             this.setContents(new ArrayList<>());
@@ -90,14 +82,13 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
         private List<EmailAttachment> attachments = new ArrayList<>();
 
         public DefaultOutgoingMessage build() {
-            return new DefaultOutgoingMessage(
-                subject,
-                content,
-                charsetContent,
-                contentType,
-                recipientEmail,
-                attachments,
-                transferEncoder
+            return new DefaultOutgoingMessage(subject,
+                                              content,
+                                              charsetContent,
+                                              contentType,
+                                              recipientEmail,
+                                              attachments,
+                                              transferEncoder
             );
         }
 

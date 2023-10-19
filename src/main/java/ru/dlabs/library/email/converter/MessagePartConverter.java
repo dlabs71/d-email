@@ -60,19 +60,17 @@ public class MessagePartConverter {
             if (recipients == null || recipients.length == 0) {
                 return new HashSet<>();
             }
-            return Arrays.stream(recipients)
-                .map(address -> {
-                    if (address instanceof InternetAddress) {
-                        InternetAddress internetAddress = (InternetAddress) address;
-                        return new EmailParticipant(internetAddress.getAddress(), internetAddress.getPersonal());
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+            return Arrays.stream(recipients).map(address -> {
+                if (address instanceof InternetAddress) {
+                    InternetAddress internetAddress = (InternetAddress) address;
+                    return new EmailParticipant(internetAddress.getAddress(), internetAddress.getPersonal());
+                }
+                return null;
+            }).filter(Objects::nonNull).collect(Collectors.toSet());
         } catch (MessagingException e) {
             throw new CheckEmailException(
-                "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage(), e
+                "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage(),
+                e
             );
         }
     }
@@ -96,7 +94,9 @@ public class MessagePartConverter {
                 .build();
         } catch (MessagingException e) {
             throw new ReadMessageException(
-                "An error occurred in getting attachments from the message: " + e.getLocalizedMessage(), e);
+                "An error occurred in getting attachments from the message: " + e.getLocalizedMessage(),
+                e
+            );
         }
     }
 
@@ -119,7 +119,9 @@ public class MessagePartConverter {
             part.getContent();
         } catch (MessagingException e) {
             throw new ReadMessageException(
-                "An error occurred in getting content from the message: " + e.getLocalizedMessage(), e);
+                "An error occurred in getting content from the message: " + e.getLocalizedMessage(),
+                e
+            );
         } catch (IOException e) {
             // This is mean that content message is full empty
             return;
@@ -162,7 +164,9 @@ public class MessagePartConverter {
             result.addContent(part.getContentType(), getContentDefault(part));
         } catch (MessagingException | IOException e) {
             throw new ReadMessageException(
-                "An error occurred in getting content from the message: " + e.getLocalizedMessage(), e);
+                "An error occurred in getting content from the message: " + e.getLocalizedMessage(),
+                e
+            );
         }
     }
 
@@ -172,14 +176,15 @@ public class MessagePartConverter {
             content = part.getContent();
         } catch (IOException | MessagingException e) {
             throw new ReadMessageException(
-                "An error occurred in getting content from the message: " + e.getLocalizedMessage(), e);
+                "An error occurred in getting content from the message: " + e.getLocalizedMessage(),
+                e
+            );
         }
         if (content instanceof String) {
             return (String) content;
         } else if (content instanceof InputStream) {
             InputStream is = (InputStream) content;
-            return new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))
-                .lines()
+            return new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8)).lines()
                 .collect(Collectors.joining("\n"));
         }
 
@@ -190,7 +195,9 @@ public class MessagePartConverter {
             return bos.toString(StandardCharsets.UTF_8.name());
         } catch (MessagingException | IOException e) {
             throw new ReadMessageException(
-                "An error occurred in writing content to ByteArrayOutputStream: " + e.getLocalizedMessage(), e);
+                "An error occurred in writing content to ByteArrayOutputStream: " + e.getLocalizedMessage(),
+                e
+            );
         }
 
     }
@@ -201,7 +208,9 @@ public class MessagePartConverter {
             content = bodyPart.getContent();
         } catch (IOException | MessagingException e) {
             throw new ReadMessageException(
-                "An error occurred in getting content from the message: " + e.getLocalizedMessage(), e);
+                "An error occurred in getting content from the message: " + e.getLocalizedMessage(),
+                e
+            );
         }
         if (content instanceof String) {
             return ((String) content).getBytes(StandardCharsets.UTF_8);
@@ -211,7 +220,9 @@ public class MessagePartConverter {
                 return IOUtils.toByteArray(is);
             } catch (IOException e) {
                 throw new ReadMessageException(
-                    "An error occurred while reading the input stream of the message: " + e.getLocalizedMessage(), e);
+                    "An error occurred while reading the input stream of the message: " + e.getLocalizedMessage(),
+                    e
+                );
             }
         }
         return content.toString().getBytes(StandardCharsets.UTF_8);
@@ -246,10 +257,10 @@ public class MessagePartConverter {
          * @return string from contents separated by the '\n'
          */
         public List<ContentMessage> getContentByType(String contentType) {
-            return this.contents.stream()
-                .filter(item -> item.isMimeType(contentType))
-                .map(item -> new ContentMessage(item.getData(), item.getContentType()))
-                .collect(Collectors.toList());
+            return this.contents.stream().filter(item -> item.isMimeType(contentType)).map(item -> new ContentMessage(
+                item.getData(),
+                item.getContentType()
+            )).collect(Collectors.toList());
         }
     }
 

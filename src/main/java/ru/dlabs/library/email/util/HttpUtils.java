@@ -65,10 +65,7 @@ public class HttpUtils {
             return null;
         }
         if (contentTypeValue.contains("charset")) {
-            String value = contentTypeValue.split("charset")[1]
-                .replaceAll("\\s", "")
-                .replaceFirst("=", "")
-                .trim();
+            String value = contentTypeValue.split("charset")[1].replaceAll("\\s", "").replaceFirst("=", "").trim();
             return value.split(";")[0];
         }
         return null;

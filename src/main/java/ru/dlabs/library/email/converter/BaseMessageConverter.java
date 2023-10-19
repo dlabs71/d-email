@@ -111,8 +111,8 @@ public class BaseMessageConverter {
         try {
             baseMessage.setSeen(message.isSet(Flags.Flag.SEEN));
         } catch (MessagingException e) {
-            log.warn("It is impossible to determine whether a message has been flagged as seen. "
-                         + e.getLocalizedMessage());
+            log.warn(
+                "It is impossible to determine whether a message has been flagged as seen. " + e.getLocalizedMessage());
         }
 
         try {

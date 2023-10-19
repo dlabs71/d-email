@@ -77,9 +77,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendText(
-        String email,
-        String subject,
-        String content
+        String email, String subject, String content
     ) {
         return this.sendText(email, subject, content, new ArrayList<>());
     }
@@ -96,9 +94,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendText(
-        Collection<String> emails,
-        String subject,
-        String content
+        Collection<String> emails, String subject, String content
     ) {
         return this.sendText(emails, subject, content, new ArrayList<>());
     }
@@ -116,10 +112,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendText(
-        Collection<String> emails,
-        String subject,
-        String content,
-        EmailAttachment... attachments
+        Collection<String> emails, String subject, String content, EmailAttachment... attachments
     ) {
         return this.sendText(emails, subject, content, Arrays.asList(attachments));
     }
@@ -137,14 +130,9 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendText(
-        Collection<String> emails,
-        String subject,
-        String content,
-        List<EmailAttachment> attachments
+        Collection<String> emails, String subject, String content, List<EmailAttachment> attachments
     ) {
-        Set<EmailParticipant> recipients = emails.stream()
-            .map(EmailParticipant::new)
-            .collect(Collectors.toSet());
+        Set<EmailParticipant> recipients = emails.stream().map(EmailParticipant::new).collect(Collectors.toSet());
         return this.sendText(recipients, subject, content, attachments);
     }
 
@@ -161,10 +149,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendText(
-        String email,
-        String subject,
-        String content,
-        EmailAttachment... attachments
+        String email, String subject, String content, EmailAttachment... attachments
     ) {
         return this.sendText(email, subject, content, Arrays.asList(attachments));
     }
@@ -182,10 +167,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendText(
-        String email,
-        String subject,
-        String content,
-        List<EmailAttachment> attachments
+        String email, String subject, String content, List<EmailAttachment> attachments
     ) {
         Set<EmailParticipant> recipients = new HashSet<>();
         recipients.add(new EmailParticipant(email));
@@ -205,10 +187,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendText(
-        Set<EmailParticipant> recipients,
-        String subject,
-        String content,
-        List<EmailAttachment> attachments
+        Set<EmailParticipant> recipients, String subject, String content, List<EmailAttachment> attachments
     ) {
         return this.send(recipients, subject, content, OutgoingContentType.TEXT, null, attachments);
     }
@@ -225,9 +204,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendHtml(
-        String email,
-        String subject,
-        String content
+        String email, String subject, String content
     ) {
         return this.sendHtml(email, subject, content, new ArrayList<>());
     }
@@ -244,9 +221,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendHtml(
-        Collection<String> emails,
-        String subject,
-        String content
+        Collection<String> emails, String subject, String content
     ) {
         return this.sendHtml(emails, subject, content, new ArrayList<>());
     }
@@ -264,10 +239,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendHtml(
-        Set<String> emails,
-        String subject,
-        String content,
-        EmailAttachment... attachments
+        Set<String> emails, String subject, String content, EmailAttachment... attachments
     ) {
         return this.sendHtml(emails, subject, content, Arrays.asList(attachments));
     }
@@ -285,14 +257,9 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendHtml(
-        Collection<String> emails,
-        String subject,
-        String content,
-        List<EmailAttachment> attachments
+        Collection<String> emails, String subject, String content, List<EmailAttachment> attachments
     ) {
-        Set<EmailParticipant> recipients = emails.stream()
-            .map(EmailParticipant::new)
-            .collect(Collectors.toSet());
+        Set<EmailParticipant> recipients = emails.stream().map(EmailParticipant::new).collect(Collectors.toSet());
         return this.sendHtml(recipients, subject, content, attachments);
     }
 
@@ -309,10 +276,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendHtml(
-        String email,
-        String subject,
-        String content,
-        EmailAttachment... attachments
+        String email, String subject, String content, EmailAttachment... attachments
     ) {
         return this.sendHtml(email, subject, content, Arrays.asList(attachments));
     }
@@ -330,10 +294,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendHtml(
-        String email,
-        String subject,
-        String content,
-        List<EmailAttachment> attachments
+        String email, String subject, String content, List<EmailAttachment> attachments
     ) {
         Set<EmailParticipant> recipients = new HashSet<>();
         recipients.add(new EmailParticipant(email));
@@ -353,10 +314,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendHtml(
-        Set<EmailParticipant> recipients,
-        String subject,
-        String content,
-        List<EmailAttachment> attachments
+        Set<EmailParticipant> recipients, String subject, String content, List<EmailAttachment> attachments
     ) {
         return this.send(recipients, subject, content, OutgoingContentType.HTML, null, attachments);
     }
@@ -377,10 +335,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendHtmlTemplated(
-        String email,
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params
+        String email, String subject, String pathToTemplate, Map<String, Object> params
     ) {
         return this.sendHtmlTemplated(email, subject, pathToTemplate, params, new ArrayList<>());
     }
@@ -401,10 +356,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendHtmlTemplated(
-        Collection<String> emails,
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params
+        Collection<String> emails, String subject, String pathToTemplate, Map<String, Object> params
     ) {
         return this.sendHtmlTemplated(emails, subject, pathToTemplate, params, new ArrayList<>());
     }
@@ -458,9 +410,7 @@ public final class DEmailSender {
         Map<String, Object> params,
         List<EmailAttachment> attachments
     ) {
-        Set<EmailParticipant> recipients = emails.stream()
-            .map(EmailParticipant::new)
-            .collect(Collectors.toSet());
+        Set<EmailParticipant> recipients = emails.stream().map(EmailParticipant::new).collect(Collectors.toSet());
         return this.sendHtmlTemplated(recipients, subject, pathToTemplate, params, attachments);
     }
 
@@ -481,11 +431,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendHtmlTemplated(
-        String email,
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params,
-        EmailAttachment... attachments
+        String email, String subject, String pathToTemplate, Map<String, Object> params, EmailAttachment... attachments
     ) {
         return this.sendHtmlTemplated(email, subject, pathToTemplate, params, Arrays.asList(attachments));
     }
@@ -534,10 +480,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendTextTemplated(
-        String email,
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params
+        String email, String subject, String pathToTemplate, Map<String, Object> params
     ) {
         return this.sendTextTemplated(email, subject, pathToTemplate, params, new ArrayList<>());
     }
@@ -558,10 +501,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendTextTemplated(
-        Collection<String> emails,
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params
+        Collection<String> emails, String subject, String pathToTemplate, Map<String, Object> params
     ) {
         return this.sendTextTemplated(emails, subject, pathToTemplate, params, new ArrayList<>());
     }
@@ -615,9 +555,7 @@ public final class DEmailSender {
         Map<String, Object> params,
         List<EmailAttachment> attachments
     ) {
-        Set<EmailParticipant> recipients = emails.stream()
-            .map(EmailParticipant::new)
-            .collect(Collectors.toSet());
+        Set<EmailParticipant> recipients = emails.stream().map(EmailParticipant::new).collect(Collectors.toSet());
         return this.sendTextTemplated(recipients, subject, pathToTemplate, params, attachments);
     }
 
@@ -638,11 +576,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendTextTemplated(
-        String email,
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params,
-        EmailAttachment... attachments
+        String email, String subject, String pathToTemplate, Map<String, Object> params, EmailAttachment... attachments
     ) {
         return this.sendTextTemplated(email, subject, pathToTemplate, params, Arrays.asList(attachments));
     }
@@ -698,14 +632,13 @@ public final class DEmailSender {
         Map<String, Object> params,
         List<EmailAttachment> attachments
     ) {
-        return this.sendTemplatedMessage(
-            recipients,
-            subject,
-            pathToTemplate,
-            params,
-            OutgoingContentType.TEXT,
-            null,
-            attachments
+        return this.sendTemplatedMessage(recipients,
+                                         subject,
+                                         pathToTemplate,
+                                         params,
+                                         OutgoingContentType.TEXT,
+                                         null,
+                                         attachments
         );
     }
 
@@ -732,14 +665,13 @@ public final class DEmailSender {
         Map<String, Object> params,
         List<EmailAttachment> attachments
     ) {
-        return this.sendTemplatedMessage(
-            recipients,
-            subject,
-            pathToTemplate,
-            params,
-            OutgoingContentType.HTML,
-            null,
-            attachments
+        return this.sendTemplatedMessage(recipients,
+                                         subject,
+                                         pathToTemplate,
+                                         params,
+                                         OutgoingContentType.HTML,
+                                         null,
+                                         attachments
         );
     }
 
@@ -776,7 +708,10 @@ public final class DEmailSender {
             message = TemplatedOutgoingMessage.builder()
                 .recipientEmail(recipients)
                 .subject(subject)
-                .template(pathToTemplate, params)
+                .template(
+                    pathToTemplate,
+                    params
+                )
                 .charsetContent(charsetContent == null ? properties.getCharset() : charsetContent)
                 .contentType(contentType)
                 .attachments(attachments)
@@ -807,14 +742,9 @@ public final class DEmailSender {
         Charset charsetContent,
         List<EmailAttachment> attachments
     ) {
-        OutgoingMessage message = DefaultOutgoingMessage.outgoingMessageBuilder()
-            .recipientEmail(recipients)
-            .subject(subject)
-            .content(content)
-            .contentType(contentType)
-            .charsetContent(charsetContent == null ? properties.getCharset() : charsetContent)
-            .attachments(attachments)
-            .build();
+        OutgoingMessage message = DefaultOutgoingMessage.outgoingMessageBuilder().recipientEmail(recipients).subject(
+            subject).content(content).contentType(contentType).charsetContent(
+            charsetContent == null ? properties.getCharset() : charsetContent).attachments(attachments).build();
         return this.send(message);
     }
 

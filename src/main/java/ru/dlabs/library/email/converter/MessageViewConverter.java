@@ -51,8 +51,7 @@ public class MessageViewConverter {
             }
         } catch (MessagingException e) {
             throw new CheckEmailException(
-                "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage()
-            );
+                "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage());
         }
 
         // Extraction of the sender address
@@ -61,8 +60,7 @@ public class MessageViewConverter {
             froms = message.getFrom();
         } catch (MessagingException e) {
             throw new CheckEmailException(
-                "The attempt to get senders of the message has failed: " + e.getLocalizedMessage()
-            );
+                "The attempt to get senders of the message has failed: " + e.getLocalizedMessage());
         }
 
         // Senders of email messages can be several. But we take only one — the first.
@@ -75,8 +73,8 @@ public class MessageViewConverter {
         try {
             builder.seen(message.isSet(Flags.Flag.SEEN));
         } catch (MessagingException e) {
-            log.warn("It is impossible to determine whether a message has been flagged as seen. "
-                         + e.getLocalizedMessage());
+            log.warn(
+                "It is impossible to determine whether a message has been flagged as seen. " + e.getLocalizedMessage());
         }
 
         // Set a metadata of the message
@@ -93,8 +91,7 @@ public class MessageViewConverter {
             }
         } catch (MessagingException e) {
             throw new CheckEmailException(
-                "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage()
-            );
+                "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage());
         }
         return builder.build();
     }

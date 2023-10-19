@@ -73,21 +73,18 @@ public class JakartaMessageConverter {
             envelop.reply(false);
             envelop.setSubject(message.getSubject());
             envelop.setSentDate(new Date());
-            envelop.setRecipients(
-                Message.RecipientType.TO,
-                EmailMessageUtils.createAddresses(message.getRecipients())
-            );
+            envelop.setRecipients(Message.RecipientType.TO, EmailMessageUtils.createAddresses(message.getRecipients()));
             return envelop;
         } catch (MessagingException | UnsupportedEncodingException ex) {
             throw new CreateMessageException(
-                "Message object couldn't be created due to the following error: " + ex.getLocalizedMessage(), ex);
+                "Message object couldn't be created due to the following error: " + ex.getLocalizedMessage(),
+                ex
+            );
         }
     }
 
     public List<BodyPart> createBodyPart(OutgoingMessage message) throws CreateMessageException {
-        return message.getContents().stream()
-            .map(JakartaMessageConverter::createBodyPart)
-            .collect(Collectors.toList());
+        return message.getContents().stream().map(JakartaMessageConverter::createBodyPart).collect(Collectors.toList());
     }
 
     public BodyPart createBodyPart(ContentMessage content) throws CreateMessageException {
@@ -98,7 +95,9 @@ public class JakartaMessageConverter {
             return messageBodyPart;
         } catch (MessagingException ex) {
             throw new CreateMessageException(
-                "Body part couldn't be created due to the following error: " + ex.getLocalizedMessage(), ex);
+                "Body part couldn't be created due to the following error: " + ex.getLocalizedMessage(),
+                ex
+            );
         }
     }
 
@@ -106,7 +105,8 @@ public class JakartaMessageConverter {
         if (message.getAttachments() == null || message.getAttachments().isEmpty()) {
             return null;
         }
-        return message.getAttachments().stream()
+        return message.getAttachments()
+            .stream()
             .map(JakartaMessageConverter::createAttachmentPart)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -125,7 +125,9 @@ public class JakartaMessageConverter {
             return attachmentPart;
         } catch (MessagingException e) {
             throw new CreateMessageException(
-                "Body part couldn't be created due to the following error: " + e.getLocalizedMessage(), e);
+                "Body part couldn't be created due to the following error: " + e.getLocalizedMessage(),
+                e
+            );
         }
     }
 }

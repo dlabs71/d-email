@@ -17,8 +17,7 @@ import lombok.Getter;
  */
 @Getter
 public enum ContentMessageType {
-    TEXT(TEXT_CONTENT_TYPE),
-    HTML(HTML_CONTENT_TYPE);
+    TEXT(TEXT_CONTENT_TYPE), HTML(HTML_CONTENT_TYPE);
 
     private final String mimeType;
 

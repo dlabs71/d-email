@@ -73,8 +73,7 @@ public class TemplateUtils {
             return createClasspathTemplate(pathToTemplate);
         }
         throw new TemplateCreationException(
-            "Template path must starts with 'file://' or 'classpath:'. It's using template path: " + pathToTemplate
-        );
+            "Template path must starts with 'file://' or 'classpath:'. It's using template path: " + pathToTemplate);
     }
 
     /**

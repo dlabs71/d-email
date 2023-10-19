@@ -15,9 +15,7 @@ import lombok.Getter;
 @Getter
 public enum TransferEncoder {
 
-    SEVEN_BIT("7bit"),
-    EIGHT_BIT("8bit"),
-    BINARY("binary");
+    SEVEN_BIT("7bit"), EIGHT_BIT("8bit"), BINARY("binary");
 
     private final String name;
 
@@ -33,9 +31,6 @@ public enum TransferEncoder {
         if (value == null) {
             return null;
         }
-        return Arrays.stream(values())
-            .filter(item -> item.getName().equals(value))
-            .findFirst()
-            .orElse(null);
+        return Arrays.stream(values()).filter(item -> item.getName().equals(value)).findFirst().orElse(null);
     }
 }

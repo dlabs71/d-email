@@ -42,10 +42,7 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
     private final OutgoingContentType contentType;
 
     public TemplatedOutgoingMessage(
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params,
-        Set<EmailParticipant> recipientEmail
+        String subject, String pathToTemplate, Map<String, Object> params, Set<EmailParticipant> recipientEmail
     ) throws TemplateCreationException {
         this(subject, pathToTemplate, params, null, OutgoingContentType.HTML, recipientEmail, null, null);
     }

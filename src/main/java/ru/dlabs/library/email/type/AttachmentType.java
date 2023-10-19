@@ -14,14 +14,8 @@ import lombok.Getter;
  */
 @Getter
 public enum AttachmentType {
-    IMAGE("image/.*"),
-    VIDEO("video/.*"),
-    AUDIO("audio/.*"),
-    APPLICATION("application/.*"),
-    FONT("font/.*"),
-    MODEL("model/.*"),
-    TEXT("text/.*"),
-    UNKNOWN(null);
+    IMAGE("image/.*"), VIDEO("video/.*"), AUDIO("audio/.*"), APPLICATION("application/.*"), FONT("font/.*"), MODEL(
+        "model/.*"), TEXT("text/.*"), UNKNOWN(null);
 
     private final String mimeTypePattern;
 
@@ -37,9 +31,7 @@ public enum AttachmentType {
      * @return {@link AttachmentType}
      */
     public static AttachmentType find(String mimeType) {
-        return Arrays.stream(AttachmentType.values())
-            .filter(item -> !item.equals(UNKNOWN) && mimeType.matches(item.getMimeTypePattern()))
-            .findFirst()
-            .orElse(UNKNOWN);
+        return Arrays.stream(AttachmentType.values()).filter(item -> !item.equals(UNKNOWN) &&
+            mimeType.matches(item.getMimeTypePattern())).findFirst().orElse(UNKNOWN);
     }
 }

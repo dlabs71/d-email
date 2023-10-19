@@ -1,18 +1,12 @@
 package ru.dlabs.library.email.client.sender;
 
 
-import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TRANSFER_ENCODING_HDR;
-
 import jakarta.mail.Authenticator;
-import jakarta.mail.BodyPart;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeMultipart;
-import java.util.List;
 import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
 import ru.dlabs.library.email.client.SendingStatus;
@@ -53,10 +47,7 @@ public class SMTPDClient implements SenderDClient {
     public Session connect() throws SessionException {
         Properties props;
         try {
-            props = SessionUtils.createCommonProperties(
-                this.smtpProperties,
-                Protocol.SMTP
-            );
+            props = SessionUtils.createCommonProperties(this.smtpProperties, Protocol.SMTP);
         } catch (Exception e) {
             throw new SessionException(
                 "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
@@ -89,11 +80,10 @@ public class SMTPDClient implements SenderDClient {
         // It's creating an envelope of the message
         Message jakartaMessage;
         try {
-            jakartaMessage = JakartaMessageConverter.convert(
-                message,
-                session,
-                smtpProperties.getEmail(),
-                smtpProperties.getName()
+            jakartaMessage = JakartaMessageConverter.convert(message,
+                                                             session,
+                                                             smtpProperties.getEmail(),
+                                                             smtpProperties.getName()
             );
         } catch (CreateMessageException | MessagingException ex) {
             log.error(ex.getLocalizedMessage(), ex);
