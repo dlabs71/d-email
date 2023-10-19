@@ -2,10 +2,12 @@ package ru.dlabs.library.email.dto.message.common;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,12 +20,13 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class BaseMessage implements Message {
 
     private Integer id;
 
     private String subject;
-    private List<ContentMessage> contents;
+    private List<ContentMessage> contents = new ArrayList<>();
 
     private Set<EmailParticipant> recipients = new HashSet<>();
     private EmailParticipant sender = null;
@@ -32,33 +35,10 @@ public class BaseMessage implements Message {
 
     private TransferEncoder transferEncoder = TransferEncoder.byDefault();
     private Integer size;
+    private boolean seen = false;
 
     private LocalDateTime sentDate;
     private LocalDateTime receivedDate;
-
-    public BaseMessage(
-        Integer id,
-        String subject,
-        List<ContentMessage> contents,
-        Set<EmailParticipant> recipients,
-        EmailParticipant sender,
-        List<EmailAttachment> attachments,
-        TransferEncoder transferEncoder,
-        Integer size,
-        LocalDateTime sentDate,
-        LocalDateTime receivedDate
-    ) {
-        this.id = id;
-        this.subject = subject;
-        this.contents = contents;
-        this.recipients = recipients;
-        this.sender = sender;
-        this.attachments = attachments;
-        this.transferEncoder = transferEncoder;
-        this.size = size;
-        this.sentDate = sentDate;
-        this.receivedDate = receivedDate;
-    }
 
     public void addContent(ContentMessage content) {
         if (this.contents == null) {
@@ -67,12 +47,19 @@ public class BaseMessage implements Message {
         this.contents.add(content);
     }
 
-    public String getTextContentsAsString() {
-        return this.getTextContentsAsString("\n");
+    public void addAllContent(Collection<ContentMessage> contents) {
+        if (this.contents == null) {
+            this.contents = new ArrayList<>();
+        }
+        this.contents.addAll(contents);
     }
 
-    public String getTextContentsAsString(String delimiter) {
-        return this.contents.stream()
+    public String getAllContentsAsString() {
+        return this.getAllContentsAsString("\n");
+    }
+
+    public String getAllContentsAsString(String delimiter) {
+        return this.getContents().stream()
             .map(ContentMessage::getData)
             .collect(Collectors.joining(delimiter));
     }

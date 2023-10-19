@@ -18,24 +18,26 @@ public class ContentMessage {
 
     private final String data;
     private final Charset charset;
+    private final ContentMessageType type;
 
     private String contentType;
 
     public ContentMessage(String data, String contentType) {
         this.data = data;
         this.contentType = contentType;
+        this.type = ContentMessageType.forContentType(contentType);
         String charset = HttpUtils.defineCharsetFromHeaderValue(contentType);
         if (charset != null) {
             this.charset = Charset.forName(charset);
         } else {
-            this.charset = null;
+            this.charset = Charset.defaultCharset();
         }
     }
 
     public ContentMessage(String data, String contentType, Charset charset) {
         this.data = data;
         this.contentType = contentType;
-
+        this.type = ContentMessageType.forContentType(contentType);
         if (charset == null) {
             this.charset = Charset.defaultCharset();
         } else {

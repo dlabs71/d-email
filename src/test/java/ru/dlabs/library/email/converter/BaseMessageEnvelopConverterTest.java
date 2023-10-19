@@ -2,7 +2,10 @@ package ru.dlabs.library.email.converter;
 
 import jakarta.mail.Message;
 import jakarta.mail.internet.MimeMessage;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.dlabs.library.email.converter.utils.MessageAsserts;
+import ru.dlabs.library.email.converter.utils.TestConverterUtils;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
 
 /**
@@ -23,12 +26,24 @@ public class BaseMessageEnvelopConverterTest {
      * </ul>
      */
     @Test
+    public void convertEnvelopDataTest_0() {
+        BaseMessage baseMessage = BaseMessageConverter.convertEnvelopData(null);
+        Assertions.assertNull(baseMessage);
+    }
+
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link BaseMessageConverter#convertEnvelopData(Message)}</li>
+     * </ul>
+     */
+    @Test
     public void convertEnvelopDataTest_1() {
         String subject = "Captain Flint's Map";
 
         MimeMessage message = TestConverterUtils.createSimpleMessage(subject, null);
         BaseMessage baseMessage = BaseMessageConverter.convertEnvelopData(message);
-        MessageAsserts.assertMessagesAsEnvelop(baseMessage, message, subject);
+        MessageAsserts.assertMessageEnvelop(baseMessage, message, subject);
     }
 
     /**
@@ -41,7 +56,7 @@ public class BaseMessageEnvelopConverterTest {
     public void convertEnvelopDataTest_2() {
         MimeMessage message = TestConverterUtils.createEmptyMessage();
         BaseMessage baseMessage = BaseMessageConverter.convertEnvelopData(message);
-        MessageAsserts.assertMessagesAsEnvelop(baseMessage, message, null);
+        MessageAsserts.assertMessageEnvelop(baseMessage, message, null);
     }
 
     /**
@@ -56,7 +71,6 @@ public class BaseMessageEnvelopConverterTest {
 
         MimeMessage message = TestConverterUtils.createMessageWithoutSenders(subject, null);
         BaseMessage baseMessage = BaseMessageConverter.convertEnvelopData(message);
-        MessageAsserts.assertMessagesAsEnvelop(baseMessage, message, subject);
+        MessageAsserts.assertMessageEnvelop(baseMessage, message, subject);
     }
-
 }

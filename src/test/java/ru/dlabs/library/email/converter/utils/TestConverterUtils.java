@@ -1,7 +1,9 @@
-package ru.dlabs.library.email.converter;
+package ru.dlabs.library.email.converter.utils;
 
 import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TRANSFER_ENCODING_HDR;
 import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TYPE_HDR;
+import static ru.dlabs.library.email.util.HttpUtils.HTML_CONTENT_TYPE;
+import static ru.dlabs.library.email.util.HttpUtils.TEXT_CONTENT_TYPE;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
@@ -38,7 +40,7 @@ public class TestConverterUtils {
     public MimeMessage createSimpleMessage(String subject, String textContent) {
         return constructMessage(
             subject,
-            Arrays.asList(textContent),
+            textContent == null ? null : Arrays.asList(textContent),
             null,
             new InternetAddress[] {
                 createAddress("john007@island.com", "John Silver"),
@@ -56,7 +58,7 @@ public class TestConverterUtils {
     public MimeMessage createMessageWithAttachments(String subject, String textContent, List<String> paths) {
         return constructMessage(
             subject,
-            Arrays.asList(textContent),
+            textContent == null ? null : Arrays.asList(textContent),
             null,
             new InternetAddress[] {
                 createAddress("john007@island.com", "John Silver"),
@@ -91,27 +93,26 @@ public class TestConverterUtils {
     }
 
     public MimeMessage createMessageWithHtml(String subject, String textContent, String htmlContent) {
-        return constructMessage(
-            subject,
-            Arrays.asList(textContent),
-            Arrays.asList(htmlContent),
-            new InternetAddress[] {
-                createAddress("john007@island.com", "John Silver"),
-                },
-            new InternetAddress[] {
-                createAddress("billy@island.com", "Billy Bones"),
-                createAddress("livesey@island.com", "Dr. Livesey"),
-                createAddress("pew@island.com", "Blind Pew")
-            },
-            null
-        );
+        return createMessageWithMultipleContent(subject, Arrays.asList(textContent), Arrays.asList(htmlContent));
     }
 
-    public MimeMessage createMessageWithDuplicateContent(String subject, String textContent) {
+    public MimeMessage createMessageWithMultipleTextContent(String subject, List<String> textContent) {
+        return createMessageWithMultipleContent(subject, textContent, null);
+    }
+
+    public MimeMessage createMessageWithMultipleHtmlContent(String subject, List<String> htmlContent) {
+        return createMessageWithMultipleContent(subject, null, htmlContent);
+    }
+
+    public MimeMessage createMessageWithMultipleContent(
+        String subject,
+        List<String> textContents,
+        List<String> htmlContents
+    ) {
         return constructMessage(
             subject,
-            Arrays.asList(textContent, textContent),
-            null,
+            textContents,
+            htmlContents,
             new InternetAddress[] {
                 createAddress("john007@island.com", "John Silver"),
                 },
@@ -158,6 +159,10 @@ public class TestConverterUtils {
             for (String textContent : textContents) {
                 MimeBodyPart part = new MimeBodyPart();
                 part.setText(textContent, StandardCharsets.UTF_8.displayName());
+                part.addHeader(
+                    CONTENT_TYPE_HDR,
+                    TEXT_CONTENT_TYPE + "; charset=" + StandardCharsets.UTF_8.displayName()
+                );
                 content.addBodyPart(part);
             }
         }
@@ -166,6 +171,10 @@ public class TestConverterUtils {
             for (String htmlContent : htmlContents) {
                 MimeBodyPart part = new MimeBodyPart();
                 part.setText(htmlContent, StandardCharsets.UTF_8.displayName(), "html");
+                part.addHeader(
+                    CONTENT_TYPE_HDR,
+                    HTML_CONTENT_TYPE + "; charset=" + StandardCharsets.UTF_8.displayName()
+                );
                 content.addBodyPart(part);
             }
         }
@@ -178,7 +187,7 @@ public class TestConverterUtils {
 
         mimeMessage.setContent(content);
         mimeMessage.addHeader(CONTENT_TRANSFER_ENCODING_HDR, TransferEncoder.EIGHT_BIT.getName());
-        mimeMessage.setHeader(CONTENT_TYPE_HDR, content.getContentType());
+        mimeMessage.addHeader(CONTENT_TYPE_HDR, content.getContentType());
         return mimeMessage;
     }
 
@@ -190,7 +199,7 @@ public class TestConverterUtils {
         DataSource dataSource = new ByteArrayDataSource(attachment.getData(), attachment.getContentType());
         attachmentPart.setDataHandler(new DataHandler(dataSource));
         attachmentPart.setFileName(attachment.getName());
-        attachmentPart.setHeader(CONTENT_TYPE_HDR, attachment.getContentType());
+        attachmentPart.addHeader(CONTENT_TYPE_HDR, attachment.getContentType());
         return attachmentPart;
     }
 

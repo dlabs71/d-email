@@ -15,6 +15,7 @@ import ru.dlabs.library.email.dto.message.common.TransferEncoder;
 import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.exception.CheckEmailException;
 import ru.dlabs.library.email.util.DateTimeUtils;
+import ru.dlabs.library.email.util.EmailMessageUtils;
 
 /**
  * Utility class is for converting a jakarta.mail.Message to an instance of the MessageView class
@@ -35,13 +36,19 @@ public class MessageViewConverter {
      * @return instance of the MessageView class
      */
     public MessageView convert(Message message) {
+        if (message == null) {
+            return null;
+        }
         MessageView.MessageViewBuilder builder = MessageView.builder();
         builder.id(message.getMessageNumber());
         builder.recipients(MessagePartConverter.getParticipants(message));
 
         // Extraction of the subject
         try {
-            builder.subject(message.getSubject());
+            if (message.getSubject() != null) {
+                String decodedSubject = EmailMessageUtils.decodeData(message.getSubject());
+                builder.subject(decodedSubject);
+            }
         } catch (MessagingException e) {
             throw new CheckEmailException(
                 "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage()
@@ -59,7 +66,7 @@ public class MessageViewConverter {
         }
 
         // Senders of email messages can be several. But we take only one — the first.
-        if (froms.length > 0) {
+        if (froms != null && froms.length > 0) {
             InternetAddress internetAddress = (InternetAddress) froms[0];
             builder.sender(new EmailParticipant(internetAddress.getAddress(), internetAddress.getPersonal()));
         }
@@ -78,8 +85,12 @@ public class MessageViewConverter {
             builder.transferEncoder(TransferEncoder.forName(transferEncoder));
 
             builder.size(message.getSize());
-            builder.sentDate(DateTimeUtils.convert(message.getSentDate()));
-            builder.receivedDate(DateTimeUtils.convert(message.getReceivedDate()));
+            if (message.getSentDate() != null) {
+                builder.sentDate(DateTimeUtils.convert(message.getSentDate()));
+            }
+            if (message.getReceivedDate() != null) {
+                builder.receivedDate(DateTimeUtils.convert(message.getReceivedDate()));
+            }
         } catch (MessagingException e) {
             throw new CheckEmailException(
                 "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage()

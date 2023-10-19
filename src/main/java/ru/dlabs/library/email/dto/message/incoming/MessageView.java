@@ -1,6 +1,7 @@
 package ru.dlabs.library.email.dto.message.incoming;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import lombok.Builder;
@@ -31,18 +32,18 @@ public class MessageView implements Message {
     private Integer id;
     private Integer size;
     private TransferEncoder transferEncoder;
-    private boolean seen = false;
+    private boolean seen;
 
     private LocalDateTime sentDate;
     private LocalDateTime receivedDate;
 
     @Override
     public List<ContentMessage> getContents() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public List<EmailAttachment> getAttachments() {
-        return null;
+        return Collections.emptyList();
     }
 }

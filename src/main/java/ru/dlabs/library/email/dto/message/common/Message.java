@@ -31,4 +31,6 @@ public interface Message {
     LocalDateTime getSentDate();
 
     LocalDateTime getReceivedDate();
+
+    boolean isSeen();
 }

@@ -5,14 +5,13 @@ import static ru.dlabs.library.email.util.HttpUtils.HTML_CONTENT_TYPE;
 import static ru.dlabs.library.email.util.HttpUtils.TEXT_CONTENT_TYPE;
 
 import jakarta.mail.Address;
+import jakarta.mail.Flags;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.angus.mail.imap.IMAPMessage;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.common.TransferEncoder;
@@ -43,10 +42,14 @@ public class BaseMessageConverter {
      * @return the instance of the BaseMessage class
      */
     public BaseMessage convert(Message message) {
+        if (message == null) {
+            return null;
+        }
         BaseMessage baseMessage = convertEnvelopData(message);
 
         MessagePartConverter.ContentAndAttachments data = MessagePartConverter.getContent(message);
         baseMessage.setContents(data.getContentByType(TEXT_CONTENT_TYPE));
+        baseMessage.addAllContent(data.getContentByType(HTML_CONTENT_TYPE));
         baseMessage.setAttachments(data.getAttachments());
         return baseMessage;
     }
@@ -59,16 +62,11 @@ public class BaseMessageConverter {
      * @return the instance of the DefaultIncomingMessage class
      */
     public DefaultIncomingMessage convertToIncomingMessage(Message message) {
-        BaseMessage baseMessage = convertEnvelopData(message);
-
-        MessagePartConverter.ContentAndAttachments data = MessagePartConverter.getContent(message);
-        baseMessage.setContents(data.getContentByType(TEXT_CONTENT_TYPE));
-        if (baseMessage.getContents() == null || baseMessage.getContents().isEmpty()) {
-            baseMessage.setContents(data.getContentByType(HTML_CONTENT_TYPE));
+        if (message == null) {
+            return null;
         }
-        baseMessage.setAttachments(data.getAttachments());
-
-        return new DefaultIncomingMessage(baseMessage, data.getContentByType(HTML_CONTENT_TYPE));
+        BaseMessage baseMessage = convert(message);
+        return new DefaultIncomingMessage(baseMessage);
     }
 
     /**
@@ -107,6 +105,14 @@ public class BaseMessageConverter {
         if (froms != null && froms.length > 0) {
             InternetAddress internetAddress = (InternetAddress) froms[0];
             baseMessage.setSender(new EmailParticipant(internetAddress.getAddress(), internetAddress.getPersonal()));
+        }
+
+        // Set the read flag
+        try {
+            baseMessage.setSeen(message.isSet(Flags.Flag.SEEN));
+        } catch (MessagingException e) {
+            log.warn("It is impossible to determine whether a message has been flagged as seen. "
+                         + e.getLocalizedMessage());
         }
 
         try {

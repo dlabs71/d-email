@@ -116,6 +116,16 @@ public class MessagePartConverter {
 
     private void getContent(Part part, ContentAndAttachments result) {
         try {
+            part.getContent();
+        } catch (MessagingException e) {
+            throw new ReadMessageException(
+                "An error occurred in getting content from the message: " + e.getLocalizedMessage(), e);
+        } catch (IOException e) {
+            // This is mean that content message is full empty
+            return;
+        }
+
+        try {
             if (!Part.ATTACHMENT.equals(part.getDisposition())) {
                 if (part.isMimeType("text/*")) {
                     result.addContent(part.getContentType(), (String) part.getContent());

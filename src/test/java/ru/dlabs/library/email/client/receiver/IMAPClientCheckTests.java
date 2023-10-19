@@ -116,6 +116,7 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
         assertEquals(incomingMessage.getRecipients().size(), 1);
 
         assertNull(incomingMessage.getContents());
+        assertEquals(incomingMessage.getContents().size(), 1);
         assertNull(incomingMessage.getAttachments());
 
         EmailParticipant recipient = incomingMessage.getRecipients().stream().findFirst().orElse(null);

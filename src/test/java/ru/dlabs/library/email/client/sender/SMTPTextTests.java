@@ -244,7 +244,7 @@ public class SMTPTextTests extends AbstractTestsClass {
         assertEquals(incomingMessage.getSender(), this.sender.sender());
         assertEquals(incomingMessage.getSender().getName(), this.sender.sender().getName());
 
-        assertEquals(incomingMessage.getTextContentsAsString(), BODY);
+        assertEquals(incomingMessage.getAllContentsAsString(), BODY);
         assertEquals(incomingMessage.getSubject(), SUBJECT);
         assertEquals(incomingMessage.getTransferEncoder(), TransferEncoder.byDefault());
     }

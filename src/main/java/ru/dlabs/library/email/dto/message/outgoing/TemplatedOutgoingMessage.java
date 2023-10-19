@@ -91,7 +91,9 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
         }
     }
 
-    public static TemplatedMessageBuilder builder() { return new TemplatedMessageBuilder(); }
+    public static TemplatedMessageBuilder builder() {
+        return new TemplatedMessageBuilder();
+    }
 
     public String constructContent() throws TemplateCreationException {
         if (pathToTemplate == null || params == null) {

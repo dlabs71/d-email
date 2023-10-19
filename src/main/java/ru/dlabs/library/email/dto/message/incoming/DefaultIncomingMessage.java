@@ -2,25 +2,19 @@ package ru.dlabs.library.email.dto.message.incoming;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NonNull;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
 import ru.dlabs.library.email.dto.message.common.ContentMessage;
+import ru.dlabs.library.email.dto.message.common.ContentMessageType;
 
 /**
  * @author Ivanov Danila
  * Project name: d-email
  * Creation date: 2023-09-06
  */
-@Getter
-@Setter
-@AllArgsConstructor
 public class DefaultIncomingMessage extends BaseMessage implements IncomingMessage {
 
-    private List<ContentMessage> htmlContents;
-
-    public DefaultIncomingMessage(BaseMessage baseMessage) {
+    public DefaultIncomingMessage(@NonNull BaseMessage baseMessage) {
         super(
             baseMessage.getId(),
             baseMessage.getSubject(),
@@ -30,14 +24,24 @@ public class DefaultIncomingMessage extends BaseMessage implements IncomingMessa
             baseMessage.getAttachments(),
             baseMessage.getTransferEncoder(),
             baseMessage.getSize(),
+            baseMessage.isSeen(),
             baseMessage.getSentDate(),
             baseMessage.getReceivedDate()
         );
     }
 
-    public DefaultIncomingMessage(BaseMessage baseMessage, List<ContentMessage> htmlContents) {
-        this(baseMessage);
-        this.htmlContents = htmlContents;
+    @Override
+    public List<ContentMessage> getHtmlContents() {
+        return this.getContents().stream()
+            .filter(item -> ContentMessageType.HTML.equals(item.getType()))
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ContentMessage> getTextContents() {
+        return this.getContents().stream()
+            .filter(item -> ContentMessageType.TEXT.equals(item.getType()))
+            .collect(Collectors.toList());
     }
 
     public String getHtmlContentsAsString() {
@@ -45,7 +49,17 @@ public class DefaultIncomingMessage extends BaseMessage implements IncomingMessa
     }
 
     public String getHtmlContentsAsString(String delimiter) {
-        return this.htmlContents.stream()
+        return this.getHtmlContents().stream()
+            .map(ContentMessage::getData)
+            .collect(Collectors.joining(delimiter));
+    }
+
+    public String getTextContentsAsString() {
+        return this.getTextContentsAsString("\n");
+    }
+
+    public String getTextContentsAsString(String delimiter) {
+        return this.getTextContents().stream()
             .map(ContentMessage::getData)
             .collect(Collectors.joining(delimiter));
     }

@@ -168,6 +168,6 @@ public class IMAPClientReadTests extends AbstractTestsClass {
         assertNotNull(incomingMessage.getContents());
         assertEquals(incomingMessage.getContents().size(), 1);
         assertEquals(incomingMessage.getContents().get(0).getData(), "Содержание тестового сообщения");
-        assertEquals(incomingMessage.getTextContentsAsString(), "Содержание тестового сообщения");
+        assertEquals(incomingMessage.getAllContentsAsString(), "Содержание тестового сообщения");
     }
 }

@@ -14,4 +14,14 @@ import ru.dlabs.library.email.dto.message.common.Message;
 public interface IncomingMessage extends Message {
 
     List<ContentMessage> getHtmlContents();
+
+    List<ContentMessage> getTextContents();
+
+    String getTextContentsAsString();
+
+    String getTextContentsAsString(String delimiter);
+
+    String getHtmlContentsAsString();
+
+    String getHtmlContentsAsString(String delimiter);
 }
