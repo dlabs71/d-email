@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import ru.dlabs.library.email.dto.message.common.ContentMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
@@ -41,6 +42,7 @@ import ru.dlabs.library.email.util.IOUtils;
  * Project name: d-email
  * Creation date: 2023-09-02
  */
+@Slf4j
 @UtilityClass
 public class MessagePartConverter {
 
@@ -51,7 +53,7 @@ public class MessagePartConverter {
      *
      * @return Set of {@link EmailParticipant}
      */
-    public Set<EmailParticipant> getParticipants(Message message) {
+    public Set<EmailParticipant> getRecipients(Message message) {
         if (message == null) {
             return null;
         }
@@ -83,6 +85,9 @@ public class MessagePartConverter {
      * @return an object of the class {@link EmailAttachment}
      */
     public EmailAttachment getAttachment(Part part) {
+        if (part == null) {
+            return null;
+        }
         try {
             byte[] content = getContentDefaultAsBytes(part);
             return EmailAttachment.builder()
@@ -90,7 +95,7 @@ public class MessagePartConverter {
                 .data(content)
                 .type(AttachmentType.find(part.getContentType()))
                 .contentType(EmailMessageUtils.decodeData(part.getContentType()))
-                .size((long) content.length)
+                .size(content == null ? 0 : (long) content.length)
                 .build();
         } catch (MessagingException e) {
             throw new ReadMessageException(
@@ -114,7 +119,10 @@ public class MessagePartConverter {
     }
 
 
-    private void getContent(Part part, ContentAndAttachments result) {
+    public void getContent(Part part, ContentAndAttachments result) {
+        if (part == null) {
+            return;
+        }
         try {
             part.getContent();
         } catch (MessagingException e) {
@@ -123,6 +131,7 @@ public class MessagePartConverter {
                 e
             );
         } catch (IOException e) {
+            log.warn(e.getLocalizedMessage());
             // This is mean that content message is full empty
             return;
         }
@@ -170,14 +179,20 @@ public class MessagePartConverter {
         }
     }
 
-    private String getContentDefault(Part part) {
+    public String getContentDefault(Part part) {
+        if (part == null) {
+            return null;
+        }
         Object content;
         try {
             content = part.getContent();
-        } catch (IOException | MessagingException e) {
+        } catch (IOException ex) {
+            log.warn(ex.getLocalizedMessage());
+            return null;
+        } catch (MessagingException ex) {
             throw new ReadMessageException(
-                "An error occurred in getting content from the message: " + e.getLocalizedMessage(),
-                e
+                "An error occurred in getting content from the message: " + ex.getLocalizedMessage(),
+                ex
             );
         }
         if (content instanceof String) {
@@ -202,14 +217,20 @@ public class MessagePartConverter {
 
     }
 
-    private byte[] getContentDefaultAsBytes(Part bodyPart) {
+    public byte[] getContentDefaultAsBytes(Part bodyPart) {
+        if (bodyPart == null) {
+            return null;
+        }
         Object content;
         try {
             content = bodyPart.getContent();
-        } catch (IOException | MessagingException e) {
+        } catch (IOException ex) {
+            log.warn(ex.getLocalizedMessage());
+            return null;
+        } catch (MessagingException ex) {
             throw new ReadMessageException(
-                "An error occurred in getting content from the message: " + e.getLocalizedMessage(),
-                e
+                "An error occurred in getting content from the message: " + ex.getLocalizedMessage(),
+                ex
             );
         }
         if (content instanceof String) {
@@ -261,6 +282,10 @@ public class MessagePartConverter {
                 item.getData(),
                 item.getContentType()
             )).collect(Collectors.toList());
+        }
+
+        public boolean isEmpty() {
+            return contents.isEmpty() && attachments.isEmpty();
         }
     }
 

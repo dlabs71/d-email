@@ -75,6 +75,9 @@ public class EmailMessageUtils {
      * @return decoded string data
      */
     public String decodeData(String data) {
+        if (data == null) {
+            return null;
+        }
         String decoded;
         try {
             decoded = MimeUtility.decodeText(data);

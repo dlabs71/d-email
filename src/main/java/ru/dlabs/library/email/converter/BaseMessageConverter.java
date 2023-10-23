@@ -82,7 +82,7 @@ public class BaseMessageConverter {
         }
         BaseMessage baseMessage = new BaseMessage();
         baseMessage.setId(message.getMessageNumber());
-        baseMessage.setRecipients(MessagePartConverter.getParticipants(message));
+        baseMessage.setRecipients(MessagePartConverter.getRecipients(message));
 
         try {
             if (message.getSubject() != null) {

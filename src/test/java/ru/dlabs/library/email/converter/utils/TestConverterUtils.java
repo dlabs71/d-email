@@ -2,8 +2,6 @@ package ru.dlabs.library.email.converter.utils;
 
 import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TRANSFER_ENCODING_HDR;
 import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TYPE_HDR;
-import static ru.dlabs.library.email.util.HttpUtils.HTML_CONTENT_TYPE;
-import static ru.dlabs.library.email.util.HttpUtils.TEXT_CONTENT_TYPE;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
@@ -157,25 +155,13 @@ public class TestConverterUtils {
 
         if (textContents != null) {
             for (String textContent : textContents) {
-                MimeBodyPart part = new MimeBodyPart();
-                part.setText(textContent, StandardCharsets.UTF_8.displayName());
-                part.addHeader(
-                    CONTENT_TYPE_HDR,
-                    TEXT_CONTENT_TYPE + "; charset=" + StandardCharsets.UTF_8.displayName()
-                );
-                content.addBodyPart(part);
+                content.addBodyPart(createContent(textContent, "plain"));
             }
         }
 
         if (htmlContents != null) {
             for (String htmlContent : htmlContents) {
-                MimeBodyPart part = new MimeBodyPart();
-                part.setText(htmlContent, StandardCharsets.UTF_8.displayName(), "html");
-                part.addHeader(
-                    CONTENT_TYPE_HDR,
-                    HTML_CONTENT_TYPE + "; charset=" + StandardCharsets.UTF_8.displayName()
-                );
-                content.addBodyPart(part);
+                content.addBodyPart(createContent(htmlContent, "html"));
             }
         }
 
@@ -189,6 +175,17 @@ public class TestConverterUtils {
         mimeMessage.addHeader(CONTENT_TRANSFER_ENCODING_HDR, TransferEncoder.EIGHT_BIT.getName());
         mimeMessage.addHeader(CONTENT_TYPE_HDR, content.getContentType());
         return mimeMessage;
+    }
+
+    @SneakyThrows
+    public BodyPart createContent(String content, String subtype) {
+        MimeBodyPart part = new MimeBodyPart();
+        part.setText(content, StandardCharsets.UTF_8.displayName(), subtype);
+        part.addHeader(
+            CONTENT_TYPE_HDR,
+            "text/" + subtype + "; charset=" + StandardCharsets.UTF_8.displayName()
+        );
+        return part;
     }
 
     @SneakyThrows

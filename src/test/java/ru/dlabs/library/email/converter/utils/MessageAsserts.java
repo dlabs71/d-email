@@ -209,8 +209,16 @@ public class MessageAsserts {
 
     @SneakyThrows
     public void assertAttachmentsMessage(@NonNull BaseMessage baseMessage, @NonNull List<String> emailAttachments) {
-        assertNotNull(baseMessage.getAttachments());
-        assertEquals(baseMessage.getAttachments().size(), emailAttachments.size());
+        assertAttachmentsMessage(baseMessage.getAttachments(), emailAttachments);
+    }
+
+    @SneakyThrows
+    public void assertAttachmentsMessage(
+        @NonNull List<EmailAttachment> attachments,
+        @NonNull List<String> emailAttachments
+    ) {
+        assertNotNull(attachments);
+        assertEquals(attachments.size(), emailAttachments.size());
 
         for (String attachment : emailAttachments) {
             File sourceFile = new File(
@@ -239,7 +247,7 @@ public class MessageAsserts {
             }
             byte[] contentOfFile = IOUtils.toByteArray(Files.newInputStream(sourceFile.toPath()));
 
-            EmailAttachment messageAttachment = baseMessage.getAttachments().stream()
+            EmailAttachment messageAttachment = attachments.stream()
                 .filter(item -> item.getName().equals(sourceFile.getName()))
                 .findFirst()
                 .orElse(null);
