@@ -163,12 +163,10 @@ public final class DEmailReceiver {
      */
     public PageResponse<IncomingMessage> readEmail(PageRequest pageRequest) {
         int totalCount = this.receiverClient.getTotalCount(folderName);
-        System.out.println(totalCount);
         if (totalCount <= 0 || totalCount <= pageRequest.getStart()) {
             return PageResponse.of(new ArrayList<>(), totalCount);
         }
         List<IncomingMessage> messages = this.receiverClient.readMessages(folderName, pageRequest);
-        pageRequest.incrementStart();
         return PageResponse.of(messages, totalCount);
     }
 

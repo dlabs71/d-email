@@ -3,7 +3,7 @@ package ru.dlabs.library.email.support;
 import java.util.Properties;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import ru.dlabs.library.email.client.receiver.ReceiveTestUtils;
+import ru.dlabs.library.email.tests.client.receiver.ReceiveTestUtils;
 
 /**
  * <p>
