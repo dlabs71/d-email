@@ -1,4 +1,4 @@
-package ru.dlabs.library.email.converter;
+package ru.dlabs.library.email.converter.incoming;
 
 import jakarta.mail.Address;
 import jakarta.mail.Message;
@@ -32,7 +32,7 @@ import ru.dlabs.library.email.exception.CheckEmailException;
 import ru.dlabs.library.email.exception.ReadMessageException;
 import ru.dlabs.library.email.type.AttachmentType;
 import ru.dlabs.library.email.util.EmailMessageUtils;
-import ru.dlabs.library.email.util.IOUtils;
+import ru.dlabs.library.email.util.JavaCoreUtils;
 
 /**
  * Utility class for converting different parts of a message {@link Message} for using in
@@ -238,7 +238,7 @@ public class MessagePartConverter {
         } else if (content instanceof InputStream) {
             InputStream is = (InputStream) content;
             try {
-                return IOUtils.toByteArray(is);
+                return JavaCoreUtils.toByteArray(is);
             } catch (IOException e) {
                 throw new ReadMessageException(
                     "An error occurred while reading the input stream of the message: " + e.getLocalizedMessage(),

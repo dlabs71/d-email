@@ -6,13 +6,14 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.exception.AttachmentException;
-import ru.dlabs.library.email.mime.DefaultMimeTypeDetector;
-import ru.dlabs.library.email.mime.MimeTypeDetector;
+import ru.dlabs.library.email.mime.DefaultFileParametersDetector;
+import ru.dlabs.library.email.mime.FileParametersDetector;
 import ru.dlabs.library.email.type.AttachmentType;
 
 /**
@@ -76,7 +77,7 @@ public class AttachmentUtils {
     }
 
     public EmailAttachment create(String pathToFile) throws AttachmentException {
-        return create(pathToFile, DefaultMimeTypeDetector.getInstance());
+        return create(pathToFile, DefaultFileParametersDetector.getInstance());
     }
 
     /**
@@ -91,13 +92,13 @@ public class AttachmentUtils {
      * @throws AttachmentException exception may occur when the file path doesn't satisfy conditions or doesn't parse.
      *                             Also, an exception may occur while reading the file.
      */
-    public EmailAttachment create(String pathToFile, MimeTypeDetector detector) throws AttachmentException {
+    public EmailAttachment create(String pathToFile, FileParametersDetector detector) throws AttachmentException {
         File file = createFile(pathToFile);
         String contentType = createContentTypeForAttachment(file, detector);
         byte[] content;
         try {
             InputStream inputStream = Files.newInputStream(file.toPath());
-            content = IOUtils.toByteArray(inputStream);
+            content = JavaCoreUtils.toByteArray(inputStream);
         } catch (IOException ex) {
             throw new AttachmentException("Read the file was failed. " + ex.getLocalizedMessage());
         }
@@ -123,12 +124,12 @@ public class AttachmentUtils {
      *
      * @return
      */
-    public String createContentTypeForAttachment(File file, MimeTypeDetector detector) {
-        String mimeType = FileSystemUtils.defineFileMimeType(file, detector);
+    public String createContentTypeForAttachment(File file, FileParametersDetector detector) {
+        String mimeType = FileSystemUtils.detectFileMimeType(file, detector);
         AttachmentType attachmentType = AttachmentType.find(mimeType);
 
         if (AttachmentType.TEXT.equals(attachmentType)) {
-            String encoding = FileSystemUtils.defineFileEncoding(file);
+            Charset encoding = FileSystemUtils.detectFileEncoding(file, detector);
             if (encoding != null) {
                 return HttpUtils.contentTypeWithCharset(mimeType, encoding);
             }

@@ -13,8 +13,9 @@ import lombok.ToString;
 import ru.dlabs.library.email.dto.message.common.ContentMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
-import ru.dlabs.library.email.dto.message.common.TransferEncoder;
 import ru.dlabs.library.email.exception.TemplateCreationException;
+import ru.dlabs.library.email.type.ContentMessageType;
+import ru.dlabs.library.email.type.TransferEncoder;
 import ru.dlabs.library.email.util.TemplateUtils;
 
 /**
@@ -39,12 +40,12 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
      */
     private final Map<String, Object> params;
 
-    private final OutgoingContentType contentType;
+    private final ContentMessageType contentType;
 
     public TemplatedOutgoingMessage(
         String subject, String pathToTemplate, Map<String, Object> params, Set<EmailParticipant> recipientEmail
     ) throws TemplateCreationException {
-        this(subject, pathToTemplate, params, null, OutgoingContentType.HTML, recipientEmail, null, null);
+        this(subject, pathToTemplate, params, null, ContentMessageType.HTML, recipientEmail, null, null);
     }
 
     public TemplatedOutgoingMessage(
@@ -54,7 +55,7 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
         Set<EmailParticipant> recipientEmail,
         List<EmailAttachment> attachments
     ) throws TemplateCreationException {
-        this(subject, pathToTemplate, params, null, OutgoingContentType.HTML, recipientEmail, attachments, null);
+        this(subject, pathToTemplate, params, null, ContentMessageType.HTML, recipientEmail, attachments, null);
     }
 
     public TemplatedOutgoingMessage(
@@ -62,7 +63,7 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
         String pathToTemplate,
         Map<String, Object> params,
         Charset charsetContent,
-        OutgoingContentType contentType,
+        ContentMessageType contentType,
         Set<EmailParticipant> recipientEmail
     ) throws TemplateCreationException {
         this(subject, pathToTemplate, params, charsetContent, contentType, recipientEmail, null, null);
@@ -73,7 +74,7 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
         String pathToTemplate,
         Map<String, Object> params,
         Charset charsetContent,
-        OutgoingContentType contentType,
+        ContentMessageType contentType,
         Set<EmailParticipant> recipientEmail,
         List<EmailAttachment> attachments,
         TransferEncoder transferEncoder
@@ -84,7 +85,7 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
         this.contentType = contentType;
         String content = this.constructContent();
         if (content != null) {
-            this.addContent(new ContentMessage(content, contentType.getContentType(), charsetContent));
+            this.addContent(new ContentMessage(content, contentType.getMimeType(), charsetContent));
         }
     }
 
@@ -106,7 +107,7 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
         private String pathToTemplate;
         private Map<String, Object> params = new HashMap<>();
         private String subject;
-        private OutgoingContentType contentType = OutgoingContentType.HTML;
+        private ContentMessageType contentType = ContentMessageType.HTML;
         private Set<EmailParticipant> recipientEmail = new HashSet<>();
         private List<EmailAttachment> attachments = new ArrayList<>();
         private Charset charsetContent = Charset.defaultCharset();
@@ -152,7 +153,7 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
             return this;
         }
 
-        public TemplatedMessageBuilder contentType(OutgoingContentType contentType) {
+        public TemplatedMessageBuilder contentType(ContentMessageType contentType) {
             this.contentType = contentType;
             return this;
         }

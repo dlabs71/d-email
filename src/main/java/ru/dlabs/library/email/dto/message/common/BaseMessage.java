@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.dlabs.library.email.type.TransferEncoder;
 
 /**
  * @author Ivanov Danila

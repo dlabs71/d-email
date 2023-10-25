@@ -19,6 +19,7 @@ import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
 import ru.dlabs.library.email.client.sender.SenderTestUtils;
 import ru.dlabs.library.email.dto.message.incoming.MessageView;
+import ru.dlabs.library.email.dto.pageable.PageRequest;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
 import ru.dlabs.library.email.support.AbstractTestsClass;
@@ -68,14 +69,12 @@ public class IMAPClientPageableTests extends AbstractTestsClass {
 
     @Test
     public void pageableTest() {
-        this.emailReceiver.start(0);
-        this.emailReceiver.pageSize(pageSize);
-        PageResponse<MessageView> response1 = this.emailReceiver.nextCheckEmail();
+        PageResponse<MessageView> response1 = this.emailReceiver.checkEmail(PageRequest.of(0, pageSize));
 
         assertEquals(response1.getTotalCount(), countMessages);
         assertEquals(response1.getData().size(), pageSize);
 
-        PageResponse<MessageView> response2 = this.emailReceiver.nextCheckEmail();
+        PageResponse<MessageView> response2 = this.emailReceiver.checkEmail();
 
         List<String> subjectResponse1 = response1.getData().stream()
             .map(MessageView::getSubject)
@@ -91,16 +90,13 @@ public class IMAPClientPageableTests extends AbstractTestsClass {
 
     @Test
     public void changePageSizeTest() {
-        this.emailReceiver.start(0);
-        this.emailReceiver.pageSize(pageSize);
-        PageResponse<MessageView> response1 = this.emailReceiver.nextCheckEmail();
+        PageResponse<MessageView> response1 = this.emailReceiver.checkEmail(PageRequest.of(0, pageSize));
 
         assertEquals(response1.getTotalCount(), countMessages);
         assertEquals(response1.getData().size(), pageSize);
 
         int newPageSize = 2 * pageSize;
-        this.emailReceiver.pageSize(newPageSize);
-        PageResponse<MessageView> response2 = this.emailReceiver.nextCheckEmail();
+        PageResponse<MessageView> response2 = this.emailReceiver.checkEmail(PageRequest.of(0, newPageSize));
 
         assertEquals(response2.getTotalCount(), countMessages);
         assertEquals(response2.getData().size(), newPageSize);
@@ -108,15 +104,14 @@ public class IMAPClientPageableTests extends AbstractTestsClass {
 
     @Test
     public void changeStartTest() {
-        this.emailReceiver.start(0);
-        this.emailReceiver.pageSize(pageSize);
-        PageResponse<MessageView> response1 = this.emailReceiver.nextCheckEmail();
+        PageRequest pageRequest = PageRequest.of(0, pageSize);
+        PageResponse<MessageView> response1 = this.emailReceiver.checkEmail(pageRequest);
 
         assertEquals(response1.getTotalCount(), countMessages);
         assertEquals(response1.getData().size(), pageSize);
 
-        this.emailReceiver.start(0);
-        PageResponse<MessageView> response2 = this.emailReceiver.nextCheckEmail();
+        pageRequest.incrementStart();
+        PageResponse<MessageView> response2 = this.emailReceiver.checkEmail(pageRequest);
 
         assertEquals(response2.getTotalCount(), countMessages);
         assertEquals(response2.getData().size(), pageSize);

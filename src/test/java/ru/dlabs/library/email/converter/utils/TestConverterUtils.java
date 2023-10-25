@@ -20,7 +20,7 @@ import java.util.List;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
-import ru.dlabs.library.email.dto.message.common.TransferEncoder;
+import ru.dlabs.library.email.type.TransferEncoder;
 import ru.dlabs.library.email.util.AttachmentUtils;
 
 /**

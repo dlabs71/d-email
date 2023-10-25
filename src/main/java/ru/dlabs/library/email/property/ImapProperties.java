@@ -63,10 +63,19 @@ public class ImapProperties extends CommonProperties {
 
     @Getter
     @AllArgsConstructor
-    public static class Credentials {
+    public static class Credentials implements Cloneable {
 
         private String email;
         private String password;
+
+        @Override
+        public Credentials clone() {
+            try {
+                return (Credentials) super.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new AssertionError();
+            }
+        }
     }
 
     @Setter

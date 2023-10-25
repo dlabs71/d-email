@@ -26,13 +26,13 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
 import ru.dlabs.library.email.dto.message.common.ContentMessage;
-import ru.dlabs.library.email.dto.message.common.ContentMessageType;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;
 import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.type.AttachmentType;
-import ru.dlabs.library.email.util.IOUtils;
+import ru.dlabs.library.email.type.ContentMessageType;
+import ru.dlabs.library.email.util.JavaCoreUtils;
 
 /**
  * <p>
@@ -245,7 +245,7 @@ public class MessageAsserts {
                     attachmentType = AttachmentType.APPLICATION;
                     break;
             }
-            byte[] contentOfFile = IOUtils.toByteArray(Files.newInputStream(sourceFile.toPath()));
+            byte[] contentOfFile = JavaCoreUtils.toByteArray(Files.newInputStream(sourceFile.toPath()));
 
             EmailAttachment messageAttachment = attachments.stream()
                 .filter(item -> item.getName().equals(sourceFile.getName()))

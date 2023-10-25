@@ -1,6 +1,7 @@
 package ru.dlabs.library.email.client;
 
 import jakarta.mail.Session;
+import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.exception.SessionException;
 
 /**
@@ -21,4 +22,6 @@ public interface DClient {
     Session connect() throws SessionException;
 
     String getProtocolName();
+
+    EmailParticipant getPrincipal();
 }

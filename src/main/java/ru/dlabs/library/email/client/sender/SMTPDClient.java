@@ -9,15 +9,16 @@ import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
-import ru.dlabs.library.email.client.SendingStatus;
-import ru.dlabs.library.email.converter.JakartaMessageConverter;
+import ru.dlabs.library.email.converter.outgoing.JakartaMessageConverter;
+import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.outgoing.OutgoingMessage;
 import ru.dlabs.library.email.exception.CreateMessageException;
 import ru.dlabs.library.email.exception.SessionException;
+import ru.dlabs.library.email.property.SessionPropertyCollector;
 import ru.dlabs.library.email.property.SmtpProperties;
 import ru.dlabs.library.email.type.Protocol;
+import ru.dlabs.library.email.type.SendingStatus;
 import ru.dlabs.library.email.util.MessageValidator;
-import ru.dlabs.library.email.util.SessionUtils;
 
 /**
  * SMTP email client for sending messages using the SMTP protocol
@@ -28,10 +29,11 @@ import ru.dlabs.library.email.util.SessionUtils;
 @Slf4j
 public class SMTPDClient implements SenderDClient {
 
-    public static final String PROTOCOL_NAME = "smtp";
-
-    private final SmtpProperties smtpProperties;
+    private static final Protocol PROTOCOL = Protocol.SMTP;
     private final Session session;
+    private final Properties properties;
+    private final PasswordAuthentication authentication;
+    private final EmailParticipant principal;
 
     /**
      * Default constructor. It creates the email client object and connects to an SMTP server
@@ -39,28 +41,27 @@ public class SMTPDClient implements SenderDClient {
      * @param smtpProperties the properties for connecting to an SMTP server
      */
     public SMTPDClient(SmtpProperties smtpProperties) {
-        this.smtpProperties = smtpProperties;
+        this.principal = new EmailParticipant(smtpProperties.getEmail(), smtpProperties.getName());
+        this.authentication = new PasswordAuthentication(smtpProperties.getEmail(), smtpProperties.getPassword());
+        try {
+            this.properties = SessionPropertyCollector.createCommonProperties(smtpProperties, PROTOCOL);
+            this.properties.put("mail.smtp.auth", "true");
+        } catch (Exception e) {
+            throw new SessionException(
+                "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
+        }
         this.session = this.connect();
     }
 
     @Override
     public Session connect() throws SessionException {
-        Properties props;
-        try {
-            props = SessionUtils.createCommonProperties(this.smtpProperties, Protocol.SMTP);
-        } catch (Exception e) {
-            throw new SessionException(
-                "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
-        }
-
-        props.put("mail.smtp.auth", "true");
         Authenticator auth = new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(smtpProperties.getEmail(), smtpProperties.getPassword());
+                return authentication;
             }
         };
         try {
-            return Session.getInstance(props, auth);
+            return Session.getInstance(this.properties, auth);
         } catch (Exception e) {
             throw new SessionException(
                 "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
@@ -69,7 +70,12 @@ public class SMTPDClient implements SenderDClient {
 
     @Override
     public String getProtocolName() {
-        return PROTOCOL_NAME;
+        return PROTOCOL.getProtocolName();
+    }
+
+    @Override
+    public EmailParticipant getPrincipal() {
+        return this.principal;
     }
 
 
@@ -80,10 +86,11 @@ public class SMTPDClient implements SenderDClient {
         // It's creating an envelope of the message
         Message jakartaMessage;
         try {
-            jakartaMessage = JakartaMessageConverter.convert(message,
-                                                             session,
-                                                             smtpProperties.getEmail(),
-                                                             smtpProperties.getName()
+            jakartaMessage = JakartaMessageConverter.convert(
+                message,
+                session,
+                this.principal.getEmail(),
+                this.principal.getName()
             );
         } catch (CreateMessageException | MessagingException ex) {
             log.error(ex.getLocalizedMessage(), ex);

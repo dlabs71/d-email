@@ -11,14 +11,16 @@ import lombok.Getter;
  */
 @Getter
 public enum Protocol {
-    SMTP("smtp", null), IMAP("imap", null), POP3("pop3", null);
+    SMTP("smtp", "smtp"),
+    IMAP("imap", "imap"),
+    POP3("pop3", "pop3");
 
     private final String propName;
-    private final String storeProtocolName;
+    private final String protocolName;
 
-    Protocol(String propName, String storeProtocolName) {
+    Protocol(String propName, String protocolName) {
         this.propName = propName;
-        this.storeProtocolName = storeProtocolName;
+        this.protocolName = protocolName;
     }
 
 

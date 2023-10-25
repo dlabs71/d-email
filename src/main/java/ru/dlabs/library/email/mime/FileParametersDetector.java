@@ -1,6 +1,7 @@
 package ru.dlabs.library.email.mime;
 
 import java.io.File;
+import java.nio.charset.Charset;
 
 /**
  * <p>
@@ -11,7 +12,9 @@ import java.io.File;
  * @author Ivanov Danila
  * @since 1.0.0
  */
-public interface MimeTypeDetector {
+public interface FileParametersDetector {
 
-    String detect(File file);
+    String detectMimeType(File file);
+
+    Charset detectEncoding(File file);
 }

@@ -1,11 +1,9 @@
-package ru.dlabs.library.email.util;
+package ru.dlabs.library.email.property;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Properties;
-import lombok.experimental.UtilityClass;
 import org.eclipse.angus.mail.util.MailSSLSocketFactory;
-import ru.dlabs.library.email.property.CommonProperties;
 import ru.dlabs.library.email.type.EncryptionType;
 import ru.dlabs.library.email.type.Protocol;
 
@@ -16,10 +14,9 @@ import ru.dlabs.library.email.type.Protocol;
  * Project name: d-email
  * Creation date: 2023-08-30
  */
-@UtilityClass
-public class SessionUtils {
+public final class SessionPropertyCollector {
 
-    public Properties createCommonProperties(CommonProperties properties, Protocol protocol)
+    public static Properties createCommonProperties(CommonProperties properties, Protocol protocol)
         throws GeneralSecurityException {
         Properties props = new Properties();
 
@@ -44,7 +41,7 @@ public class SessionUtils {
         return props;
     }
 
-    public String createProperty(Protocol protocol, String property) {
+    public static String createProperty(Protocol protocol, String property) {
         return "mail." + protocol.getPropName() + "." + property;
     }
 

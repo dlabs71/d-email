@@ -11,7 +11,7 @@ import ru.dlabs.library.email.dto.message.common.ContentMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.common.Message;
-import ru.dlabs.library.email.dto.message.common.TransferEncoder;
+import ru.dlabs.library.email.type.TransferEncoder;
 
 /**
  * This class described common data about an email message. Without a message body and message attachments.

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import ru.dlabs.library.email.DEmailSender;
-import ru.dlabs.library.email.client.SendingStatus;
+import ru.dlabs.library.email.type.SendingStatus;
 import ru.dlabs.library.email.property.SmtpProperties;
 import ru.dlabs.library.email.support.AbstractTestsClass;
 import ru.dlabs.library.email.support.PropUtils;

@@ -1,4 +1,4 @@
-package ru.dlabs.library.email.converter;
+package ru.dlabs.library.email.converter.incoming;
 
 import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TRANSFER_ENCODING_HDR;
 import static ru.dlabs.library.email.util.HttpUtils.HTML_CONTENT_TYPE;
@@ -14,11 +14,11 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
-import ru.dlabs.library.email.dto.message.common.TransferEncoder;
 import ru.dlabs.library.email.dto.message.incoming.DefaultIncomingMessage;
 import ru.dlabs.library.email.exception.CheckEmailException;
-import ru.dlabs.library.email.util.DateTimeUtils;
+import ru.dlabs.library.email.type.TransferEncoder;
 import ru.dlabs.library.email.util.EmailMessageUtils;
+import ru.dlabs.library.email.util.JavaCoreUtils;
 
 /**
  * The Utility class to convert a jakarta.mail.Message to an instance of the BaseMessage class or its inheritors
@@ -121,10 +121,10 @@ public class BaseMessageConverter {
 
             baseMessage.setSize(message.getSize());
             if (message.getSentDate() != null) {
-                baseMessage.setSentDate(DateTimeUtils.convert(message.getSentDate()));
+                baseMessage.setSentDate(JavaCoreUtils.convert(message.getSentDate()));
             }
             if (message.getReceivedDate() != null) {
-                baseMessage.setReceivedDate(DateTimeUtils.convert(message.getReceivedDate()));
+                baseMessage.setReceivedDate(JavaCoreUtils.convert(message.getReceivedDate()));
             }
         } catch (MessagingException e) {
             throw new CheckEmailException(

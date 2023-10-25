@@ -3,6 +3,7 @@ package ru.dlabs.library.email.dto.message.common;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import ru.dlabs.library.email.type.TransferEncoder;
 
 /**
  * Email message

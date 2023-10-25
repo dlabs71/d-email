@@ -2,6 +2,7 @@ package ru.dlabs.library.email.dto.message.common;
 
 import java.nio.charset.Charset;
 import lombok.Getter;
+import ru.dlabs.library.email.type.ContentMessageType;
 import ru.dlabs.library.email.util.HttpUtils;
 
 /**

@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import lombok.NonNull;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
 import ru.dlabs.library.email.dto.message.common.ContentMessage;
-import ru.dlabs.library.email.dto.message.common.ContentMessageType;
+import ru.dlabs.library.email.type.ContentMessageType;
 
 /**
  * @author Ivanov Danila

@@ -2,7 +2,6 @@ package ru.dlabs.library.email.dto.pageable;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * The page request class. This class contains information about the start and end of data selection.
@@ -15,7 +14,6 @@ import lombok.Setter;
  * @since 1.0.0
  */
 @Getter
-@Setter
 @AllArgsConstructor
 public class PageRequest {
 
@@ -38,8 +36,8 @@ public class PageRequest {
      *
      * @return current instance of the class {@link PageRequest}
      */
-    public PageRequest incrementStart() {
-        this.setStart(this.getEnd() + 1);
+    public synchronized PageRequest incrementStart() {
+        this.start = this.getEnd() + 1;
         return this;
     }
 

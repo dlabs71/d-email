@@ -1,7 +1,7 @@
 package ru.dlabs.library.email.client.sender;
 
 import ru.dlabs.library.email.client.DClient;
-import ru.dlabs.library.email.client.SendingStatus;
+import ru.dlabs.library.email.type.SendingStatus;
 import ru.dlabs.library.email.dto.message.outgoing.OutgoingMessage;
 
 /**

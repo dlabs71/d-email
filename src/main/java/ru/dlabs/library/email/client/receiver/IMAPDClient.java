@@ -16,8 +16,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.angus.mail.imap.IMAPStore;
-import ru.dlabs.library.email.converter.BaseMessageConverter;
-import ru.dlabs.library.email.converter.MessageViewConverter;
+import ru.dlabs.library.email.converter.incoming.BaseMessageConverter;
+import ru.dlabs.library.email.converter.incoming.MessageViewConverter;
+import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;
 import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageRequest;
@@ -25,8 +26,8 @@ import ru.dlabs.library.email.exception.CheckEmailException;
 import ru.dlabs.library.email.exception.FolderOperationException;
 import ru.dlabs.library.email.exception.SessionException;
 import ru.dlabs.library.email.property.ImapProperties;
+import ru.dlabs.library.email.property.SessionPropertyCollector;
 import ru.dlabs.library.email.type.Protocol;
-import ru.dlabs.library.email.util.SessionUtils;
 
 /**
  * This class is an implementation of the interface {@link ReceiverDClient}.
@@ -40,14 +41,14 @@ import ru.dlabs.library.email.util.SessionUtils;
 @Slf4j
 public class IMAPDClient implements ReceiverDClient {
 
-    public static final String PROTOCOL_NAME = "imap";
+    private static final Protocol PROTOCOL = Protocol.IMAP;
     public static final String DEFAULT_INBOX_FOLDER_NAME = "INBOX";
     public static final String DEFAULT_OUTBOX_FOLDER_NAME = "OUTBOX";
-
-    private final ImapProperties imapProperties;
     private final Session session;
     private IMAPStore store;
     private ImapProperties.Credentials currentCredential;
+    private final Properties properties;
+    private final Map<String, ImapProperties.Credentials> credentials = new HashMap<>();
 
     /**
      * Constructor of the class. An IMAP connection will be created by creating the class at once.
@@ -55,15 +56,21 @@ public class IMAPDClient implements ReceiverDClient {
      * @param imapProperties properties for creating an IMAP connection
      */
     public IMAPDClient(ImapProperties imapProperties) {
-        this.imapProperties = imapProperties;
+        imapProperties.getCredentials().forEach((key, value) -> this.credentials.put(
+            key,
+            new ImapProperties.Credentials(
+                value.getEmail(),
+                value.getPassword()
+            )
+        ));
+        this.properties = this.collectProperties(imapProperties);
         this.session = this.connect();
     }
 
-    @Override
-    public Session connect() throws SessionException {
+    private Properties collectProperties(ImapProperties imapProperties) {
         Properties props;
         try {
-            props = SessionUtils.createCommonProperties(imapProperties, Protocol.IMAP);
+            props = SessionPropertyCollector.createCommonProperties(imapProperties, PROTOCOL);
         } catch (GeneralSecurityException e) {
             throw new SessionException(
                 "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
@@ -74,9 +81,13 @@ public class IMAPDClient implements ReceiverDClient {
         props.put("mail.imap.appendbuffersize", imapProperties.getAppendBufferSize());
         props.put("mail.imap.connectionpoolsize", imapProperties.getConnectionPoolSize());
         props.put("mail.imap.connectionpooltimeout", imapProperties.getConnectionPoolTimeout());
+        return props;
+    }
 
+    @Override
+    public Session connect() throws SessionException {
         try {
-            return Session.getDefaultInstance(props);
+            return Session.getDefaultInstance(this.properties);
         } catch (Exception e) {
             throw new SessionException(
                 "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
@@ -85,17 +96,25 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public String getProtocolName() {
-        return PROTOCOL_NAME;
+        return PROTOCOL.getProtocolName();
     }
 
     @Override
-    public void setStore(String credentialId) {
-        if (!imapProperties.getCredentials().containsKey(credentialId)) {
+    public EmailParticipant getPrincipal() {
+        if (this.currentCredential == null) {
+            return null;
+        }
+        return new EmailParticipant(this.currentCredential.getEmail());
+    }
+
+    @Override
+    public synchronized void setStore(String credentialId) {
+        if (!credentials.containsKey(credentialId)) {
             throw new SessionException("The credential with id=" + credentialId + " doesn't exist");
         }
-        this.currentCredential = imapProperties.getCredentials().get(credentialId);
+        this.currentCredential = credentials.get(credentialId);
         try {
-            IMAPStore store = (IMAPStore) session.getStore(PROTOCOL_NAME);
+            IMAPStore store = (IMAPStore) session.getStore(PROTOCOL.getProtocolName());
             store.connect(this.currentCredential.getEmail(), this.currentCredential.getPassword());
             if (this.store != null) {
                 this.store.close();
@@ -117,6 +136,8 @@ public class IMAPDClient implements ReceiverDClient {
                     + folderName
                     + " finished with the error: "
                     + e.getLocalizedMessage(), e);
+        } finally {
+            closeFolder(folder);
         }
     }
 
@@ -226,9 +247,9 @@ public class IMAPDClient implements ReceiverDClient {
             throw new FolderOperationException(
                 "The folder with the name " + folder.getName()
                     + " couldn't be expunge because of the following error: " + e.getLocalizedMessage());
+        } finally {
+            this.closeFolder(folder);
         }
-
-        this.closeFolder(folder);
         return true;
     }
 

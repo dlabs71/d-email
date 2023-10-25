@@ -60,21 +60,20 @@ public class IMAPClientDeleteTests extends AbstractTestsClass {
     @Test
     @Order(1)
     public void deleteMessage() {
-        PageResponse<MessageView> response = this.emailReceiver.nextCheckEmail();
+        PageResponse<MessageView> response = this.emailReceiver.checkEmail();
         int total = response.getTotalCount();
 
-        boolean result = this.emailReceiver.deleteMessage(response.getData().get(0).getId());
+        boolean result = this.emailReceiver.deleteMessageById(response.getData().get(0).getId());
         assertTrue(result);
 
-        this.emailReceiver.start(0);
-        response = this.emailReceiver.nextCheckEmail();
+        response = this.emailReceiver.checkEmail();
         assertEquals(total - response.getTotalCount(), 1);
     }
 
     @Test
     @Order(2)
     public void deleteSeveralMessages() {
-        PageResponse<MessageView> response = this.emailReceiver.nextCheckEmail();
+        PageResponse<MessageView> response = this.emailReceiver.checkEmail();
         int total = response.getTotalCount();
 
         List<Integer> ids = new ArrayList<>();
@@ -85,15 +84,14 @@ public class IMAPClientDeleteTests extends AbstractTestsClass {
         assertEquals(result.size(), 2);
         result.forEach((key, value) -> assertTrue(value));
 
-        this.emailReceiver.start(0);
-        response = this.emailReceiver.nextCheckEmail();
+        response = this.emailReceiver.checkEmail();
         assertEquals(total - response.getTotalCount(), 2);
     }
 
     @Test
     @Order(3)
     public void deleteAllMessages() {
-        PageResponse<MessageView> response = this.emailReceiver.nextCheckEmail();
+        PageResponse<MessageView> response = this.emailReceiver.checkEmail();
         int total = response.getTotalCount();
 
         Map<Integer, Boolean> result = this.emailReceiver.clearCurrentFolder();

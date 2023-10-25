@@ -1,4 +1,4 @@
-package ru.dlabs.library.email.dto.message.common;
+package ru.dlabs.library.email.type;
 
 import static ru.dlabs.library.email.util.HttpUtils.HTML_CONTENT_TYPE;
 import static ru.dlabs.library.email.util.HttpUtils.TEXT_CONTENT_TYPE;
@@ -17,7 +17,8 @@ import lombok.Getter;
  */
 @Getter
 public enum ContentMessageType {
-    TEXT(TEXT_CONTENT_TYPE), HTML(HTML_CONTENT_TYPE);
+    TEXT(TEXT_CONTENT_TYPE),
+    HTML(HTML_CONTENT_TYPE);
 
     private final String mimeType;
 

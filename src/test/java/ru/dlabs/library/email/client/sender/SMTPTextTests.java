@@ -18,16 +18,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
-import ru.dlabs.library.email.client.SendingStatus;
 import ru.dlabs.library.email.client.receiver.ReceiveTestUtils;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
-import ru.dlabs.library.email.dto.message.common.TransferEncoder;
 import ru.dlabs.library.email.dto.message.incoming.DefaultIncomingMessage;
 import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.support.AbstractTestsClass;
 import ru.dlabs.library.email.support.PropUtils;
+import ru.dlabs.library.email.type.SendingStatus;
+import ru.dlabs.library.email.type.TransferEncoder;
 import ru.dlabs.library.email.util.AttachmentUtils;
 
 @Order(31)
@@ -218,10 +218,7 @@ public class SMTPTextTests extends AbstractTestsClass {
     }
 
     private void assertMailbox(String credentialId, boolean twoRecipients, boolean withAttachments) {
-        PageResponse<IncomingMessage> inbox = this.receiver
-            .start(0)
-            .credentialId(credentialId)
-            .nextReadEmail();
+        PageResponse<IncomingMessage> inbox = this.receiver.credentialId(credentialId).readEmail();
         assertEquals(inbox.getData().size(), 1);
 
         IncomingMessage incomingMessage = inbox.getData().get(0);

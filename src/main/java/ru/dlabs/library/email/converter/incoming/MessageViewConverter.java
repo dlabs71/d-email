@@ -1,4 +1,4 @@
-package ru.dlabs.library.email.converter;
+package ru.dlabs.library.email.converter.incoming;
 
 import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TRANSFER_ENCODING_HDR;
 
@@ -11,11 +11,11 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
-import ru.dlabs.library.email.dto.message.common.TransferEncoder;
 import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.exception.CheckEmailException;
-import ru.dlabs.library.email.util.DateTimeUtils;
+import ru.dlabs.library.email.type.TransferEncoder;
 import ru.dlabs.library.email.util.EmailMessageUtils;
+import ru.dlabs.library.email.util.JavaCoreUtils;
 
 /**
  * Utility class is for converting a jakarta.mail.Message to an instance of the MessageView class
@@ -84,10 +84,10 @@ public class MessageViewConverter {
 
             builder.size(message.getSize());
             if (message.getSentDate() != null) {
-                builder.sentDate(DateTimeUtils.convert(message.getSentDate()));
+                builder.sentDate(JavaCoreUtils.convert(message.getSentDate()));
             }
             if (message.getReceivedDate() != null) {
-                builder.receivedDate(DateTimeUtils.convert(message.getReceivedDate()));
+                builder.receivedDate(JavaCoreUtils.convert(message.getReceivedDate()));
             }
         } catch (MessagingException e) {
             throw new CheckEmailException(

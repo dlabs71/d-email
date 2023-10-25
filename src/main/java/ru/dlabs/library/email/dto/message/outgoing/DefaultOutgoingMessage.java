@@ -12,7 +12,8 @@ import ru.dlabs.library.email.dto.message.common.BaseMessage;
 import ru.dlabs.library.email.dto.message.common.ContentMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
-import ru.dlabs.library.email.dto.message.common.TransferEncoder;
+import ru.dlabs.library.email.type.ContentMessageType;
+import ru.dlabs.library.email.type.TransferEncoder;
 
 /**
  * Class describe a simple outgoing email message
@@ -26,7 +27,7 @@ import ru.dlabs.library.email.dto.message.common.TransferEncoder;
 @ToString
 public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessage {
 
-    private final OutgoingContentType contentType;
+    private final ContentMessageType contentType;
 
     public DefaultOutgoingMessage(
         String subject, String content, Set<EmailParticipant> recipientEmail, List<EmailAttachment> attachments
@@ -34,7 +35,7 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
         this(subject,
              content,
              Charset.defaultCharset(),
-             OutgoingContentType.TEXT,
+             ContentMessageType.TEXT,
              recipientEmail,
              attachments,
              TransferEncoder.byDefault()
@@ -45,7 +46,7 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
         String subject,
         String content,
         Charset charsetContent,
-        OutgoingContentType contentType,
+        ContentMessageType contentType,
         Set<EmailParticipant> recipientEmail,
         List<EmailAttachment> attachments,
         TransferEncoder transferEncoder
@@ -58,7 +59,7 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
 
 
         if (content != null) {
-            ContentMessage contentMessage = new ContentMessage(content, contentType.getContentType(), charsetContent);
+            ContentMessage contentMessage = new ContentMessage(content, contentType.getMimeType(), charsetContent);
             this.addContent(contentMessage);
         } else {
             this.setContents(new ArrayList<>());
@@ -76,7 +77,7 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
         private String subject;
         private String content;
         private Charset charsetContent = Charset.defaultCharset();
-        private OutgoingContentType contentType;
+        private ContentMessageType contentType;
         private TransferEncoder transferEncoder = TransferEncoder.byDefault();
         private Set<EmailParticipant> recipientEmail = new HashSet<>();
         private List<EmailAttachment> attachments = new ArrayList<>();
@@ -112,7 +113,7 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
             return this;
         }
 
-        public Builder contentType(OutgoingContentType contentType) {
+        public Builder contentType(ContentMessageType contentType) {
             this.contentType = contentType;
             return this;
         }

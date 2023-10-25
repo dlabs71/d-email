@@ -13,7 +13,6 @@ import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;
 import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageRequest;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
-import ru.dlabs.library.email.exception.SessionException;
 import ru.dlabs.library.email.property.ImapProperties;
 
 /**
@@ -28,7 +27,7 @@ import ru.dlabs.library.email.property.ImapProperties;
  * <p>
  * Checking and reading emails executes as pageable. By the default page has a size = 50 elements. You can change it
  * by using the {@link DEmailReceiver#pageSize(int pageSize)} method.
- * Then you call {@link DEmailReceiver#nextCheckEmail()} or {@link DEmailReceiver#nextReadEmail()}
+ * Then you call {@link DEmailReceiver#checkEmail()} or {@link DEmailReceiver#readEmail()}
  * the page number increase by 1.
  * Accordingly, to read or check email messages from a 0 page, you must use
  * the {@link DEmailReceiver#start(int start)} method before it.
@@ -39,12 +38,10 @@ import ru.dlabs.library.email.property.ImapProperties;
  */
 public final class DEmailReceiver {
 
+    private static final PageRequest DEFAULT_PAGE_REQUEST = PageRequest.of(0, 50);
     private final ReceiverDClient receiverClient;
-    private final ImapProperties properties;
-    private final PageRequest pageRequest;
 
     private String folderName = DEFAULT_INBOX_FOLDER_NAME;
-    private String credentialId;
 
     /**
      * The constructor of the class.
@@ -52,9 +49,7 @@ public final class DEmailReceiver {
      * @param properties properties for connecting to an email server by IMAP protocol
      */
     public DEmailReceiver(ImapProperties properties) {
-        this.properties = properties;
         this.receiverClient = new IMAPDClient(properties);
-        this.pageRequest = PageRequest.of(0, 50);
         if (properties.getCredentials().size() == 1) {
             String firstCredentialId = properties.getCredentials().keySet().iterator().next();
             this.credentialId(firstCredentialId);
@@ -79,32 +74,8 @@ public final class DEmailReceiver {
      *
      * @return instance of the {@link DEmailReceiver} class
      */
-    public DEmailReceiver folder(String folderName) {
+    public synchronized DEmailReceiver folder(String folderName) {
         this.folderName = folderName;
-        return this;
-    }
-
-    /**
-     * Changes page size of selection messages from a folder
-     *
-     * @param pageSize page size
-     *
-     * @return instance of the {@link DEmailReceiver} class
-     */
-    public DEmailReceiver pageSize(int pageSize) {
-        this.pageRequest.setLength(pageSize);
-        return this;
-    }
-
-    /**
-     * Sets start page number for reading messages from a folder
-     *
-     * @param start page number
-     *
-     * @return instance of the {@link DEmailReceiver} class
-     */
-    public DEmailReceiver start(int start) {
-        this.pageRequest.setStart(start);
         return this;
     }
 
@@ -116,7 +87,6 @@ public final class DEmailReceiver {
      * @return instance of the {@link DEmailReceiver} class
      */
     public DEmailReceiver credentialId(String credentialId) {
-        this.credentialId = credentialId;
         this.receiverClient.setStore(credentialId);
         return this;
     }
@@ -127,31 +97,22 @@ public final class DEmailReceiver {
      * @return object of the {@link EmailParticipant} class
      */
     public EmailParticipant receiver() {
-        if (this.credentialId == null) {
-            throw new SessionException("Store is not set");
-        }
-        ImapProperties.Credentials credentials = this.properties.getCredentials()
-            .getOrDefault(this.credentialId, null);
-
-        if (credentials == null) {
-            throw new SessionException("The credential with id=" + credentialId + " doesn't exist");
-        }
-        return new EmailParticipant(credentials.getEmail());
+        return receiverClient.getPrincipal();
     }
 
     /**
      * Checks email. Returns only common information about messages. The messages won't have a read flag.
      * <p>
      * This method supports page requests. After successful execution,
-     * the global {@link DEmailReceiver#pageRequest} parameter
+     * the global {@link DEmailReceiver#DEFAULT_PAGE_REQUEST} parameter
      * will increase the page number.
      * Use the {@link DEmailReceiver#start(int start)} and {@link DEmailReceiver#pageSize(int pageSize)}
      * methods for managing page parameters.
      *
      * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link MessageView}.
      */
-    public PageResponse<MessageView> nextCheckEmail() {
-        return this.checkEmail(this.pageRequest);
+    public PageResponse<MessageView> checkEmail() {
+        return this.checkEmail(DEFAULT_PAGE_REQUEST);
     }
 
     /**
@@ -166,11 +127,10 @@ public final class DEmailReceiver {
      */
     public PageResponse<MessageView> checkEmail(PageRequest pageRequest) {
         int totalCount = this.receiverClient.getTotalCount(folderName);
-        if (totalCount <= 0 || totalCount <= this.pageRequest.getStart()) {
+        if (totalCount <= 0 || totalCount < pageRequest.getStart()) {
             return PageResponse.of(new ArrayList<>(), totalCount);
         }
         List<MessageView> messageViews = this.receiverClient.checkEmailMessages(folderName, pageRequest);
-        pageRequest.incrementStart();
         return PageResponse.of(messageViews, totalCount);
     }
 
@@ -179,15 +139,15 @@ public final class DEmailReceiver {
      * set up in every message.
      * <p>
      * This method supports page requests. After successful execution,
-     * the global {@link DEmailReceiver#pageRequest} parameter
+     * the global {@link DEmailReceiver#DEFAULT_PAGE_REQUEST} parameter
      * will increase the page number.
      * Use the {@link DEmailReceiver#start(int start)} and {@link DEmailReceiver#pageSize(int pageSize)}
      * methods for managing page parameters.
      *
      * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link IncomingMessage}.
      */
-    public PageResponse<IncomingMessage> nextReadEmail() {
-        return this.readEmail(this.pageRequest);
+    public PageResponse<IncomingMessage> readEmail() {
+        return this.readEmail(DEFAULT_PAGE_REQUEST);
     }
 
     /**
@@ -203,7 +163,8 @@ public final class DEmailReceiver {
      */
     public PageResponse<IncomingMessage> readEmail(PageRequest pageRequest) {
         int totalCount = this.receiverClient.getTotalCount(folderName);
-        if (totalCount <= 0 || totalCount <= this.pageRequest.getStart()) {
+        System.out.println(totalCount);
+        if (totalCount <= 0 || totalCount <= pageRequest.getStart()) {
             return PageResponse.of(new ArrayList<>(), totalCount);
         }
         List<IncomingMessage> messages = this.receiverClient.readMessages(folderName, pageRequest);
@@ -218,7 +179,7 @@ public final class DEmailReceiver {
      *
      * @return object of the class {@link IncomingMessage}
      */
-    public IncomingMessage readEmail(Integer id) {
+    public IncomingMessage readMessageById(Integer id) {
         if (id == null) {
             return null;
         }
@@ -253,7 +214,7 @@ public final class DEmailReceiver {
      *
      * @return true if the message was deleted successfully, or else false
      */
-    public boolean deleteMessage(Integer id) {
+    public boolean deleteMessageById(Integer id) {
         return this.receiverClient.deleteMessage(folderName, id);
     }
 }

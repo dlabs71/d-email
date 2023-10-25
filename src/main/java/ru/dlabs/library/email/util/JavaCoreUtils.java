@@ -3,15 +3,22 @@ package ru.dlabs.library.email.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import lombok.experimental.UtilityClass;
 
 /**
- * Utility class for IO operations
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-10-25</div>
+ * </p>
  *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-09-06
+ * @since 1.0.0
  */
-public class IOUtils {
+@UtilityClass
+public class JavaCoreUtils {
 
     /**
      * It converts Input Stream to byte array
@@ -31,5 +38,9 @@ public class IOUtils {
             os.write(buffer, 0, len);
         }
         return os.toByteArray();
+    }
+
+    public LocalDateTime convert(Date date) {
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 }

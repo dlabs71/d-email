@@ -79,7 +79,7 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     public void readSimpleEmailTest() {
         PageResponse<IncomingMessage> response = DEmailReceiver.of(this.simpleImapProperties)
             .credentialId(CREDENTIAL_ID_1)
-            .nextReadEmail();
+            .readEmail();
         assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
 
@@ -95,7 +95,7 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     public void readSSLEmailTest() {
         PageResponse<IncomingMessage> response = DEmailReceiver.of(this.sslImapProperties)
             .credentialId(CREDENTIAL_ID_1)
-            .nextReadEmail();
+            .readEmail();
         assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
 
@@ -111,7 +111,7 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     public void readTLSEmailTest() {
         PageResponse<IncomingMessage> response = DEmailReceiver.of(this.tlsImapProperties)
             .credentialId(CREDENTIAL_ID_1)
-            .nextReadEmail();
+            .readEmail();
         assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
 
@@ -132,15 +132,12 @@ public class IMAPClientReadTests extends AbstractTestsClass {
         Thread.sleep(sendDelayAfter);
         DEmailReceiver client = DEmailReceiver.of(this.sslImapProperties).credentialId(CREDENTIAL_ID_1);
 
-        client.start(0);
-        PageResponse<MessageView> checkEmailResponse1 = client.nextCheckEmail();
+        PageResponse<MessageView> checkEmailResponse1 = client.checkEmail();
         MessageView messageView1 = checkEmailResponse1.getData().get(0);
 
-        client.start(0);
-        client.readEmail(messageView1.getId());
+        client.readMessageById(messageView1.getId());
 
-        client.start(0);
-        PageResponse<MessageView> checkEmailResponse2 = client.nextCheckEmail();
+        PageResponse<MessageView> checkEmailResponse2 = client.checkEmail();
         MessageView messageView2 = checkEmailResponse2.getData().get(0);
 
         assertEquals(messageView1.getId(), messageView2.getId());

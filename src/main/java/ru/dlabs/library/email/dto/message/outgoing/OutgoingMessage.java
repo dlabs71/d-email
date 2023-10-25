@@ -1,6 +1,7 @@
 package ru.dlabs.library.email.dto.message.outgoing;
 
 import ru.dlabs.library.email.dto.message.common.Message;
+import ru.dlabs.library.email.type.ContentMessageType;
 
 /**
  * Interface an outgoing message
@@ -11,5 +12,5 @@ import ru.dlabs.library.email.dto.message.common.Message;
  */
 public interface OutgoingMessage extends Message {
 
-    OutgoingContentType getContentType();
+    ContentMessageType getContentType();
 }

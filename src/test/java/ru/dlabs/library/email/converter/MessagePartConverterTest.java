@@ -30,14 +30,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import ru.dlabs.library.email.converter.incoming.MessagePartConverter;
 import ru.dlabs.library.email.converter.utils.MessageAsserts;
 import ru.dlabs.library.email.converter.utils.TestConverterUtils;
 import ru.dlabs.library.email.dto.message.common.ContentMessage;
-import ru.dlabs.library.email.dto.message.common.ContentMessageType;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.type.AttachmentType;
-import ru.dlabs.library.email.util.IOUtils;
+import ru.dlabs.library.email.type.ContentMessageType;
+import ru.dlabs.library.email.util.JavaCoreUtils;
 
 /**
  * <p>
@@ -100,7 +101,7 @@ public class MessagePartConverterTest {
                 .getResource(attachmentPath.replace("classpath:", ""))
                 .toURI()
         );
-        byte[] contentOfFile = IOUtils.toByteArray(Files.newInputStream(sourceFile.toPath()));
+        byte[] contentOfFile = JavaCoreUtils.toByteArray(Files.newInputStream(sourceFile.toPath()));
 
         MimeBodyPart emptyAttachment = new MimeBodyPart();
         DataSource dataSource = new ByteArrayDataSource(

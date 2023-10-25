@@ -4,6 +4,7 @@ import jakarta.mail.Message;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.dlabs.library.email.converter.incoming.BaseMessageConverter;
 import ru.dlabs.library.email.converter.utils.MessageAsserts;
 import ru.dlabs.library.email.converter.utils.TestConverterUtils;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;

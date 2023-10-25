@@ -1,4 +1,4 @@
-package ru.dlabs.library.email.dto.message.common;
+package ru.dlabs.library.email.type;
 
 import java.util.Arrays;
 import lombok.Getter;
@@ -15,7 +15,9 @@ import lombok.Getter;
 @Getter
 public enum TransferEncoder {
 
-    SEVEN_BIT("7bit"), EIGHT_BIT("8bit"), BINARY("binary");
+    SEVEN_BIT("7bit"),
+    EIGHT_BIT("8bit"),
+    BINARY("binary");
 
     private final String name;
 

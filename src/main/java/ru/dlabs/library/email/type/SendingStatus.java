@@ -1,4 +1,4 @@
-package ru.dlabs.library.email.client;
+package ru.dlabs.library.email.type;
 
 /**
  * Statuses of results sending email messages

@@ -72,7 +72,7 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
     public void checkSimpleEmailTest() {
         PageResponse<MessageView> response = DEmailReceiver.of(this.simpleImapProperties)
             .credentialId(CREDENTIAL_ID_1)
-            .nextCheckEmail();
+            .checkEmail();
         Assertions.assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         Assertions.assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
 
@@ -84,7 +84,7 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
     public void checkSSLEmailTest() {
         PageResponse<MessageView> response = DEmailReceiver.of(this.sslImapProperties)
             .credentialId(CREDENTIAL_ID_1)
-            .nextCheckEmail();
+            .checkEmail();
         Assertions.assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         Assertions.assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
 
@@ -96,7 +96,7 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
     public void checkTLSEmailTest() {
         PageResponse<MessageView> response = DEmailReceiver.of(this.tlsImapProperties)
             .credentialId(CREDENTIAL_ID_1)
-            .nextCheckEmail();
+            .checkEmail();
         Assertions.assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         Assertions.assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
 
@@ -115,9 +115,10 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
         assertNotNull(incomingMessage.getRecipients());
         assertEquals(incomingMessage.getRecipients().size(), 1);
 
-        assertNull(incomingMessage.getContents());
-        assertEquals(incomingMessage.getContents().size(), 1);
-        assertNull(incomingMessage.getAttachments());
+        assertNotNull(incomingMessage.getContents());
+        assertEquals(incomingMessage.getContents().size(), 0);
+        assertNotNull(incomingMessage.getAttachments());
+        assertEquals(incomingMessage.getAttachments().size(), 0);
 
         EmailParticipant recipient = incomingMessage.getRecipients().stream().findFirst().orElse(null);
         assertNotNull(recipient);

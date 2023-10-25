@@ -7,5 +7,7 @@ package ru.dlabs.library.email.type;
  * @version 1.0
  */
 public enum EncryptionType {
-    TLS, SSL, NONE
+    TLS,
+    SSL,
+    NONE
 }

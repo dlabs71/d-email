@@ -14,8 +14,14 @@ import lombok.Getter;
  */
 @Getter
 public enum AttachmentType {
-    IMAGE("image/.*"), VIDEO("video/.*"), AUDIO("audio/.*"), APPLICATION("application/.*"), FONT("font/.*"), MODEL(
-        "model/.*"), TEXT("text/.*"), UNKNOWN(null);
+    IMAGE("image/.*"),
+    VIDEO("video/.*"),
+    AUDIO("audio/.*"),
+    APPLICATION("application/.*"),
+    FONT("font/.*"),
+    MODEL("model/.*"),
+    TEXT("text/.*"),
+    UNKNOWN(null);
 
     private final String mimeTypePattern;
 

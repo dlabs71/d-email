@@ -3,13 +3,11 @@ package ru.dlabs.library.email.util;
 import static ru.dlabs.library.email.util.HttpUtils.DEFAULT_BINARY_CONTENT_TYPE;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import ru.dlabs.library.email.mime.DefaultMimeTypeDetector;
-import ru.dlabs.library.email.mime.MimeTypeDetector;
+import ru.dlabs.library.email.mime.DefaultFileParametersDetector;
+import ru.dlabs.library.email.mime.FileParametersDetector;
 
 /**
  * <p>
@@ -24,26 +22,36 @@ import ru.dlabs.library.email.mime.MimeTypeDetector;
 @UtilityClass
 public class FileSystemUtils {
 
-    public String defineFileEncoding(File file) {
-        try {
-            FileInputStream is = new FileInputStream(file);
-            InputStreamReader reader = new InputStreamReader(is);
-            return reader.getEncoding();
-        } catch (IOException ex) {
-            log.error(ex.getLocalizedMessage(), ex);
+    public Charset detectFileEncoding(File file) {
+        return detectFileEncoding(file, null);
+    }
+
+    public Charset detectFileEncoding(File file, FileParametersDetector detector) {
+        if (file == null || !file.exists()) {
+            return null;
         }
-        return null;
-    }
-
-    public String defineFileMimeType(File file) {
-        return defineFileMimeType(file, null);
-    }
-
-    public String defineFileMimeType(File file, MimeTypeDetector detector) {
         if (detector == null) {
-            detector = DefaultMimeTypeDetector.getInstance();
+            detector = DefaultFileParametersDetector.getInstance();
         }
-        String mimeType = detector.detect(file);
+        Charset encoding = detector.detectEncoding(file);
+        if (encoding == null) {
+            encoding = Charset.defaultCharset();
+        }
+        return encoding;
+    }
+
+    public String detectFileMimeType(File file) {
+        return detectFileMimeType(file, null);
+    }
+
+    public String detectFileMimeType(File file, FileParametersDetector detector) {
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        if (detector == null) {
+            detector = DefaultFileParametersDetector.getInstance();
+        }
+        String mimeType = detector.detectMimeType(file);
 
         if (mimeType == null) {
             mimeType = DEFAULT_BINARY_CONTENT_TYPE;
