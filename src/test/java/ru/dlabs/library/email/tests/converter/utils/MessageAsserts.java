@@ -53,9 +53,9 @@ public class MessageAsserts {
         @NonNull MimeMessage message,
         String subject
     ) {
-        assertEquals(messageDto.getId(), message.getMessageNumber());
-        assertEquals(messageDto.getSize(), message.getSize());
-        assertEquals(messageDto.isSeen(), message.isSet(Flags.Flag.SEEN));
+        assertEquals(message.getMessageNumber(), messageDto.getId());
+        assertEquals(message.getSize(), messageDto.getSize());
+        assertEquals(message.isSet(Flags.Flag.SEEN), messageDto.isSeen());
 
         if (messageDto.getSentDate() == null) {
             assertNull(message.getSentDate());
@@ -65,7 +65,7 @@ public class MessageAsserts {
                 .toInstant()
                 .toEpochMilli();
             Long sendDateBeforeConvert = message.getSentDate().getTime();
-            assertEquals(sendDateAfterConvert, sendDateBeforeConvert);
+            assertEquals(sendDateBeforeConvert, sendDateAfterConvert);
         }
 
         if (messageDto.getReceivedDate() == null) {
@@ -73,12 +73,12 @@ public class MessageAsserts {
         } else {
             Long sendDateAfterConvert = messageDto.getReceivedDate().toEpochSecond(ZoneOffset.UTC);
             Long sendDateBeforeConvert = message.getReceivedDate().getTime();
-            assertEquals(sendDateAfterConvert, sendDateBeforeConvert);
+            assertEquals(sendDateBeforeConvert, sendDateAfterConvert);
         }
 
         assertEquals(messageDto.getSubject(), subject);
         if (message.getEncoding() != null) {
-            assertEquals(messageDto.getTransferEncoder().getName(), message.getEncoding());
+            assertEquals(message.getEncoding(), messageDto.getTransferEncoder().getName());
         } else {
             assertNull(messageDto.getTransferEncoder());
         }
@@ -86,8 +86,8 @@ public class MessageAsserts {
         if (message.getFrom() != null) {
             assertNotNull(messageDto.getSender());
             InternetAddress from = (InternetAddress) message.getFrom()[0];
-            assertEquals(messageDto.getSender().getEmail(), from.getAddress());
-            assertEquals(messageDto.getSender().getName(), from.getPersonal());
+            assertEquals(from.getAddress(), messageDto.getSender().getEmail());
+            assertEquals(from.getPersonal(), messageDto.getSender().getName());
         } else {
             assertNull(messageDto.getSender());
         }
@@ -100,12 +100,12 @@ public class MessageAsserts {
                     .findFirst()
                     .orElse(null);
                 assertNotNull(participant);
-                assertEquals(participant.getEmail(), internetAddress.getAddress());
-                assertEquals(participant.getName(), internetAddress.getPersonal());
+                assertEquals(internetAddress.getAddress(), participant.getEmail());
+                assertEquals(internetAddress.getPersonal(), participant.getName());
             }
         } else {
             assertNotNull(messageDto.getRecipients());
-            assertEquals(messageDto.getRecipients().size(), 0);
+            assertEquals(0, messageDto.getRecipients().size());
         }
     }
 
@@ -115,32 +115,32 @@ public class MessageAsserts {
 
     public void assertContentMessage(@NonNull BaseMessage baseMessage, @NonNull List<String> contents) {
         assertNotNull(baseMessage.getContents());
-        assertEquals(baseMessage.getContents().size(), contents.size());
+        assertEquals(contents.size(), baseMessage.getContents().size());
 
         for (ContentMessage content : baseMessage.getContents()) {
             assertInstanceOf(ContentMessage.class, content);
-            assertEquals(content.getCharset(), StandardCharsets.UTF_8);
+            assertEquals(StandardCharsets.UTF_8, content.getCharset());
             assertNotNull(content.getData());
             assertTrue(contents.contains(content.getData()));
             assertNotNull(content.getContentType());
             assertNotNull(content.getType());
         }
 
-        assertEquals(baseMessage.getAllContentsAsString(";"), String.join(";", contents));
-        assertEquals(baseMessage.getAllContentsAsString(), String.join("\n", contents));
+        assertEquals(String.join(";", contents), baseMessage.getAllContentsAsString(";"));
+        assertEquals(String.join("\n", contents), baseMessage.getAllContentsAsString());
     }
 
     public void assertEmptyContentMessage(@NonNull BaseMessage baseMessage) {
         assertNotNull(baseMessage.getContents());
         assertEquals(baseMessage.getContents().size(), 0);
 
-        assertEquals(baseMessage.getAllContentsAsString(";"), "");
-        assertEquals(baseMessage.getAllContentsAsString(), "");
+        assertEquals("", baseMessage.getAllContentsAsString(";"));
+        assertEquals("", baseMessage.getAllContentsAsString());
     }
 
     public void assertEmptyContentMessage(@NonNull MessageView messageView) {
         assertNotNull(messageView.getContents());
-        assertEquals(messageView.getContents().size(), 0);
+        assertEquals(0, messageView.getContents().size());
     }
 
     public void assertHtmlContentMessage(@NonNull IncomingMessage message, @NonNull String html) {
@@ -149,30 +149,30 @@ public class MessageAsserts {
 
     public void assertHtmlContentMessage(@NonNull IncomingMessage message, @NonNull List<String> contents) {
         assertNotNull(message.getHtmlContents());
-        assertEquals(message.getHtmlContents().size(), contents.size());
+        assertEquals(contents.size(), message.getHtmlContents().size());
 
         for (ContentMessage content : message.getHtmlContents()) {
             assertInstanceOf(ContentMessage.class, content);
-            assertEquals(content.getCharset(), StandardCharsets.UTF_8);
+            assertEquals(StandardCharsets.UTF_8, content.getCharset());
             assertNotNull(content.getData());
             assertTrue(contents.contains(content.getData()));
             assertEquals(
-                content.getContentType(),
-                HTML_CONTENT_TYPE + "; charset=" + StandardCharsets.UTF_8.name().toUpperCase()
+                HTML_CONTENT_TYPE + "; charset=" + StandardCharsets.UTF_8.name().toUpperCase(),
+                content.getContentType()
             );
-            assertEquals(content.getType(), ContentMessageType.HTML);
+            assertEquals(ContentMessageType.HTML, content.getType());
         }
 
-        assertEquals(message.getHtmlContentsAsString(";"), String.join(";", contents));
-        assertEquals(message.getHtmlContentsAsString(), String.join("\n", contents));
+        assertEquals(String.join(";", contents), message.getHtmlContentsAsString(";"));
+        assertEquals(String.join("\n", contents), message.getHtmlContentsAsString());
     }
 
     public void assertEmptyHtmlContentMessage(@NonNull IncomingMessage message) {
         assertNotNull(message.getHtmlContents());
         assertEquals(message.getHtmlContents().size(), 0);
 
-        assertEquals(message.getHtmlContentsAsString(";"), "");
-        assertEquals(message.getHtmlContentsAsString(), "");
+        assertEquals("", message.getHtmlContentsAsString(";"));
+        assertEquals("", message.getHtmlContentsAsString());
     }
 
     public void assertTextContentMessage(@NonNull IncomingMessage message, @NonNull String text) {
@@ -181,30 +181,30 @@ public class MessageAsserts {
 
     public void assertTextContentMessage(@NonNull IncomingMessage message, @NonNull List<String> contents) {
         assertNotNull(message.getTextContents());
-        assertEquals(message.getTextContents().size(), contents.size());
+        assertEquals(contents.size(), message.getTextContents().size());
 
         for (ContentMessage content : message.getTextContents()) {
             assertInstanceOf(ContentMessage.class, content);
-            assertEquals(content.getCharset(), StandardCharsets.UTF_8);
+            assertEquals(StandardCharsets.UTF_8, content.getCharset());
             assertNotNull(content.getData());
             assertTrue(contents.contains(content.getData()));
             assertEquals(
-                content.getContentType(),
-                TEXT_CONTENT_TYPE + "; charset=" + StandardCharsets.UTF_8.name().toUpperCase()
+                TEXT_CONTENT_TYPE + "; charset=" + StandardCharsets.UTF_8.name().toUpperCase(),
+                content.getContentType()
             );
-            assertEquals(content.getType(), ContentMessageType.TEXT);
+            assertEquals(ContentMessageType.TEXT, content.getType());
         }
 
-        assertEquals(message.getTextContentsAsString(";"), String.join(";", contents));
-        assertEquals(message.getTextContentsAsString(), String.join("\n", contents));
+        assertEquals(String.join(";", contents), message.getTextContentsAsString(";"));
+        assertEquals(String.join("\n", contents), message.getTextContentsAsString());
     }
 
     public void assertEmptyTextContentMessage(@NonNull IncomingMessage message) {
         assertNotNull(message.getTextContents());
-        assertEquals(message.getTextContents().size(), 0);
+        assertEquals(0, message.getTextContents().size());
 
-        assertEquals(message.getTextContentsAsString(";"), "");
-        assertEquals(message.getTextContentsAsString(), "");
+        assertEquals("", message.getTextContentsAsString(";"));
+        assertEquals("", message.getTextContentsAsString());
     }
 
     @SneakyThrows
@@ -254,19 +254,19 @@ public class MessageAsserts {
 
             assertNotNull(messageAttachment);
             assertNotNull(attachmentType);
-            assertEquals(messageAttachment.getSize(), sourceFile.length());
-            assertEquals(messageAttachment.getType(), attachmentType);
-            assertEquals(Arrays.toString(messageAttachment.getData()), Arrays.toString(contentOfFile));
+            assertEquals(sourceFile.length(), messageAttachment.getSize());
+            assertEquals(attachmentType, messageAttachment.getType());
+            assertEquals(Arrays.toString(contentOfFile), Arrays.toString(messageAttachment.getData()));
         }
     }
 
     public void assertEmptyAttachmentsMessage(@NonNull BaseMessage baseMessage) {
         assertNotNull(baseMessage.getAttachments());
-        assertEquals(baseMessage.getAttachments().size(), 0);
+        assertEquals(0, baseMessage.getAttachments().size());
     }
 
     public void assertEmptyAttachmentsMessage(@NonNull MessageView messageView) {
         assertNotNull(messageView.getAttachments());
-        assertEquals(messageView.getAttachments().size(), 0);
+        assertEquals(0, messageView.getAttachments().size());
     }
 }

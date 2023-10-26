@@ -11,11 +11,11 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import ru.dlabs.library.email.DEmailSender;
-import ru.dlabs.library.email.support.AbstractTestsClass;
-import ru.dlabs.library.email.type.SendingStatus;
 import ru.dlabs.library.email.exception.ValidationMessageException;
 import ru.dlabs.library.email.property.SmtpProperties;
+import ru.dlabs.library.email.support.AbstractTestsClass;
 import ru.dlabs.library.email.support.PropUtils;
+import ru.dlabs.library.email.type.SendingStatus;
 
 @Order(31)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -41,14 +41,14 @@ public class SMTPClientConnectionTests extends AbstractTestsClass {
     public void sendSslTextMessageTest() {
         SendingStatus result = DEmailSender.of(this.sslSmtpProperties)
             .sendText(this.recipientEmail, "Test subject", "Test message");
-        assertEquals(result, SendingStatus.SUCCESS);
+        assertEquals(SendingStatus.SUCCESS, result);
     }
 
     @Test
     public void sendTlsTextMessageTest() {
         SendingStatus result = DEmailSender.of(this.tlsSmtpProperties)
             .sendText(this.recipientEmail, "Test subject", "Test message");
-        assertEquals(result, SendingStatus.SUCCESS);
+        assertEquals(SendingStatus.SUCCESS, result);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class SMTPClientConnectionTests extends AbstractTestsClass {
         );
 
         assertInstanceOf(ValidationMessageException.class, exception);
-        assertEquals(exception.getMessage(), "List recipients cannot be null or empty in the email message");
+        assertEquals("List recipients cannot be null or empty in the email message", exception.getMessage());
     }
 
 }

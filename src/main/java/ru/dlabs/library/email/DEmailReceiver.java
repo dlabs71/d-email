@@ -120,7 +120,7 @@ public final class DEmailReceiver {
             return PageResponse.of(new ArrayList<>(), totalCount);
         }
         List<MessageView> messageViews = this.receiverClient.checkEmailMessages(currentFolderName, pageRequest);
-        return PageResponse.of(messageViews, totalCount);
+        return PageResponse.of(messageViews, totalCount, currentFolderName);
     }
 
     /**

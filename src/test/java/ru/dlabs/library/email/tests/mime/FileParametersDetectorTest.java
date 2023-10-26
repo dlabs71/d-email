@@ -31,43 +31,43 @@ public class FileParametersDetectorTest {
         DefaultFileParametersDetector detector = new DefaultFileParametersDetector();
 
         String mimeType = detector.detectMimeType(this.getResource("attachments/file.doc"));
-        assertEquals(mimeType, "application/msword");
+        assertEquals("application/msword", mimeType);
 
         mimeType = detector.detectMimeType(this.getResource("attachments/file.docx"));
-        assertEquals(mimeType, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        assertEquals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", mimeType);
 
         mimeType = detector.detectMimeType(this.getResource("attachments/file.jpg"));
-        assertEquals(mimeType, "image/jpeg");
+        assertEquals("image/jpeg", mimeType);
 
         mimeType = detector.detectMimeType(this.getResource("attachments/file.pdf"));
-        assertEquals(mimeType, "application/pdf");
+        assertEquals("application/pdf", mimeType);
 
         mimeType = detector.detectMimeType(this.getResource("attachments/file.png"));
-        assertEquals(mimeType, "image/png");
+        assertEquals("image/png", mimeType);
 
         mimeType = detector.detectMimeType(this.getResource("attachments/file.rar"));
         assertTrue(Arrays.asList("application/vnd.rar", "application/x-rar-compressed; version=5").contains(mimeType));
 
         mimeType = detector.detectMimeType(this.getResource("attachments/file.rtf"));
-        assertEquals(mimeType, "application/rtf");
+        assertEquals("application/rtf", mimeType);
 
         mimeType = detector.detectMimeType(this.getResource("attachments/file.svg"));
-        assertEquals(mimeType, "image/svg+xml");
+        assertEquals("image/svg+xml", mimeType);
 
         mimeType = detector.detectMimeType(this.getResource("attachments/file.tgz"));
         assertTrue(Arrays.asList("application/gzip", "application/x-compressed-tar").contains(mimeType));
 
         mimeType = detector.detectMimeType(this.getResource("attachments/file.txt"));
-        assertEquals(mimeType, "text/plain");
+        assertEquals("text/plain", mimeType);
 
         mimeType = detector.detectMimeType(this.getResource("attachments/file.xls"));
-        assertEquals(mimeType, "application/vnd.ms-excel");
+        assertEquals("application/vnd.ms-excel", mimeType);
 
         mimeType = detector.detectMimeType(this.getResource("attachments/file.xlsx"));
-        assertEquals(mimeType, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", mimeType);
 
         mimeType = detector.detectMimeType(this.getResource("attachments/file.zip"));
-        assertEquals(mimeType, "application/zip");
+        assertEquals("application/zip", mimeType);
     }
 
     @SneakyThrows

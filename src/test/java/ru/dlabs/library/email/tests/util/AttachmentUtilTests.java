@@ -86,34 +86,34 @@ public class AttachmentUtilTests {
         EmailAttachment result1 = assertDoesNotThrow(
             () -> AttachmentUtils.create("classpath:template.txt")
         );
-        assertEquals(result1.getSize(), sourceFile1.length());
-        assertEquals(result1.getName(), sourceFile1.getName());
-        assertEquals(result1.getType(), AttachmentType.TEXT);
-        assertEquals(result1.getData().length, sourceFile1.length());
+        assertEquals(sourceFile1.length(), result1.getSize());
+        assertEquals(sourceFile1.getName(), result1.getName());
+        assertEquals(AttachmentType.TEXT, result1.getType());
+        assertEquals(sourceFile1.length(), result1.getData().length);
 
         EmailAttachment result2 = assertDoesNotThrow(
             () -> AttachmentUtils.create("classpath:attachments/file.jpg")
         );
-        assertEquals(result2.getSize(), sourceFile2.length());
-        assertEquals(result2.getName(), sourceFile2.getName());
-        assertEquals(result2.getType(), AttachmentType.IMAGE);
-        assertEquals(result2.getData().length, sourceFile2.length());
+        assertEquals(sourceFile2.length(), result2.getSize());
+        assertEquals(sourceFile2.getName(), result2.getName());
+        assertEquals(AttachmentType.IMAGE, result2.getType());
+        assertEquals(sourceFile2.length(), result2.getData().length);
 
         EmailAttachment result3 = assertDoesNotThrow(
             () -> AttachmentUtils.create("classpath:template.txt", detector)
         );
-        assertEquals(result3.getSize(), sourceFile1.length());
-        assertEquals(result3.getName(), sourceFile1.getName());
-        assertEquals(result3.getType(), AttachmentType.TEXT);
-        assertEquals(result3.getData().length, sourceFile1.length());
+        assertEquals(sourceFile1.length(), result3.getSize());
+        assertEquals(sourceFile1.getName(), result3.getName());
+        assertEquals(AttachmentType.TEXT, result3.getType());
+        assertEquals(sourceFile1.length(), result3.getData().length);
 
         EmailAttachment result4 = assertDoesNotThrow(
             () -> AttachmentUtils.create("classpath:attachments/file.jpg", detector)
         );
-        assertEquals(result4.getSize(), sourceFile2.length());
-        assertEquals(result4.getName(), sourceFile2.getName());
-        assertEquals(result4.getType(), AttachmentType.IMAGE);
-        assertEquals(result4.getData().length, sourceFile2.length());
+        assertEquals(sourceFile2.length(), result4.getSize());
+        assertEquals(sourceFile2.getName(), result4.getName());
+        assertEquals(AttachmentType.IMAGE, result4.getType());
+        assertEquals(sourceFile2.length(), result4.getData().length);
     }
 
     /**
@@ -130,85 +130,85 @@ public class AttachmentUtilTests {
             TestUtils.getResource("attachments/file.djvu"),
             detector
         );
-        assertEquals(contentType, "image/vnd.djvu");
+        assertEquals("image/vnd.djvu", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(
             TestUtils.getResource("attachments/file.doc"),
             detector
         );
-        assertEquals(contentType, "application/msword");
+        assertEquals("application/msword", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(
             TestUtils.getResource("attachments/file.docx"),
             detector
         );
-        assertEquals(contentType, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        assertEquals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(
             TestUtils.getResource("attachments/file.jpg"),
             detector
         );
-        assertEquals(contentType, "image/jpeg");
+        assertEquals("image/jpeg", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(
             TestUtils.getResource("attachments/file.pdf"),
             detector
         );
-        assertEquals(contentType, "application/pdf");
+        assertEquals("application/pdf", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(
             TestUtils.getResource("attachments/file.png"),
             detector
         );
-        assertEquals(contentType, "image/png");
+        assertEquals("image/png", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(
             TestUtils.getResource("attachments/file.rar"),
             detector
         );
-        assertEquals(contentType, "application/x-rar-compressed; version=5");
+        assertEquals("application/x-rar-compressed; version=5", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(
             TestUtils.getResource("attachments/file.rtf"),
             detector
         );
-        assertEquals(contentType, "application/rtf");
+        assertEquals("application/rtf", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(
             TestUtils.getResource("attachments/file.svg"),
             detector
         );
-        assertEquals(contentType, "image/svg+xml");
+        assertEquals("image/svg+xml", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(
             TestUtils.getResource("attachments/file.tgz"),
             detector
         );
-        assertEquals(contentType, "application/gzip");
+        assertEquals("application/gzip", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(
             TestUtils.getResource("attachments/file.txt"),
             detector
         );
-        assertEquals(contentType, "text/plain; charset=utf-8");
+        assertEquals("text/plain; charset=utf-8", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(
             TestUtils.getResource("attachments/file.xls"),
             detector
         );
-        assertEquals(contentType, "application/vnd.ms-excel");
+        assertEquals("application/vnd.ms-excel", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(
             TestUtils.getResource("attachments/file.xlsx"),
             detector
         );
-        assertEquals(contentType, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(
             TestUtils.getResource("attachments/file.zip"),
             detector
         );
-        assertEquals(contentType, "application/zip");
+        assertEquals("application/zip", contentType);
     }
 
     /**
@@ -219,46 +219,47 @@ public class AttachmentUtilTests {
      */
     @Test
     public void createContentTypeStringDefaultTest() {
-        String contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.djvu"));
+        String contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource(
+            "attachments/file.djvu"));
         assertTrue(Arrays.asList("image/vnd.djvu", "image/vnd.djvu+multipage").contains(contentType));
 
         contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.doc"));
-        assertEquals(contentType, "application/msword");
+        assertEquals("application/msword", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.docx"));
-        assertEquals(contentType, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        assertEquals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.jpg"));
-        assertEquals(contentType, "image/jpeg");
+        assertEquals("image/jpeg", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.pdf"));
-        assertEquals(contentType, "application/pdf");
+        assertEquals("application/pdf", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.png"));
-        assertEquals(contentType, "image/png");
+        assertEquals("image/png", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.rar"));
-        assertEquals(contentType, "application/vnd.rar");
+        assertEquals("application/vnd.rar", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.rtf"));
-        assertEquals(contentType, "application/rtf");
+        assertEquals("application/rtf", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.svg"));
-        assertEquals(contentType, "image/svg+xml");
+        assertEquals("image/svg+xml", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.tgz"));
         assertTrue(Arrays.asList("application/gzip", "application/x-compressed-tar").contains(contentType));
 
         contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.txt"));
-        assertEquals(contentType, "text/plain; charset=utf-8");
+        assertEquals("text/plain; charset=utf-8", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.xls"));
-        assertEquals(contentType, "application/vnd.ms-excel");
+        assertEquals("application/vnd.ms-excel", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.xlsx"));
-        assertEquals(contentType, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", contentType);
 
         contentType = AttachmentUtils.createContentTypeForAttachment(TestUtils.getResource("attachments/file.zip"));
-        assertEquals(contentType, "application/zip");
+        assertEquals("application/zip", contentType);
     }
 }

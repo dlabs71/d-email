@@ -77,8 +77,8 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     public void readSimpleEmailTest() {
         PageResponse<IncomingMessage> response = DEmailReceiver.of(this.simpleImapProperties)
             .readEmail();
-        assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
-        assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
+        assertEquals(COUNT_OF_MESSAGES, response.getTotalCount());
+        assertEquals(COUNT_OF_MESSAGES, response.getData().size());
 
         response.getData().forEach(item -> {
             assertInstanceOf(DefaultIncomingMessage.class, item);
@@ -92,8 +92,8 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     public void readSSLEmailTest() {
         PageResponse<IncomingMessage> response = DEmailReceiver.of(this.sslImapProperties)
             .readEmail();
-        assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
-        assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
+        assertEquals(COUNT_OF_MESSAGES, response.getTotalCount());
+        assertEquals(COUNT_OF_MESSAGES, response.getData().size());
 
         response.getData().forEach(item -> {
             assertInstanceOf(DefaultIncomingMessage.class, item);
@@ -107,8 +107,8 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     public void readTLSEmailTest() {
         PageResponse<IncomingMessage> response = DEmailReceiver.of(this.tlsImapProperties)
             .readEmail();
-        assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
-        assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
+        assertEquals(COUNT_OF_MESSAGES, response.getTotalCount());
+        assertEquals(COUNT_OF_MESSAGES, response.getData().size());
 
         response.getData().forEach(item -> {
             assertInstanceOf(DefaultIncomingMessage.class, item);
@@ -154,11 +154,11 @@ public class IMAPClientReadTests extends AbstractTestsClass {
 
         EmailParticipant recipient = incomingMessage.getRecipients().stream().findFirst().orElse(null);
         assertNotNull(recipient);
-        assertEquals(recipient.getEmail(), this.recipientEmail);
-        assertEquals(incomingMessage.getSender().getEmail(), this.senderEmail);
+        assertEquals(this.recipientEmail, recipient.getEmail());
+        assertEquals(this.senderEmail, incomingMessage.getSender().getEmail());
         assertNotNull(incomingMessage.getContents());
-        assertEquals(incomingMessage.getContents().size(), 1);
-        assertEquals(incomingMessage.getContents().get(0).getData(), "Содержание тестового сообщения");
-        assertEquals(incomingMessage.getAllContentsAsString(), "Содержание тестового сообщения");
+        assertEquals(1, incomingMessage.getContents().size());
+        assertEquals("Содержание тестового сообщения", incomingMessage.getContents().get(0).getData());
+        assertEquals("Содержание тестового сообщения", incomingMessage.getAllContentsAsString());
     }
 }

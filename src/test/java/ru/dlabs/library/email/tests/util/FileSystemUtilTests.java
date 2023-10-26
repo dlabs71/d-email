@@ -43,13 +43,13 @@ public class FileSystemUtilTests {
 
         assertNull(FileSystemUtils.detectFileEncoding(null));
         assertNull(FileSystemUtils.detectFileEncoding(new File("not existed file")));
-        assertEquals(FileSystemUtils.detectFileEncoding(file_utf8, tikaDetector), StandardCharsets.UTF_8);
-        assertEquals(FileSystemUtils.detectFileEncoding(file_iso88591, tikaDetector), StandardCharsets.ISO_8859_1);
-        assertEquals(FileSystemUtils.detectFileEncoding(file_koi8r, tikaDetector), Charset.forName("KOI8-R"));
-        assertEquals(FileSystemUtils.detectFileEncoding(file_utf16be, tikaDetector), StandardCharsets.UTF_16BE);
+        assertEquals(StandardCharsets.UTF_8, FileSystemUtils.detectFileEncoding(file_utf8, tikaDetector));
+        assertEquals(StandardCharsets.ISO_8859_1, FileSystemUtils.detectFileEncoding(file_iso88591, tikaDetector));
+        assertEquals(Charset.forName("KOI8-R"), FileSystemUtils.detectFileEncoding(file_koi8r, tikaDetector));
+        assertEquals(StandardCharsets.UTF_16BE, FileSystemUtils.detectFileEncoding(file_utf16be, tikaDetector));
 
 
-        assertEquals(FileSystemUtils.detectFileEncoding(file_utf8), Charset.defaultCharset());
+        assertEquals(Charset.defaultCharset(), FileSystemUtils.detectFileEncoding(file_utf8));
     }
 
     /**
@@ -64,43 +64,43 @@ public class FileSystemUtilTests {
         assertTrue(Arrays.asList("image/vnd.djvu", "image/vnd.djvu+multipage").contains(contentType));
 
         contentType = FileSystemUtils.detectFileMimeType(getResource("attachments/file.doc"));
-        assertEquals(contentType, "application/msword");
+        assertEquals("application/msword", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(getResource("attachments/file.docx"));
-        assertEquals(contentType, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        assertEquals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(getResource("attachments/file.jpg"));
-        assertEquals(contentType, "image/jpeg");
+        assertEquals("image/jpeg", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(getResource("attachments/file.pdf"));
-        assertEquals(contentType, "application/pdf");
+        assertEquals("application/pdf", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(getResource("attachments/file.png"));
-        assertEquals(contentType, "image/png");
+        assertEquals("image/png", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(getResource("attachments/file.rar"));
-        assertEquals(contentType, "application/vnd.rar");
+        assertEquals("application/vnd.rar", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(getResource("attachments/file.rtf"));
-        assertEquals(contentType, "application/rtf");
+        assertEquals("application/rtf", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(getResource("attachments/file.svg"));
-        assertEquals(contentType, "image/svg+xml");
+        assertEquals("image/svg+xml", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(getResource("attachments/file.tgz"));
         assertTrue(Arrays.asList("application/gzip", "application/x-compressed-tar").contains(contentType));
 
         contentType = FileSystemUtils.detectFileMimeType(getResource("attachments/file.txt"));
-        assertEquals(contentType, "text/plain");
+        assertEquals("text/plain", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(getResource("attachments/file.xls"));
-        assertEquals(contentType, "application/vnd.ms-excel");
+        assertEquals("application/vnd.ms-excel", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(getResource("attachments/file.xlsx"));
-        assertEquals(contentType, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(getResource("attachments/file.zip"));
-        assertEquals(contentType, "application/zip");
+        assertEquals("application/zip", contentType);
     }
 
     /**
@@ -115,84 +115,84 @@ public class FileSystemUtilTests {
             getResource("attachments/file.djvu"),
             tikaDetector
         );
-        assertEquals(contentType, "image/vnd.djvu");
+        assertEquals("image/vnd.djvu", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(
             getResource("attachments/file.doc"),
             tikaDetector
         );
-        assertEquals(contentType, "application/msword");
+        assertEquals("application/msword", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(
             getResource("attachments/file.docx"),
             tikaDetector
         );
-        assertEquals(contentType, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        assertEquals("application/vnd.openxmlformats-officedocument.wordprocessingml.document", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(
             getResource("attachments/file.jpg"),
             tikaDetector
         );
-        assertEquals(contentType, "image/jpeg");
+        assertEquals("image/jpeg", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(
             getResource("attachments/file.pdf"),
             tikaDetector
         );
-        assertEquals(contentType, "application/pdf");
+        assertEquals("application/pdf", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(
             getResource("attachments/file.png"),
             tikaDetector
         );
-        assertEquals(contentType, "image/png");
+        assertEquals("image/png", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(
             getResource("attachments/file.rar"),
             tikaDetector
         );
-        assertEquals(contentType, "application/x-rar-compressed; version=5");
+        assertEquals("application/x-rar-compressed; version=5", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(
             getResource("attachments/file.rtf"),
             tikaDetector
         );
-        assertEquals(contentType, "application/rtf");
+        assertEquals("application/rtf", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(
             getResource("attachments/file.svg"),
             tikaDetector
         );
-        assertEquals(contentType, "image/svg+xml");
+        assertEquals("image/svg+xml", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(
             getResource("attachments/file.tgz"),
             tikaDetector
         );
-        assertEquals(contentType, "application/gzip");
+        assertEquals("application/gzip", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(
             getResource("attachments/file.txt"),
             tikaDetector
         );
-        assertEquals(contentType, "text/plain");
+        assertEquals("text/plain", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(
             getResource("attachments/file.xls"),
             tikaDetector
         );
-        assertEquals(contentType, "application/vnd.ms-excel");
+        assertEquals("application/vnd.ms-excel", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(
             getResource("attachments/file.xlsx"),
             tikaDetector
         );
-        assertEquals(contentType, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", contentType);
 
         contentType = FileSystemUtils.detectFileMimeType(
             getResource("attachments/file.zip"),
             tikaDetector
         );
-        assertEquals(contentType, "application/zip");
+        assertEquals("application/zip", contentType);
     }
 }

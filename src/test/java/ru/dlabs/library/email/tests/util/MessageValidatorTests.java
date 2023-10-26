@@ -25,21 +25,21 @@ public class MessageValidatorTests {
             () -> MessageValidator.validate(new DefaultOutgoingMessage("Test subject", null, participants, null))
         );
         assertInstanceOf(ValidationMessageException.class, exception);
-        assertEquals(exception.getMessage(), "Content cannot be null in the email message");
+        assertEquals("Content cannot be null in the email message", exception.getMessage());
 
         exception = assertThrows(
             RuntimeException.class,
             () -> MessageValidator.validate(new DefaultOutgoingMessage(null, null, participants, null))
         );
         assertInstanceOf(ValidationMessageException.class, exception);
-        assertEquals(exception.getMessage(), "Subject cannot be null in the email message");
+        assertEquals("Subject cannot be null in the email message", exception.getMessage());
 
         exception = assertThrows(
             RuntimeException.class,
             () -> MessageValidator.validate(new DefaultOutgoingMessage(null, null, new HashSet<>(), null))
         );
         assertInstanceOf(ValidationMessageException.class, exception);
-        assertEquals(exception.getMessage(), "List recipients cannot be null or empty in the email message");
+        assertEquals("List recipients cannot be null or empty in the email message", exception.getMessage());
     }
 
     @Test
@@ -52,20 +52,20 @@ public class MessageValidatorTests {
             () -> MessageValidator.validate(new TemplatedOutgoingMessage("Test subject", null, null, participants))
         );
         assertInstanceOf(ValidationMessageException.class, exception);
-        assertEquals(exception.getMessage(), "Content cannot be null in the email message");
+        assertEquals("Content cannot be null in the email message", exception.getMessage());
 
         exception = assertThrows(
             RuntimeException.class,
             () -> MessageValidator.validate(new TemplatedOutgoingMessage(null, null, null, participants))
         );
         assertInstanceOf(ValidationMessageException.class, exception);
-        assertEquals(exception.getMessage(), "Subject cannot be null in the email message");
+        assertEquals("Subject cannot be null in the email message", exception.getMessage());
 
         exception = assertThrows(
             RuntimeException.class,
             () -> MessageValidator.validate(new TemplatedOutgoingMessage(null, null, null, new HashSet<>()))
         );
         assertInstanceOf(ValidationMessageException.class, exception);
-        assertEquals(exception.getMessage(), "List recipients cannot be null or empty in the email message");
+        assertEquals("List recipients cannot be null or empty in the email message", exception.getMessage());
     }
 }

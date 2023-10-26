@@ -24,9 +24,9 @@ public class PageRequestTest {
      */
     @Test
     public void getEndTest() {
-        assertEquals(PageRequest.of(0, 10).getEnd(), 9);
-        assertEquals(PageRequest.of(10, 10).getEnd(), 19);
-        assertEquals(PageRequest.of(2, 7).getEnd(), 8);
+        assertEquals(9, PageRequest.of(0, 10).getEnd());
+        assertEquals(19, PageRequest.of(10, 10).getEnd());
+        assertEquals(8, PageRequest.of(2, 7).getEnd());
     }
 
     /**
@@ -37,8 +37,8 @@ public class PageRequestTest {
      */
     @Test
     public void incrementStartTest() {
-        assertEquals(PageRequest.of(0, 10).incrementStart().getStart(), 10);
-        assertEquals(PageRequest.of(10, 10).incrementStart().getStart(), 20);
-        assertEquals(PageRequest.of(2, 7).incrementStart().getStart(), 9);
+        assertEquals(10, PageRequest.of(0, 10).incrementStart().getStart());
+        assertEquals(20, PageRequest.of(10, 10).incrementStart().getStart());
+        assertEquals(9, PageRequest.of(2, 7).incrementStart().getStart());
     }
 }

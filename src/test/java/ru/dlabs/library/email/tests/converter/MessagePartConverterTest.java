@@ -31,11 +31,11 @@ import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.converter.incoming.MessagePartConverter;
-import ru.dlabs.library.email.tests.converter.utils.MessageAsserts;
-import ru.dlabs.library.email.tests.converter.utils.TestConverterUtils;
 import ru.dlabs.library.email.dto.message.common.ContentMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
+import ru.dlabs.library.email.tests.converter.utils.MessageAsserts;
+import ru.dlabs.library.email.tests.converter.utils.TestConverterUtils;
 import ru.dlabs.library.email.type.AttachmentType;
 import ru.dlabs.library.email.type.ContentMessageType;
 import ru.dlabs.library.email.util.JavaCoreUtils;
@@ -65,7 +65,7 @@ public class MessagePartConverterTest {
 
         assertNotNull(participants1);
         assertNull(message.getRecipients(Message.RecipientType.TO));
-        assertEquals(participants1.size(), 0);
+        assertEquals(0, participants1.size());
 
         Set<EmailParticipant> participants2 = MessagePartConverter.getRecipients(null);
         assertNull(participants2);
@@ -131,14 +131,14 @@ public class MessagePartConverterTest {
         byte[] result4 = MessagePartConverter.getContentDefaultAsBytes(emailPartAttachment);
         assertNotNull(result4);
         assertNotNull(contentOfFile);
-        assertEquals(result4.length, contentOfFile.length);
-        assertEquals(Arrays.toString(result4), Arrays.toString(contentOfFile));
+        assertEquals(contentOfFile.length, result4.length);
+        assertEquals(Arrays.toString(contentOfFile), Arrays.toString(result4));
 
         byte[] result5 = MessagePartConverter.getContentDefaultAsBytes(emailPartContent);
         assertNotNull(result5);
         assertNotNull(contentOfFile);
-        assertEquals(result5.length, content.getBytes(StandardCharsets.UTF_8).length);
-        assertEquals(new String(result5), content);
+        assertEquals(content.getBytes(StandardCharsets.UTF_8).length, result5.length);
+        assertEquals(content, new String(result5));
     }
 
     @Test
@@ -184,12 +184,12 @@ public class MessagePartConverterTest {
         String result4 = MessagePartConverter.getContentDefault(emailPartAttachment);
         assertNotNull(result4);
         assertNotNull(contentOfFile);
-        assertEquals(result4, contentOfFile);
+        assertEquals(contentOfFile, result4);
 
         String result5 = MessagePartConverter.getContentDefault(emailPartContent);
         assertNotNull(result5);
         assertNotNull(contentOfFile);
-        assertEquals(result5, content);
+        assertEquals(content, result5);
     }
 
     /**
@@ -220,10 +220,10 @@ public class MessagePartConverterTest {
         EmailAttachment attachment2 = MessagePartConverter.getAttachment(emptyAttachment);
         assertNotNull(attachment2);
         assertNotNull(emptyAttachment);
-        assertEquals(attachment2.getSize(), 0);
-        assertEquals(attachment2.getName(), emptyAttachment.getFileName());
-        assertEquals(attachment2.getContentType(), emptyAttachment.getContentType());
-        assertEquals(attachment2.getType(), AttachmentType.APPLICATION);
+        assertEquals(0, attachment2.getSize());
+        assertEquals(emptyAttachment.getFileName(), attachment2.getName());
+        assertEquals(emptyAttachment.getContentType(), attachment2.getContentType());
+        assertEquals(AttachmentType.APPLICATION, attachment2.getType());
         assertNull(attachment2.getData());
 
         EmailAttachment attachment3 = MessagePartConverter.getAttachment(emailPart);
@@ -234,16 +234,16 @@ public class MessagePartConverterTest {
         field.setAccessible(true);
         Long sizeContent = ((Integer) field.get(emailPart.getContent())).longValue();
 
-        assertEquals(attachment3.getSize(), sizeContent);
-        assertEquals(attachment3.getName(), emailPart.getFileName());
-        assertEquals(attachment3.getContentType(), emailPart.getContentType());
-        assertEquals(attachment3.getType(), AttachmentType.APPLICATION);
+        assertEquals(sizeContent, attachment3.getSize());
+        assertEquals(emailPart.getFileName(), attachment3.getName());
+        assertEquals(emailPart.getContentType(), attachment3.getContentType());
+        assertEquals(AttachmentType.APPLICATION, attachment3.getType());
 
         Field fieldBuf = ByteArrayInputStream.class.getDeclaredField("buf");
         fieldBuf.setAccessible(true);
         byte[] contentBuf = (byte[]) fieldBuf.get(emailPart.getContent());
 
-        assertEquals(Arrays.toString(attachment3.getData()), Arrays.toString(contentBuf));
+        assertEquals(Arrays.toString(contentBuf), Arrays.toString(attachment3.getData()));
     }
 
     @Test
@@ -284,10 +284,10 @@ public class MessagePartConverterTest {
         MessagePartConverter.ContentAndAttachments result2 = MessagePartConverter.getContent(message);
         assertNotNull(result2);
         assertFalse(result2.isEmpty());
-        assertEquals(result2.getContents().size(), 5);
-        assertEquals(result2.getAttachments().size(), 5);
-        assertEquals(result2.getContentByType(TEXT_CONTENT_TYPE).size(), 2);
-        assertEquals(result2.getContentByType(HTML_CONTENT_TYPE).size(), 3);
+        assertEquals(5, result2.getContents().size());
+        assertEquals(5, result2.getAttachments().size());
+        assertEquals(2, result2.getContentByType(TEXT_CONTENT_TYPE).size());
+        assertEquals(3, result2.getContentByType(HTML_CONTENT_TYPE).size());
 
         assertContents(
             result2.getContentByType("text/plain"),
@@ -312,23 +312,23 @@ public class MessagePartConverterTest {
         ContentMessageType contentMessageType
     ) {
         assertNotNull(resultContent);
-        assertEquals(resultContent.size(), sourceContents.size());
+        assertEquals(sourceContents.size(), resultContent.size());
         for (String sourceContent : sourceContents) {
             ContentMessage content = resultContent.stream()
                 .filter(item -> item.getData().equals(sourceContent))
                 .findFirst()
                 .orElse(null);
             assertNotNull(content);
-            assertEquals(content.getContentType(), contentType);
-            assertEquals(content.getCharset(), StandardCharsets.UTF_8);
-            assertEquals(content.getType(), contentMessageType);
+            assertEquals(contentType, content.getContentType());
+            assertEquals(StandardCharsets.UTF_8, content.getCharset());
+            assertEquals(contentMessageType, content.getType());
         }
     }
 
     public void assertRecipients(Address[] addresses, Set<EmailParticipant> participants) {
         assertNotNull(participants);
         assertNotNull(addresses);
-        assertEquals(addresses.length, participants.size());
+        assertEquals(participants.size(), addresses.length);
         for (Address address : addresses) {
             InternetAddress internetAddress = (InternetAddress) address;
             EmailParticipant participant = participants.stream()
@@ -336,8 +336,8 @@ public class MessagePartConverterTest {
                 .findFirst()
                 .orElse(null);
             assertNotNull(participant);
-            assertEquals(participant.getEmail(), internetAddress.getAddress());
-            assertEquals(participant.getName(), internetAddress.getPersonal());
+            assertEquals(internetAddress.getAddress(), participant.getEmail());
+            assertEquals(internetAddress.getPersonal(), participant.getName());
         }
     }
 }

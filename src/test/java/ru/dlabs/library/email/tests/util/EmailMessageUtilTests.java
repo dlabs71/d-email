@@ -73,7 +73,7 @@ public class EmailMessageUtilTests {
         EmailParticipant[] participantsArray = participants.toArray(new EmailParticipant[0]);
 
         InternetAddress[] addresses = EmailMessageUtils.createAddresses(participants);
-        assertEquals(addresses.length, 2);
+        assertEquals(2, addresses.length);
 
         // -------------------------------------------------------
 
@@ -106,9 +106,9 @@ public class EmailMessageUtilTests {
         String data2 = MimeUtility.encodeText("йцукенгшqwertyui123", "UTF-8", "B");
 
         String result1 = EmailMessageUtils.decodeData(data1);
-        assertEquals(result1, data1);
+        assertEquals(data1, result1);
 
         String result2 = EmailMessageUtils.decodeData(data2);
-        assertEquals(result2, "йцукенгшqwertyui123");
+        assertEquals("йцукенгшqwertyui123", result2);
     }
 }

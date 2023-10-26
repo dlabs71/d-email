@@ -70,8 +70,8 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
     public void checkSimpleEmailTest() {
         PageResponse<MessageView> response = DEmailReceiver.of(this.simpleImapProperties)
             .checkEmail();
-        Assertions.assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
-        Assertions.assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
+        Assertions.assertEquals(COUNT_OF_MESSAGES, response.getTotalCount());
+        Assertions.assertEquals(COUNT_OF_MESSAGES, response.getData().size());
 
         MessageView incomingMessage = response.getData().get(0);
         checkMessage(incomingMessage);
@@ -81,8 +81,8 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
     public void checkSSLEmailTest() {
         PageResponse<MessageView> response = DEmailReceiver.of(this.sslImapProperties)
             .checkEmail();
-        Assertions.assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
-        Assertions.assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
+        Assertions.assertEquals(COUNT_OF_MESSAGES, response.getTotalCount());
+        Assertions.assertEquals(COUNT_OF_MESSAGES, response.getData().size());
 
         MessageView incomingMessage = response.getData().get(0);
         checkMessage(incomingMessage);
@@ -92,8 +92,8 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
     public void checkTLSEmailTest() {
         PageResponse<MessageView> response = DEmailReceiver.of(this.tlsImapProperties)
             .checkEmail();
-        Assertions.assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
-        Assertions.assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
+        Assertions.assertEquals(COUNT_OF_MESSAGES, response.getTotalCount());
+        Assertions.assertEquals(COUNT_OF_MESSAGES, response.getData().size());
 
         MessageView incomingMessage = response.getData().get(0);
         checkMessage(incomingMessage);
@@ -108,16 +108,16 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
         assertNotNull(incomingMessage.getSentDate());
         assertNotNull(incomingMessage.getSize());
         assertNotNull(incomingMessage.getRecipients());
-        assertEquals(incomingMessage.getRecipients().size(), 1);
+        assertEquals(1, incomingMessage.getRecipients().size());
 
         assertNotNull(incomingMessage.getContents());
-        assertEquals(incomingMessage.getContents().size(), 0);
+        assertEquals(0, incomingMessage.getContents().size());
         assertNotNull(incomingMessage.getAttachments());
-        assertEquals(incomingMessage.getAttachments().size(), 0);
+        assertEquals(0, incomingMessage.getAttachments().size());
 
         EmailParticipant recipient = incomingMessage.getRecipients().stream().findFirst().orElse(null);
         assertNotNull(recipient);
-        assertEquals(recipient.getEmail(), this.recipientEmail);
-        assertEquals(incomingMessage.getSender().getEmail(), this.senderEmail);
+        assertEquals(this.recipientEmail, recipient.getEmail());
+        assertEquals(this.senderEmail, incomingMessage.getSender().getEmail());
     }
 }

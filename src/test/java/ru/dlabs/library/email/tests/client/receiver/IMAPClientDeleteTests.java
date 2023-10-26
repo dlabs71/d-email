@@ -3,7 +3,6 @@ package ru.dlabs.library.email.tests.client.receiver;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +15,11 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
-import ru.dlabs.library.email.tests.client.sender.SenderTestUtils;
 import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
 import ru.dlabs.library.email.support.AbstractTestsClass;
+import ru.dlabs.library.email.tests.client.sender.SenderTestUtils;
 
 /**
  * @author Ivanov Danila
@@ -36,7 +35,7 @@ public class IMAPClientDeleteTests extends AbstractTestsClass {
     private DEmailReceiver emailReceiver;
 
     @BeforeEach
-    public void loadConfig() throws IOException {
+    public void loadConfig() {
         ImapProperties[] properties = ReceiveTestUtils.loadProperties();
         ImapProperties sslImapProperties = properties[0];
         this.emailSender = SenderTestUtils.createSender();
@@ -66,7 +65,7 @@ public class IMAPClientDeleteTests extends AbstractTestsClass {
         assertTrue(result);
 
         response = this.emailReceiver.checkEmail();
-        assertEquals(total - response.getTotalCount(), 1);
+        assertEquals(1, total - response.getTotalCount());
     }
 
     @Test
@@ -80,11 +79,11 @@ public class IMAPClientDeleteTests extends AbstractTestsClass {
         ids.add(response.getData().get(1).getId());
 
         Map<Integer, Boolean> result = this.emailReceiver.deleteMessages(ids);
-        assertEquals(result.size(), 2);
+        assertEquals(2, result.size());
         result.forEach((key, value) -> assertTrue(value));
 
         response = this.emailReceiver.checkEmail();
-        assertEquals(total - response.getTotalCount(), 2);
+        assertEquals(2, total - response.getTotalCount());
     }
 
     @Test
@@ -94,7 +93,7 @@ public class IMAPClientDeleteTests extends AbstractTestsClass {
         int total = response.getTotalCount();
 
         Map<Integer, Boolean> result = this.emailReceiver.clearCurrentFolder();
-        assertEquals(result.size(), total);
+        assertEquals(total, result.size());
         result.forEach((key, value) -> assertTrue(value));
     }
 }

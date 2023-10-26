@@ -63,7 +63,7 @@ public class SMTPTextTests extends AbstractTestsClass {
 
         SendingStatus result = this.sender.sendText(this.recipientEmail1, SUBJECT, BODY);
 
-        assertEquals(result, SendingStatus.SUCCESS);
+        assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, false, false);
@@ -83,7 +83,7 @@ public class SMTPTextTests extends AbstractTestsClass {
             BODY
         );
 
-        assertEquals(result, SendingStatus.SUCCESS);
+        assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, false);
@@ -105,7 +105,7 @@ public class SMTPTextTests extends AbstractTestsClass {
             ATTACHMENT_2
         );
 
-        assertEquals(result, SendingStatus.SUCCESS);
+        assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, true);
@@ -126,7 +126,7 @@ public class SMTPTextTests extends AbstractTestsClass {
             Arrays.asList(ATTACHMENT_1, ATTACHMENT_2)
         );
 
-        assertEquals(result, SendingStatus.SUCCESS);
+        assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, true);
@@ -147,7 +147,7 @@ public class SMTPTextTests extends AbstractTestsClass {
             ATTACHMENT_2
         );
 
-        assertEquals(result, SendingStatus.SUCCESS);
+        assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, false, true);
@@ -166,7 +166,7 @@ public class SMTPTextTests extends AbstractTestsClass {
             Arrays.asList(ATTACHMENT_1, ATTACHMENT_2)
         );
 
-        assertEquals(result, SendingStatus.SUCCESS);
+        assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, false, true);
@@ -190,7 +190,7 @@ public class SMTPTextTests extends AbstractTestsClass {
             Arrays.asList(ATTACHMENT_1, ATTACHMENT_2)
         );
 
-        assertEquals(result, SendingStatus.SUCCESS);
+        assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
         assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, true);
@@ -218,19 +218,19 @@ public class SMTPTextTests extends AbstractTestsClass {
         assertInstanceOf(DefaultIncomingMessage.class, message);
         DefaultIncomingMessage incomingMessage = (DefaultIncomingMessage) message;
 
-        assertEquals(incomingMessage.getSender(), this.sender.sender());
-        assertEquals(incomingMessage.getSender().getName(), this.sender.sender().getName());
+        assertEquals(this.sender.sender(), incomingMessage.getSender());
+        assertEquals(this.sender.sender().getName(), incomingMessage.getSender().getName());
 
-        assertEquals(incomingMessage.getAllContentsAsString(), BODY);
-        assertEquals(incomingMessage.getSubject(), SUBJECT);
-        assertEquals(incomingMessage.getTransferEncoder(), TransferEncoder.byDefault());
+        assertEquals(BODY, incomingMessage.getAllContentsAsString());
+        assertEquals(SUBJECT, incomingMessage.getSubject());
+        assertEquals(TransferEncoder.byDefault(), incomingMessage.getTransferEncoder());
     }
 
     private void assertIncomingMessageRecipients_1(IncomingMessage incomingMessage) {
         assertEquals(incomingMessage.getRecipients().size(), 1);
         EmailParticipant recipient = incomingMessage.getRecipients().stream().findFirst().get();
-        assertEquals(recipient.getEmail(), this.recipientEmail1);
-        assertEquals(recipient.getName(), this.recipientEmail1);
+        assertEquals(this.recipientEmail1, recipient.getEmail());
+        assertEquals(this.recipientEmail1, recipient.getName());
     }
 
     private void assertIncomingMessageRecipients_2(IncomingMessage incomingMessage) {

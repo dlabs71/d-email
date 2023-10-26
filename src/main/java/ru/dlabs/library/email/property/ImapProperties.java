@@ -27,7 +27,7 @@ public class ImapProperties extends CommonProperties {
     private Integer fetchSize = 1048576;
     private Integer statusCacheTimeout = 1000;
     private Integer appendBufferSize = 1000;
-    private Integer connectionPoolSize = 1;
+    private Integer connectionPoolSize = 10;
     private Integer connectionPoolTimeout = 45000;
 
     public ImapProperties(

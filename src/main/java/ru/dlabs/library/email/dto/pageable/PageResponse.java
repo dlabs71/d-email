@@ -20,8 +20,13 @@ public class PageResponse<T> {
 
     private List<T> data;
     private int totalCount;
+    private String folderName;
 
     public static <T> PageResponse<T> of(List<T> data, int totalCount) {
-        return new PageResponse<>(data, totalCount);
+        return new PageResponse<>(data, totalCount, null);
+    }
+
+    public static <T> PageResponse<T> of(List<T> data, int totalCount, String folderName) {
+        return new PageResponse<>(data, totalCount, folderName);
     }
 }

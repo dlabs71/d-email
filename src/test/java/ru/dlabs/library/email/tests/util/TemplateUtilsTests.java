@@ -68,8 +68,8 @@ public class TemplateUtilsTests {
         );
 
         assertEquals(
-            content,
-            "It's a template with the name Template for testing a utility class with the name TemplateUtils;"
+            "It's a template with the name Template for testing a utility class with the name TemplateUtils;",
+            content
         );
     }
 
@@ -87,13 +87,13 @@ public class TemplateUtilsTests {
         String content = TemplateUtils.construct("classpath:template.html", params);
 
         assertEquals(
-            content.replace("   ", "").trim(),
             "<div>\n" +
                 " <h1>Header Template</h1>\n" +
                 " <div>\n" +
                 "  <p>It's the content of an HTML page.</p>\n" +
                 " </div>\n" +
-                "</div>".replace("  ", "").trim()
+                "</div>".replace("  ", "").trim(),
+            content.replace("   ", "").trim()
         );
     }
 
@@ -116,35 +116,35 @@ public class TemplateUtilsTests {
         String path8 = "file:///home///project//data//file.txt";
 
         TemplateUtils.TemplatePath templatePath = TemplateUtils.normalizeTemplatePath(path1);
-        assertEquals(templatePath.getPathToDir(), "/home/project/data");
-        assertEquals(templatePath.getTemplateName(), "file.txt");
+        assertEquals("/home/project/data", templatePath.getPathToDir());
+        assertEquals("file.txt", templatePath.getTemplateName());
 
         templatePath = TemplateUtils.normalizeTemplatePath(path2);
-        assertEquals(templatePath.getPathToDir(), "/home/project/data");
-        assertEquals(templatePath.getTemplateName(), "file.txt");
+        assertEquals("/home/project/data", templatePath.getPathToDir());
+        assertEquals("file.txt", templatePath.getTemplateName());
 
         templatePath = TemplateUtils.normalizeTemplatePath(path3);
-        assertEquals(templatePath.getPathToDir(), "template");
-        assertEquals(templatePath.getTemplateName(), "file.txt");
+        assertEquals("template", templatePath.getPathToDir());
+        assertEquals("file.txt", templatePath.getTemplateName());
 
         templatePath = TemplateUtils.normalizeTemplatePath(path4);
-        assertEquals(templatePath.getPathToDir(), "");
-        assertEquals(templatePath.getTemplateName(), "file.txt");
+        assertEquals("", templatePath.getPathToDir());
+        assertEquals("file.txt", templatePath.getTemplateName());
 
         templatePath = TemplateUtils.normalizeTemplatePath(path5);
-        assertEquals(templatePath.getPathToDir(), "");
-        assertEquals(templatePath.getTemplateName(), "file.txt");
+        assertEquals("", templatePath.getPathToDir());
+        assertEquals("file.txt", templatePath.getTemplateName());
 
         templatePath = TemplateUtils.normalizeTemplatePath(path6);
-        assertEquals(templatePath.getPathToDir(), "directory");
-        assertEquals(templatePath.getTemplateName(), "file.txt");
+        assertEquals("directory", templatePath.getPathToDir());
+        assertEquals("file.txt", templatePath.getTemplateName());
 
         templatePath = TemplateUtils.normalizeTemplatePath(path7);
-        assertEquals(templatePath.getPathToDir(), "/home/project/data data");
-        assertEquals(templatePath.getTemplateName(), "file file.txt");
+        assertEquals("/home/project/data data", templatePath.getPathToDir());
+        assertEquals("file file.txt", templatePath.getTemplateName());
 
         templatePath = TemplateUtils.normalizeTemplatePath(path8);
-        assertEquals(templatePath.getPathToDir(), "/home/project/data");
-        assertEquals(templatePath.getTemplateName(), "file.txt");
+        assertEquals("/home/project/data", templatePath.getPathToDir());
+        assertEquals("file.txt", templatePath.getTemplateName());
     }
 }

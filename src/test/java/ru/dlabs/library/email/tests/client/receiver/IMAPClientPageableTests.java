@@ -40,7 +40,7 @@ public class IMAPClientPageableTests extends AbstractTestsClass {
     private DEmailReceiver emailReceiver;
 
     @BeforeEach
-    public void loadConfig() throws IOException {
+    public void loadConfig() {
         ImapProperties[] properties = ReceiveTestUtils.loadProperties();
         ImapProperties sslImapProperties = properties[0];
         this.emailSender = SenderTestUtils.createSender();
@@ -70,8 +70,8 @@ public class IMAPClientPageableTests extends AbstractTestsClass {
         PageRequest pageRequest = PageRequest.of(0, pageSize);
         PageResponse<MessageView> response1 = this.emailReceiver.checkEmail(pageRequest);
 
-        assertEquals(response1.getTotalCount(), countMessages);
-        assertEquals(response1.getData().size(), pageSize);
+        assertEquals(countMessages, response1.getTotalCount());
+        assertEquals(pageSize, response1.getData().size());
 
         pageRequest.incrementStart();
         PageResponse<MessageView> response2 = this.emailReceiver.checkEmail(pageRequest);
@@ -92,13 +92,13 @@ public class IMAPClientPageableTests extends AbstractTestsClass {
     public void changePageSizeTest() {
         PageResponse<MessageView> response1 = this.emailReceiver.checkEmail(PageRequest.of(0, pageSize));
 
-        assertEquals(response1.getTotalCount(), countMessages);
-        assertEquals(response1.getData().size(), pageSize);
+        assertEquals(countMessages, response1.getTotalCount());
+        assertEquals(pageSize, response1.getData().size());
 
         int newPageSize = 2 * pageSize;
         PageResponse<MessageView> response2 = this.emailReceiver.checkEmail(PageRequest.of(0, newPageSize));
 
-        assertEquals(response2.getTotalCount(), countMessages);
-        assertEquals(response2.getData().size(), newPageSize);
+        assertEquals(countMessages, response2.getTotalCount());
+        assertEquals(newPageSize, response2.getData().size());
     }
 }

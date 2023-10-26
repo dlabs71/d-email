@@ -38,6 +38,6 @@ public class SMTPAttachmentTests extends AbstractTestsClass {
                 AttachmentUtils.create("classpath:attachments/file.txt"),
                 AttachmentUtils.create("classpath:attachments/file.jpg")
             );
-        assertEquals(result, SendingStatus.SUCCESS);
+        assertEquals(SendingStatus.SUCCESS, result);
     }
 }
