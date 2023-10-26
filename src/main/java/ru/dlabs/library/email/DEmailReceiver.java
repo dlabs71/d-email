@@ -41,6 +41,8 @@ public final class DEmailReceiver {
     private static final PageRequest DEFAULT_PAGE_REQUEST = PageRequest.of(0, 50);
     private final ReceiverDClient receiverClient;
 
+    private final Object monitor = new Object();
+
     private String folderName = DEFAULT_INBOX_FOLDER_NAME;
 
     /**
@@ -87,7 +89,7 @@ public final class DEmailReceiver {
      * @return instance of the {@link DEmailReceiver} class
      */
     public DEmailReceiver credentialId(String credentialId) {
-        this.receiverClient.setStore(credentialId);
+        this.receiverClient.switchCredential(credentialId);
         return this;
     }
 
@@ -98,6 +100,10 @@ public final class DEmailReceiver {
      */
     public EmailParticipant receiver() {
         return receiverClient.getPrincipal();
+    }
+
+    public String getCurrentFolder() {
+        return folderName;
     }
 
     /**
@@ -126,11 +132,12 @@ public final class DEmailReceiver {
      * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link MessageView}.
      */
     public PageResponse<MessageView> checkEmail(PageRequest pageRequest) {
-        int totalCount = this.receiverClient.getTotalCount(folderName);
+        String currentFolderName = folderName;
+        int totalCount = this.receiverClient.getTotalCount(currentFolderName);
         if (totalCount <= 0 || totalCount < pageRequest.getStart()) {
             return PageResponse.of(new ArrayList<>(), totalCount);
         }
-        List<MessageView> messageViews = this.receiverClient.checkEmailMessages(folderName, pageRequest);
+        List<MessageView> messageViews = this.receiverClient.checkEmailMessages(currentFolderName, pageRequest);
         return PageResponse.of(messageViews, totalCount);
     }
 

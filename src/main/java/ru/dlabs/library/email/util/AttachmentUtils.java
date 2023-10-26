@@ -68,11 +68,11 @@ public class AttachmentUtils {
             }
             return file;
         } catch (URISyntaxException | MalformedURLException ex) {
-            log.error(ex.getLocalizedMessage(), ex);
+            log.error(ex.getMessage(), ex);
             throw new AttachmentException(
                 "The resource cannot be loaded. "
                     + "The parameter pathToFile must start with a: 'file://'; 'classpath:' or '/'. "
-                    + "The pathToFile = " + pathToFile + ". The error: " + ex.getLocalizedMessage());
+                    + "The pathToFile = " + pathToFile + ". The error: " + ex.getMessage());
         }
     }
 
@@ -100,7 +100,7 @@ public class AttachmentUtils {
             InputStream inputStream = Files.newInputStream(file.toPath());
             content = JavaCoreUtils.toByteArray(inputStream);
         } catch (IOException ex) {
-            throw new AttachmentException("Read the file was failed. " + ex.getLocalizedMessage());
+            throw new AttachmentException("Read the file was failed. " + ex.getMessage());
         }
         return EmailAttachment.builder()
             .name(file.getName())

@@ -68,7 +68,7 @@ public class JakartaMessageConverter {
             return envelop;
         } catch (MessagingException | UnsupportedEncodingException ex) {
             throw new CreateMessageException(
-                "Message object couldn't be created due to the following error: " + ex.getLocalizedMessage(),
+                "Message object couldn't be created due to the following error: " + ex.getMessage(),
                 ex
             );
         }

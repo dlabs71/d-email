@@ -22,7 +22,6 @@ import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;
 import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageRequest;
-import ru.dlabs.library.email.exception.CheckEmailException;
 import ru.dlabs.library.email.exception.FolderOperationException;
 import ru.dlabs.library.email.exception.SessionException;
 import ru.dlabs.library.email.property.ImapProperties;
@@ -45,10 +44,12 @@ public class IMAPDClient implements ReceiverDClient {
     public static final String DEFAULT_INBOX_FOLDER_NAME = "INBOX";
     public static final String DEFAULT_OUTBOX_FOLDER_NAME = "OUTBOX";
     private final Session session;
-    private IMAPStore store;
-    private ImapProperties.Credentials currentCredential;
     private final Properties properties;
     private final Map<String, ImapProperties.Credentials> credentials = new HashMap<>();
+
+    private final Map<String, IMAPStore> storeMap = new HashMap<>();
+    private ImapProperties.Credentials currentCredential;
+    private String currentCredentialId;
 
     /**
      * Constructor of the class. An IMAP connection will be created by creating the class at once.
@@ -73,7 +74,7 @@ public class IMAPDClient implements ReceiverDClient {
             props = SessionPropertyCollector.createCommonProperties(imapProperties, PROTOCOL);
         } catch (GeneralSecurityException e) {
             throw new SessionException(
-                "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
+                "The creation of a connection failed because of the following error: " + e.getMessage());
         }
         props.put("mail.imap.partialfetch", imapProperties.isPartialFetch());
         props.put("mail.imap.fetchsize", imapProperties.getFetchSize());
@@ -90,7 +91,7 @@ public class IMAPDClient implements ReceiverDClient {
             return Session.getDefaultInstance(this.properties);
         } catch (Exception e) {
             throw new SessionException(
-                "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
+                "The creation of a connection failed because of the following error: " + e.getMessage());
         }
     }
 
@@ -108,42 +109,78 @@ public class IMAPDClient implements ReceiverDClient {
     }
 
     @Override
-    public synchronized void setStore(String credentialId) {
-        if (!credentials.containsKey(credentialId)) {
-            throw new SessionException("The credential with id=" + credentialId + " doesn't exist");
+    public void switchCredential(String credentialId) {
+        ImapProperties.Credentials credentials = this.credentials.getOrDefault(credentialId, null);
+        if (credentials == null) {
+            throw new IllegalArgumentException("Credentials with id = " + credentialId + " hasn't been found");
         }
-        this.currentCredential = credentials.get(credentialId);
+        IMAPStore store = storeMap.getOrDefault(credentialId, null);
+        if (store == null) {
+            store = createStore(credentials);
+            storeMap.put(credentialId, store);
+        }
+        this.currentCredential = credentials;
+        this.currentCredentialId = credentialId;
+    }
+
+    private IMAPStore createStore(ImapProperties.Credentials credentials) {
         try {
             IMAPStore store = (IMAPStore) session.getStore(PROTOCOL.getProtocolName());
-            store.connect(this.currentCredential.getEmail(), this.currentCredential.getPassword());
-            if (this.store != null) {
-                this.store.close();
-            }
-            this.store = store;
+            store.connect(credentials.getEmail(), credentials.getPassword());
+            return store;
         } catch (MessagingException e) {
-            throw new SessionException("Creating session finished with the error: " + e.getLocalizedMessage(), e);
+            throw new SessionException("Creating session finished with the error: " + e.getMessage(), e);
         }
     }
 
+//    @Override
+//    public synchronized void setStore(String credentialId) {
+//        if (!credentials.containsKey(credentialId)) {
+//            throw new SessionException("The credential with id=" + credentialId + " doesn't exist");
+//        }
+//        this.currentCredential = credentials.get(credentialId);
+//        try {
+//            IMAPStore store = (IMAPStore) session.getStore(PROTOCOL.getProtocolName());
+//            store.connect(this.currentCredential.getEmail(), this.currentCredential.getPassword());
+//
+//            IMAPStore oldStore = this.store;
+//            this.store = store;
+//
+//            if (oldStore != null) {
+//                oldStore.close();
+//            }
+//        } catch (MessagingException e) {
+//            throw new SessionException("Creating session finished with the error: " + e.getMessage(), e);
+//        }
+//    }
+
     @Override
     public Integer getTotalCount(String folderName) {
-        Folder folder = this.openFolderForRead(folderName);
+        String credentialId = this.currentCredentialId;
+        Folder folder = this.openFolderForRead(credentialId, folderName);
         try {
-            return folder.getMessageCount();
-        } catch (MessagingException e) {
-            throw new FolderOperationException(
-                "Getting a count of messages in the folder with the name "
-                    + folderName
-                    + " finished with the error: "
-                    + e.getLocalizedMessage(), e);
+            return this.getTotalCount(folder);
         } finally {
             closeFolder(folder);
         }
     }
 
+    private Integer getTotalCount(Folder folder) throws FolderOperationException {
+        try {
+            return folder.getMessageCount();
+        } catch (MessagingException e) {
+            throw new FolderOperationException(
+                "Getting a count of messages in the folder with the name "
+                    + folder.getName()
+                    + " finished with the error: "
+                    + e.getMessage(), e);
+        }
+    }
+
     @Override
     public List<MessageView> checkEmailMessages(String folderName, PageRequest pageRequest) {
-        Folder folder = this.openFolderForRead(folderName);
+        String credentialId = this.currentCredentialId;
+        Folder folder = this.openFolderForRead(credentialId, folderName);
         Stream<Message> messages = this.getMessages(folder, pageRequest);
 
         List<MessageView> result = messages.map(MessageViewConverter::convert).collect(Collectors.toList());
@@ -153,7 +190,8 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public List<IncomingMessage> readMessages(String folderName, PageRequest pageRequest) {
-        Folder folder = this.openFolderForWrite(folderName);
+        String credentialId = this.currentCredentialId;
+        Folder folder = this.openFolderForWrite(credentialId, folderName);
         Stream<Message> messages = this.getMessages(folder, pageRequest);
 
         List<IncomingMessage> result =
@@ -164,7 +202,8 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public IncomingMessage readMessageById(String folderName, int id) {
-        Folder folder = this.openFolderForWrite(folderName);
+        String credentialId = this.currentCredentialId;
+        Folder folder = this.openFolderForWrite(credentialId, folderName);
 
         Message message;
         try {
@@ -172,7 +211,7 @@ public class IMAPDClient implements ReceiverDClient {
         } catch (MessagingException e) {
             throw new FolderOperationException(
                 "Reading the message with id=" + id + " in the folder with name " + folderName
-                    + " finished the error: " + e.getLocalizedMessage(), e);
+                    + " finished the error: " + e.getMessage(), e);
         }
 
         IncomingMessage incomingMessage = BaseMessageConverter.convertToIncomingMessage(message);
@@ -181,22 +220,24 @@ public class IMAPDClient implements ReceiverDClient {
     }
 
     @Override
-    public Folder openFolderForRead(String folderName) {
+    public Folder openFolderForRead(String credentialId, String folderName) {
         if (folderName == null) {
             folderName = DEFAULT_INBOX_FOLDER_NAME;
         }
-        return this.openFolder(folderName, Folder.READ_ONLY);
+        return this.openFolder(credentialId, folderName, Folder.READ_ONLY);
     }
 
     @Override
-    public Folder openFolderForWrite(String folderName) {
+    public Folder openFolderForWrite(String credentialId, String folderName) {
         if (folderName == null) {
             folderName = DEFAULT_INBOX_FOLDER_NAME;
         }
-        return this.openFolder(folderName, Folder.READ_WRITE);
+        return this.openFolder(credentialId, folderName, Folder.READ_WRITE);
     }
 
-    private Folder openFolder(String folderName, int mode) {
+    private Folder openFolder(String credentialId, String folderName, int mode) {
+        log.debug("Try to open folder: " + folderName);
+        IMAPStore store = storeMap.get(credentialId);
         if (store == null) {
             throw new FolderOperationException("The store is null");
         }
@@ -208,7 +249,7 @@ public class IMAPDClient implements ReceiverDClient {
         } catch (MessagingException e) {
             throw new FolderOperationException(
                 "The folder with the name " + folderName + " couldn't be opened because of the following error: "
-                    + e.getLocalizedMessage(), e);
+                    + e.getMessage(), e);
         }
         return folder;
     }
@@ -221,22 +262,22 @@ public class IMAPDClient implements ReceiverDClient {
         try {
             folder.close();
         } catch (MessagingException e) {
-            throw new FolderOperationException(
-                "The folder with the name " + folder.getName()
-                    + " couldn't be closed because of the following error: " + e.getLocalizedMessage(), e);
+            log.warn("The folder with the name " + folder.getName()
+                         + " couldn't be closed because of the following error: " + e.getMessage());
         }
     }
 
     @Override
     public boolean deleteMessage(String folderName, int id) {
-        Folder folder = this.openFolderForWrite(folderName);
+        String credentialId = this.currentCredentialId;
+        Folder folder = this.openFolderForWrite(credentialId, folderName);
 
         try {
             Message message = folder.getMessage(id);
             message.setFlag(Flags.Flag.DELETED, true);
         } catch (MessagingException e) {
             log.warn("The message with id=" + id
-                         + " wasn't marked as deleted because of the following error: " + e.getLocalizedMessage());
+                         + " wasn't marked as deleted because of the following error: " + e.getMessage());
             this.closeFolder(folder);
             return false;
         }
@@ -246,7 +287,7 @@ public class IMAPDClient implements ReceiverDClient {
         } catch (MessagingException e) {
             throw new FolderOperationException(
                 "The folder with the name " + folder.getName()
-                    + " couldn't be expunge because of the following error: " + e.getLocalizedMessage());
+                    + " couldn't be expunge because of the following error: " + e.getMessage());
         } finally {
             this.closeFolder(folder);
         }
@@ -255,7 +296,8 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public Map<Integer, Boolean> deleteMessages(String folderName, Collection<Integer> ids) {
-        Folder folder = this.openFolderForWrite(folderName);
+        String credentialId = this.currentCredentialId;
+        Folder folder = this.openFolderForWrite(credentialId, folderName);
         Map<Integer, Boolean> result = new HashMap<>();
         ids.forEach(id -> {
             try {
@@ -264,7 +306,7 @@ public class IMAPDClient implements ReceiverDClient {
                 result.put(id, true);
             } catch (MessagingException e) {
                 log.warn("The message with id=" + id + " wasn't marked as deleted because of the following error: "
-                             + e.getLocalizedMessage());
+                             + e.getMessage());
                 result.put(id, false);
             }
         });
@@ -275,7 +317,7 @@ public class IMAPDClient implements ReceiverDClient {
             throw new FolderOperationException(
                 "The folder with the name " + folder.getName()
                     + " couldn't be expunge because of the following error: "
-                    + e.getLocalizedMessage());
+                    + e.getMessage());
         }
 
         this.closeFolder(folder);
@@ -284,7 +326,8 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public Map<Integer, Boolean> deleteAllMessages(String folderName) {
-        Folder folder = this.openFolderForWrite(folderName);
+        String credentialId = this.currentCredentialId;
+        Folder folder = this.openFolderForWrite(credentialId, folderName);
         Map<Integer, Boolean> result = new HashMap<>();
         this.getMessages(folder, PageRequest.of(0, Integer.MAX_VALUE)).forEach(message -> {
             try {
@@ -292,7 +335,7 @@ public class IMAPDClient implements ReceiverDClient {
                 result.put(message.getMessageNumber(), true);
             } catch (MessagingException e) {
                 log.warn("The message with id=" + message.getMessageNumber()
-                             + " wasn't marked as deleted because of the following error: " + e.getLocalizedMessage());
+                             + " wasn't marked as deleted because of the following error: " + e.getMessage());
                 result.put(message.getMessageNumber(), false);
             }
         });
@@ -303,7 +346,7 @@ public class IMAPDClient implements ReceiverDClient {
             throw new FolderOperationException(
                 "The folder with the name " + folder.getName()
                     + " couldn't be expunge because of the following error: "
-                    + e.getLocalizedMessage());
+                    + e.getMessage());
         }
 
         this.closeFolder(folder);
@@ -311,7 +354,7 @@ public class IMAPDClient implements ReceiverDClient {
     }
 
     private Stream<Message> getMessages(Folder folder, PageRequest pageRequest) {
-        int totalCount = this.getTotalCount(folder.getName());
+        int totalCount = this.getTotalCount(folder);
         int end = pageRequest.getEnd() + 1;
         if (totalCount < end) {
             end = totalCount;
@@ -319,7 +362,7 @@ public class IMAPDClient implements ReceiverDClient {
         try {
             return Arrays.stream(folder.getMessages(pageRequest.getStart() + 1, end));
         } catch (MessagingException e) {
-            throw new CheckEmailException("The get list message operation has failed: " + e.getLocalizedMessage());
+            throw new FolderOperationException("The get list message operation has failed: " + e.getMessage());
         }
     }
 
@@ -328,7 +371,7 @@ public class IMAPDClient implements ReceiverDClient {
             message.setFlag(Flags.Flag.SEEN, true);
             message.saveChanges();
         } catch (MessagingException e) {
-            log.warn("The message wasn't marked as seen because of the following error: " + e.getLocalizedMessage());
+            log.warn("The message wasn't marked as seen because of the following error: " + e.getMessage());
         }
     }
 }

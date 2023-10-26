@@ -41,7 +41,7 @@ public class JakartaMessagePartConverter {
             return messageBodyPart;
         } catch (MessagingException ex) {
             throw new CreateMessageException(
-                "Body part couldn't be created due to the following error: " + ex.getLocalizedMessage(),
+                "Body part couldn't be created due to the following error: " + ex.getMessage(),
                 ex
             );
         }
@@ -71,7 +71,7 @@ public class JakartaMessagePartConverter {
             return attachmentPart;
         } catch (MessagingException e) {
             throw new CreateMessageException(
-                "Body part couldn't be created due to the following error: " + e.getLocalizedMessage(),
+                "Body part couldn't be created due to the following error: " + e.getMessage(),
                 e
             );
         }

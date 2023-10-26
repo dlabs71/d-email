@@ -48,7 +48,7 @@ public class SMTPDClient implements SenderDClient {
             this.properties.put("mail.smtp.auth", "true");
         } catch (Exception e) {
             throw new SessionException(
-                "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
+                "The creation of a connection failed because of the following error: " + e.getMessage());
         }
         this.session = this.connect();
     }
@@ -64,7 +64,7 @@ public class SMTPDClient implements SenderDClient {
             return Session.getInstance(this.properties, auth);
         } catch (Exception e) {
             throw new SessionException(
-                "The creation of a connection failed because of the following error: " + e.getLocalizedMessage());
+                "The creation of a connection failed because of the following error: " + e.getMessage());
         }
     }
 
@@ -93,7 +93,7 @@ public class SMTPDClient implements SenderDClient {
                 this.principal.getName()
             );
         } catch (CreateMessageException | MessagingException ex) {
-            log.error(ex.getLocalizedMessage(), ex);
+            log.error(ex.getMessage(), ex);
             return SendingStatus.ERROR_IN_MESSAGE;
         }
 
@@ -101,7 +101,7 @@ public class SMTPDClient implements SenderDClient {
         try {
             Transport.send(jakartaMessage);
         } catch (MessagingException ex) {
-            log.error("Message couldn't be sent due to the following error: " + ex.getLocalizedMessage(), ex);
+            log.error("Message couldn't be sent due to the following error: " + ex.getMessage(), ex);
             return SendingStatus.ERROR_IN_TRANSPORT;
         }
         return SendingStatus.SUCCESS;

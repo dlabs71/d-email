@@ -91,7 +91,7 @@ public class BaseMessageConverter {
             }
         } catch (MessagingException e) {
             throw new CheckEmailException(
-                "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage());
+                "The attempt to get recipients of the message has failed: " + e.getMessage());
         }
 
         Address[] froms;
@@ -99,7 +99,7 @@ public class BaseMessageConverter {
             froms = message.getFrom();
         } catch (MessagingException e) {
             throw new CheckEmailException(
-                "The attempt to get senders of the message has failed: " + e.getLocalizedMessage());
+                "The attempt to get senders of the message has failed: " + e.getMessage());
         }
 
         if (froms != null && froms.length > 0) {
@@ -112,7 +112,7 @@ public class BaseMessageConverter {
             baseMessage.setSeen(message.isSet(Flags.Flag.SEEN));
         } catch (MessagingException e) {
             log.warn(
-                "It is impossible to determine whether a message has been flagged as seen. " + e.getLocalizedMessage());
+                "It is impossible to determine whether a message has been flagged as seen. " + e.getMessage());
         }
 
         try {
@@ -128,7 +128,7 @@ public class BaseMessageConverter {
             }
         } catch (MessagingException e) {
             throw new CheckEmailException(
-                "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage());
+                "The attempt to get recipients of the message has failed: " + e.getMessage());
         }
 
         return baseMessage;

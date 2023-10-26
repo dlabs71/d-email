@@ -60,7 +60,7 @@ public class EmailMessageUtils {
             try {
                 return createAddress(recipient.getEmail(), recipient.getName());
             } catch (UnsupportedEncodingException | AddressException e) {
-                log.error("Email address " + recipient + " is incorrect. " + e.getLocalizedMessage());
+                log.error("Email address " + recipient + " is incorrect. " + e.getMessage());
                 return null;
             }
         }).filter(Objects::nonNull).toArray(InternetAddress[]::new);
@@ -82,7 +82,7 @@ public class EmailMessageUtils {
         try {
             decoded = MimeUtility.decodeText(data);
         } catch (UnsupportedEncodingException e) {
-            log.warn("The data (" + data + ") doesn't decode by the following error: " + e.getLocalizedMessage());
+            log.warn("The data (" + data + ") doesn't decode by the following error: " + e.getMessage());
             decoded = data;
         }
         return Normalizer.normalize(decoded, Normalizer.Form.NFC);

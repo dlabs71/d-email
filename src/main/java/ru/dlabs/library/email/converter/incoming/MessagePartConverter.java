@@ -71,9 +71,7 @@ public class MessagePartConverter {
             }).filter(Objects::nonNull).collect(Collectors.toSet());
         } catch (MessagingException e) {
             throw new CheckEmailException(
-                "The attempt to get recipients of the message has failed: " + e.getLocalizedMessage(),
-                e
-            );
+                "The attempt to get recipients of the message has failed: " + e.getMessage(), e);
         }
     }
 
@@ -99,7 +97,7 @@ public class MessagePartConverter {
                 .build();
         } catch (MessagingException e) {
             throw new ReadMessageException(
-                "An error occurred in getting attachments from the message: " + e.getLocalizedMessage(),
+                "An error occurred in getting attachments from the message: " + e.getMessage(),
                 e
             );
         }
@@ -127,11 +125,11 @@ public class MessagePartConverter {
             part.getContent();
         } catch (MessagingException e) {
             throw new ReadMessageException(
-                "An error occurred in getting content from the message: " + e.getLocalizedMessage(),
+                "An error occurred in getting content from the message: " + e.getMessage(),
                 e
             );
         } catch (IOException e) {
-            log.warn(e.getLocalizedMessage());
+            log.warn(e.getMessage());
             // This is mean that content message is full empty
             return;
         }
@@ -173,7 +171,7 @@ public class MessagePartConverter {
             result.addContent(part.getContentType(), getContentDefault(part));
         } catch (MessagingException | IOException e) {
             throw new ReadMessageException(
-                "An error occurred in getting content from the message: " + e.getLocalizedMessage(),
+                "An error occurred in getting content from the message: " + e.getMessage(),
                 e
             );
         }
@@ -187,11 +185,11 @@ public class MessagePartConverter {
         try {
             content = part.getContent();
         } catch (IOException ex) {
-            log.warn(ex.getLocalizedMessage());
+            log.warn(ex.getMessage());
             return null;
         } catch (MessagingException ex) {
             throw new ReadMessageException(
-                "An error occurred in getting content from the message: " + ex.getLocalizedMessage(),
+                "An error occurred in getting content from the message: " + ex.getMessage(),
                 ex
             );
         }
@@ -210,7 +208,7 @@ public class MessagePartConverter {
             return bos.toString(StandardCharsets.UTF_8.name());
         } catch (MessagingException | IOException e) {
             throw new ReadMessageException(
-                "An error occurred in writing content to ByteArrayOutputStream: " + e.getLocalizedMessage(),
+                "An error occurred in writing content to ByteArrayOutputStream: " + e.getMessage(),
                 e
             );
         }
@@ -225,11 +223,11 @@ public class MessagePartConverter {
         try {
             content = bodyPart.getContent();
         } catch (IOException ex) {
-            log.warn(ex.getLocalizedMessage());
+            log.warn(ex.getMessage());
             return null;
         } catch (MessagingException ex) {
             throw new ReadMessageException(
-                "An error occurred in getting content from the message: " + ex.getLocalizedMessage(),
+                "An error occurred in getting content from the message: " + ex.getMessage(),
                 ex
             );
         }
@@ -241,7 +239,7 @@ public class MessagePartConverter {
                 return JavaCoreUtils.toByteArray(is);
             } catch (IOException e) {
                 throw new ReadMessageException(
-                    "An error occurred while reading the input stream of the message: " + e.getLocalizedMessage(),
+                    "An error occurred while reading the input stream of the message: " + e.getMessage(),
                     e
                 );
             }

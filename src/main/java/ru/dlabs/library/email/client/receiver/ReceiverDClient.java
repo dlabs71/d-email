@@ -15,14 +15,6 @@ import ru.dlabs.library.email.dto.pageable.PageRequest;
 public interface ReceiverDClient extends DClient {
 
     /**
-     * It creates a store for the account using the credential ID
-     *
-     * @param credentialId the credential ID of a credentials map from properties
-     *                     (For example {@link ru.dlabs.library.email.property.ImapProperties})
-     */
-    void setStore(String credentialId);
-
-    /**
      * Returns the total count of email messages in the folder.
      *
      * @param folderName the folder name (For example: INBOX, OUTBOX, etc.)
@@ -72,7 +64,7 @@ public interface ReceiverDClient extends DClient {
      *
      * @return an object of the class {@link Folder}
      */
-    Folder openFolderForRead(String folderName);
+    Folder openFolderForRead(String credentialId, String folderName);
 
     /**
      * Opens the folder for read and write.
@@ -81,7 +73,7 @@ public interface ReceiverDClient extends DClient {
      *
      * @return an object of the class {@link Folder}
      */
-    Folder openFolderForWrite(String folderName);
+    Folder openFolderForWrite(String credentialId, String folderName);
 
     /**
      * Closes the opened folder
@@ -118,4 +110,6 @@ public interface ReceiverDClient extends DClient {
      * @return a map with a key is a message ID, and a value is the result of deletion (true or false).
      */
     Map<Integer, Boolean> deleteAllMessages(String folderName);
+
+    void switchCredential(String credentialId);
 }
