@@ -64,8 +64,7 @@ public class IMAPClientConcurrentTest extends AbstractTestsClass {
 
     @SneakyThrows
     private void sendData(String email) {
-        this.emailReceiver.credentialId(CREDENTIAL_ID_1)
-            .clearCurrentFolder();
+        this.emailReceiver.clearCurrentFolder();
         this.emailSender.sendText(email, "Тестовое сообщение 1", "Содержание тестового сообщения 1");
         this.emailSender.sendText(email, "Тестовое сообщение 2", "Содержание тестового сообщения 2");
         this.emailSender.sendText(email, "Тестовое сообщение 3", "Содержание тестового сообщения 3");
@@ -88,9 +87,7 @@ public class IMAPClientConcurrentTest extends AbstractTestsClass {
 
     public void readMessages() {
         String currentFolder = emailReceiver.getCurrentFolder();
-        PageResponse<MessageView> response = emailReceiver
-            .credentialId(CREDENTIAL_ID_1)
-            .checkEmail();
+        PageResponse<MessageView> response = emailReceiver.checkEmail();
         System.out.println(
             "Read from folder: " + currentFolder + ". Size: " + response.getData().size());
         if ("Sent".equals(currentFolder)) {

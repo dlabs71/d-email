@@ -27,7 +27,18 @@ public class ReceiveTestUtils {
         return DEmailReceiver.of(properties);
     }
 
-    public ImapProperties.ImapPropertiesBuilder loadCommonProperties(Properties properties) throws IOException {
+    public DEmailReceiver createReceiver1() {
+        ImapProperties properties = loadSslProperties(CREDENTIAL_ID_1);
+        return DEmailReceiver.of(properties);
+    }
+
+    public DEmailReceiver createReceiver2() {
+        ImapProperties properties = loadSslProperties(CREDENTIAL_ID_2);
+        return DEmailReceiver.of(properties);
+    }
+
+    public ImapProperties.ImapPropertiesBuilder loadCommonProperties(Properties properties, String credentialId)
+        throws IOException {
         HashMap<String, ImapProperties.Credentials> credentialsMap = new HashMap<>();
         credentialsMap.put(
             CREDENTIAL_ID_1,
@@ -45,16 +56,21 @@ public class ReceiveTestUtils {
         );
         return ImapProperties.builder()
             .host(properties.getProperty("host"))
-            .credentials(credentialsMap)
+            .credentials(credentialsMap.get(credentialId))
             .debug("true".equals(properties.getProperty("debug", "false")));
     }
 
     @SneakyThrows
     public ImapProperties[] loadProperties() {
+        return loadProperties(CREDENTIAL_ID_1);
+    }
+
+    @SneakyThrows
+    public ImapProperties[] loadProperties(String credentialId) {
         ImapProperties[] result = new ImapProperties[3];
 
         Properties properties = PropUtils.loadPropertiesFromFile(PROP_FILE_NAME);
-        ImapProperties.ImapPropertiesBuilder builder = loadCommonProperties(properties);
+        ImapProperties.ImapPropertiesBuilder builder = loadCommonProperties(properties, credentialId);
 
         result[0] = builder
             .encryptionType(EncryptionType.SSL)
@@ -76,8 +92,13 @@ public class ReceiveTestUtils {
 
     @SneakyThrows
     public ImapProperties loadSslProperties() {
+        return loadSslProperties(CREDENTIAL_ID_1);
+    }
+
+    @SneakyThrows
+    public ImapProperties loadSslProperties(String credentialId) {
         Properties properties = PropUtils.loadPropertiesFromFile(PROP_FILE_NAME);
-        ImapProperties.ImapPropertiesBuilder builder = loadCommonProperties(properties);
+        ImapProperties.ImapPropertiesBuilder builder = loadCommonProperties(properties, credentialId);
         return builder
             .encryptionType(EncryptionType.SSL)
             .port(Integer.parseInt(properties.getProperty("encryptionClient.port")))
@@ -85,6 +106,6 @@ public class ReceiveTestUtils {
     }
 
     public String getDefaultEmail(ImapProperties properties) {
-        return properties.getCredentials().get(ReceiveTestUtils.CREDENTIAL_ID_1).getEmail();
+        return properties.getCredentials().getEmail();
     }
 }

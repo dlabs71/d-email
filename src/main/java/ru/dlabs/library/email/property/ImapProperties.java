@@ -22,7 +22,7 @@ import ru.dlabs.library.email.type.EncryptionType;
 @NoArgsConstructor
 public class ImapProperties extends CommonProperties {
 
-    private Map<String, Credentials> credentials;
+    private Credentials credentials;
     private boolean partialFetch = true;
     private Integer fetchSize = 1048576;
     private Integer statusCacheTimeout = 1000;
@@ -31,7 +31,7 @@ public class ImapProperties extends CommonProperties {
     private Integer connectionPoolTimeout = 45000;
 
     public ImapProperties(
-        Map<String, Credentials> credentials,
+        Credentials credentials,
         boolean partialFetch,
         Integer fetchSize,
         Integer statusCacheTimeout,
@@ -84,7 +84,7 @@ public class ImapProperties extends CommonProperties {
     @Accessors(chain = true, fluent = true)
     public static class ImapPropertiesBuilder {
 
-        private Map<String, Credentials> credentials;
+        private Credentials credentials;
         private boolean partialFetch = true;
         private Integer fetchSize = 1048576;
         private Integer statusCacheTimeout = 1000;

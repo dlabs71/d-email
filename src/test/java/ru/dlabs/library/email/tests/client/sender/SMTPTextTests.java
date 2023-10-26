@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
-import ru.dlabs.library.email.tests.client.receiver.ReceiveTestUtils;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.incoming.DefaultIncomingMessage;
@@ -26,6 +25,7 @@ import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.support.AbstractTestsClass;
 import ru.dlabs.library.email.support.PropUtils;
+import ru.dlabs.library.email.tests.client.receiver.ReceiveTestUtils;
 import ru.dlabs.library.email.type.SendingStatus;
 import ru.dlabs.library.email.type.TransferEncoder;
 import ru.dlabs.library.email.util.AttachmentUtils;
@@ -41,7 +41,8 @@ public class SMTPTextTests extends AbstractTestsClass {
 
     private String recipientEmail1;
     private String recipientEmail2;
-    private DEmailReceiver receiver;
+    private DEmailReceiver receiver1;
+    private DEmailReceiver receiver2;
     private DEmailSender sender;
 
     @BeforeEach
@@ -49,7 +50,8 @@ public class SMTPTextTests extends AbstractTestsClass {
         Properties props = PropUtils.loadPropertiesFromFile(SenderTestUtils.PROP_FILE_NAME);
         this.recipientEmail1 = props.getProperty("recipientEmail1");
         this.recipientEmail2 = props.getProperty("recipientEmail2");
-        this.receiver = ReceiveTestUtils.createReceiver();
+        this.receiver1 = ReceiveTestUtils.createReceiver1();
+        this.receiver2 = ReceiveTestUtils.createReceiver2();
         this.sender = SenderTestUtils.createSender();
     }
 
@@ -57,9 +59,7 @@ public class SMTPTextTests extends AbstractTestsClass {
     @Order(1)
     @SneakyThrows
     public void sendTextTest_1() {
-        this.receiver
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
-            .clearCurrentFolder();
+        this.receiver1.clearCurrentFolder();
 
         SendingStatus result = this.sender.sendText(this.recipientEmail1, SUBJECT, BODY);
 
@@ -74,12 +74,8 @@ public class SMTPTextTests extends AbstractTestsClass {
     @Order(2)
     @SneakyThrows
     public void sendTextTest_2() {
-        this.receiver
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
-            .clearCurrentFolder();
-        this.receiver
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_2)
-            .clearCurrentFolder();
+        this.receiver1.clearCurrentFolder();
+        this.receiver2.clearCurrentFolder();
 
         SendingStatus result = this.sender.sendText(
             Arrays.asList(this.recipientEmail1, this.recipientEmail2),
@@ -98,12 +94,8 @@ public class SMTPTextTests extends AbstractTestsClass {
     @Order(3)
     @SneakyThrows
     public void sendTextTest_3() {
-        this.receiver
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
-            .clearCurrentFolder();
-        this.receiver
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_2)
-            .clearCurrentFolder();
+        this.receiver1.clearCurrentFolder();
+        this.receiver2.clearCurrentFolder();
 
         SendingStatus result = this.sender.sendText(
             Arrays.asList(this.recipientEmail1, this.recipientEmail2),
@@ -124,12 +116,8 @@ public class SMTPTextTests extends AbstractTestsClass {
     @Order(4)
     @SneakyThrows
     public void sendTextTest_4() {
-        this.receiver
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
-            .clearCurrentFolder();
-        this.receiver
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_2)
-            .clearCurrentFolder();
+        this.receiver1.clearCurrentFolder();
+        this.receiver2.clearCurrentFolder();
 
         SendingStatus result = this.sender.sendText(
             Arrays.asList(this.recipientEmail1, this.recipientEmail2),
@@ -149,9 +137,7 @@ public class SMTPTextTests extends AbstractTestsClass {
     @Order(5)
     @SneakyThrows
     public void sendTextTest_5() {
-        this.receiver
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
-            .clearCurrentFolder();
+        this.receiver1.clearCurrentFolder();
 
         SendingStatus result = this.sender.sendText(
             this.recipientEmail1,
@@ -171,9 +157,7 @@ public class SMTPTextTests extends AbstractTestsClass {
     @Order(6)
     @SneakyThrows
     public void sendTextTest_6() {
-        this.receiver
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
-            .clearCurrentFolder();
+        this.receiver1.clearCurrentFolder();
 
         SendingStatus result = this.sender.sendText(
             this.recipientEmail1,
@@ -192,12 +176,8 @@ public class SMTPTextTests extends AbstractTestsClass {
     @Order(7)
     @SneakyThrows
     public void sendTextTest_7() {
-        this.receiver
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
-            .clearCurrentFolder();
-        this.receiver
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_2)
-            .clearCurrentFolder();
+        this.receiver1.clearCurrentFolder();
+        this.receiver2.clearCurrentFolder();
 
 
         SendingStatus result = this.sender.sendText(
@@ -218,7 +198,7 @@ public class SMTPTextTests extends AbstractTestsClass {
     }
 
     private void assertMailbox(String credentialId, boolean twoRecipients, boolean withAttachments) {
-        PageResponse<IncomingMessage> inbox = this.receiver.credentialId(credentialId).readEmail();
+        PageResponse<IncomingMessage> inbox = this.receiver1.readEmail();
         assertEquals(inbox.getData().size(), 1);
 
         IncomingMessage incomingMessage = inbox.getData().get(0);

@@ -41,8 +41,6 @@ public final class DEmailReceiver {
     private static final PageRequest DEFAULT_PAGE_REQUEST = PageRequest.of(0, 50);
     private final ReceiverDClient receiverClient;
 
-    private final Object monitor = new Object();
-
     private String folderName = DEFAULT_INBOX_FOLDER_NAME;
 
     /**
@@ -52,10 +50,6 @@ public final class DEmailReceiver {
      */
     public DEmailReceiver(ImapProperties properties) {
         this.receiverClient = new IMAPDClient(properties);
-        if (properties.getCredentials().size() == 1) {
-            String firstCredentialId = properties.getCredentials().keySet().iterator().next();
-            this.credentialId(firstCredentialId);
-        }
     }
 
     /**
@@ -78,18 +72,6 @@ public final class DEmailReceiver {
      */
     public synchronized DEmailReceiver folder(String folderName) {
         this.folderName = folderName;
-        return this;
-    }
-
-    /**
-     * Sets the using email credentials for connecting to email server
-     *
-     * @param credentialId credentials identifier from Map credentials in the property connection
-     *
-     * @return instance of the {@link DEmailReceiver} class
-     */
-    public DEmailReceiver credentialId(String credentialId) {
-        this.receiverClient.switchCredential(credentialId);
         return this;
     }
 

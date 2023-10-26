@@ -64,7 +64,7 @@ public interface ReceiverDClient extends DClient {
      *
      * @return an object of the class {@link Folder}
      */
-    Folder openFolderForRead(String credentialId, String folderName);
+    Folder openFolderForRead(String folderName);
 
     /**
      * Opens the folder for read and write.
@@ -73,7 +73,7 @@ public interface ReceiverDClient extends DClient {
      *
      * @return an object of the class {@link Folder}
      */
-    Folder openFolderForWrite(String credentialId, String folderName);
+    Folder openFolderForWrite(String folderName);
 
     /**
      * Closes the opened folder
@@ -110,6 +110,4 @@ public interface ReceiverDClient extends DClient {
      * @return a map with a key is a message ID, and a value is the result of deletion (true or false).
      */
     Map<Integer, Boolean> deleteAllMessages(String folderName);
-
-    void switchCredential(String credentialId);
 }

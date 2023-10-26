@@ -65,7 +65,6 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     @SneakyThrows
     private void sendData(String email) {
         DEmailReceiver.of(this.simpleImapProperties)
-            .credentialId(CREDENTIAL_ID_1)
             .clearCurrentFolder();
         this.emailSender.sendText(email, "Тестовое сообщение 1", "Содержание тестового сообщения");
         this.emailSender.sendText(email, "Тестовое сообщение 2", "Содержание тестового сообщения");
@@ -77,7 +76,6 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     @Order(1)
     public void readSimpleEmailTest() {
         PageResponse<IncomingMessage> response = DEmailReceiver.of(this.simpleImapProperties)
-            .credentialId(CREDENTIAL_ID_1)
             .readEmail();
         assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
@@ -93,7 +91,6 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     @Order(2)
     public void readSSLEmailTest() {
         PageResponse<IncomingMessage> response = DEmailReceiver.of(this.sslImapProperties)
-            .credentialId(CREDENTIAL_ID_1)
             .readEmail();
         assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
@@ -109,7 +106,6 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     @Order(3)
     public void readTLSEmailTest() {
         PageResponse<IncomingMessage> response = DEmailReceiver.of(this.tlsImapProperties)
-            .credentialId(CREDENTIAL_ID_1)
             .readEmail();
         assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
@@ -125,11 +121,10 @@ public class IMAPClientReadTests extends AbstractTestsClass {
     @Order(4)
     public void seenMessagesTest() throws InterruptedException {
         DEmailReceiver.of(this.simpleImapProperties)
-            .credentialId(CREDENTIAL_ID_1)
             .clearCurrentFolder();
         this.emailSender.sendText(this.recipientEmail, "Тестовое сообщение 1", "Содержание тестового сообщения");
         Thread.sleep(sendDelayAfter);
-        DEmailReceiver client = DEmailReceiver.of(this.sslImapProperties).credentialId(CREDENTIAL_ID_1);
+        DEmailReceiver client = DEmailReceiver.of(this.sslImapProperties);
 
         PageResponse<MessageView> checkEmailResponse1 = client.checkEmail();
         MessageView messageView1 = checkEmailResponse1.getData().get(0);

@@ -59,7 +59,6 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
     @SneakyThrows
     private void sendData(String email) {
         DEmailReceiver.of(this.simpleImapProperties)
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
             .clearCurrentFolder();
         this.emailSender.sendText(email, "Тестовое сообщение 1", "Содержание тестового сообщения 1");
         this.emailSender.sendText(email, "Тестовое сообщение 2", "Содержание тестового сообщения 2");
@@ -70,7 +69,6 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
     @Test
     public void checkSimpleEmailTest() {
         PageResponse<MessageView> response = DEmailReceiver.of(this.simpleImapProperties)
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
             .checkEmail();
         Assertions.assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         Assertions.assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
@@ -82,7 +80,6 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
     @Test
     public void checkSSLEmailTest() {
         PageResponse<MessageView> response = DEmailReceiver.of(this.sslImapProperties)
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
             .checkEmail();
         Assertions.assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         Assertions.assertEquals(response.getData().size(), COUNT_OF_MESSAGES);
@@ -94,7 +91,6 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
     @Test
     public void checkTLSEmailTest() {
         PageResponse<MessageView> response = DEmailReceiver.of(this.tlsImapProperties)
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1)
             .checkEmail();
         Assertions.assertEquals(response.getTotalCount(), COUNT_OF_MESSAGES);
         Assertions.assertEquals(response.getData().size(), COUNT_OF_MESSAGES);

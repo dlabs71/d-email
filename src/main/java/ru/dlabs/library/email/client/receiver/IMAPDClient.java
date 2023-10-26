@@ -45,11 +45,8 @@ public class IMAPDClient implements ReceiverDClient {
     public static final String DEFAULT_OUTBOX_FOLDER_NAME = "OUTBOX";
     private final Session session;
     private final Properties properties;
-    private final Map<String, ImapProperties.Credentials> credentials = new HashMap<>();
-
-    private final Map<String, IMAPStore> storeMap = new HashMap<>();
-    private ImapProperties.Credentials currentCredential;
-    private String currentCredentialId;
+    private final IMAPStore store;
+    private final ImapProperties.Credentials credentials;
 
     /**
      * Constructor of the class. An IMAP connection will be created by creating the class at once.
@@ -57,15 +54,10 @@ public class IMAPDClient implements ReceiverDClient {
      * @param imapProperties properties for creating an IMAP connection
      */
     public IMAPDClient(ImapProperties imapProperties) {
-        imapProperties.getCredentials().forEach((key, value) -> this.credentials.put(
-            key,
-            new ImapProperties.Credentials(
-                value.getEmail(),
-                value.getPassword()
-            )
-        ));
+        this.credentials = imapProperties.getCredentials().clone();
         this.properties = this.collectProperties(imapProperties);
         this.session = this.connect();
+        this.store = createStore(this.session, this.credentials);
     }
 
     private Properties collectProperties(ImapProperties imapProperties) {
@@ -102,28 +94,13 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public EmailParticipant getPrincipal() {
-        if (this.currentCredential == null) {
+        if (this.credentials == null) {
             return null;
         }
-        return new EmailParticipant(this.currentCredential.getEmail());
+        return new EmailParticipant(this.credentials.getEmail());
     }
 
-    @Override
-    public void switchCredential(String credentialId) {
-        ImapProperties.Credentials credentials = this.credentials.getOrDefault(credentialId, null);
-        if (credentials == null) {
-            throw new IllegalArgumentException("Credentials with id = " + credentialId + " hasn't been found");
-        }
-        IMAPStore store = storeMap.getOrDefault(credentialId, null);
-        if (store == null) {
-            store = createStore(credentials);
-            storeMap.put(credentialId, store);
-        }
-        this.currentCredential = credentials;
-        this.currentCredentialId = credentialId;
-    }
-
-    private IMAPStore createStore(ImapProperties.Credentials credentials) {
+    private static IMAPStore createStore(Session session, ImapProperties.Credentials credentials) {
         try {
             IMAPStore store = (IMAPStore) session.getStore(PROTOCOL.getProtocolName());
             store.connect(credentials.getEmail(), credentials.getPassword());
@@ -133,31 +110,9 @@ public class IMAPDClient implements ReceiverDClient {
         }
     }
 
-//    @Override
-//    public synchronized void setStore(String credentialId) {
-//        if (!credentials.containsKey(credentialId)) {
-//            throw new SessionException("The credential with id=" + credentialId + " doesn't exist");
-//        }
-//        this.currentCredential = credentials.get(credentialId);
-//        try {
-//            IMAPStore store = (IMAPStore) session.getStore(PROTOCOL.getProtocolName());
-//            store.connect(this.currentCredential.getEmail(), this.currentCredential.getPassword());
-//
-//            IMAPStore oldStore = this.store;
-//            this.store = store;
-//
-//            if (oldStore != null) {
-//                oldStore.close();
-//            }
-//        } catch (MessagingException e) {
-//            throw new SessionException("Creating session finished with the error: " + e.getMessage(), e);
-//        }
-//    }
-
     @Override
     public Integer getTotalCount(String folderName) {
-        String credentialId = this.currentCredentialId;
-        Folder folder = this.openFolderForRead(credentialId, folderName);
+        Folder folder = this.openFolderForRead(folderName);
         try {
             return this.getTotalCount(folder);
         } finally {
@@ -179,8 +134,7 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public List<MessageView> checkEmailMessages(String folderName, PageRequest pageRequest) {
-        String credentialId = this.currentCredentialId;
-        Folder folder = this.openFolderForRead(credentialId, folderName);
+        Folder folder = this.openFolderForRead(folderName);
         Stream<Message> messages = this.getMessages(folder, pageRequest);
 
         List<MessageView> result = messages.map(MessageViewConverter::convert).collect(Collectors.toList());
@@ -190,8 +144,7 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public List<IncomingMessage> readMessages(String folderName, PageRequest pageRequest) {
-        String credentialId = this.currentCredentialId;
-        Folder folder = this.openFolderForWrite(credentialId, folderName);
+        Folder folder = this.openFolderForWrite(folderName);
         Stream<Message> messages = this.getMessages(folder, pageRequest);
 
         List<IncomingMessage> result =
@@ -202,8 +155,7 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public IncomingMessage readMessageById(String folderName, int id) {
-        String credentialId = this.currentCredentialId;
-        Folder folder = this.openFolderForWrite(credentialId, folderName);
+        Folder folder = this.openFolderForWrite(folderName);
 
         Message message;
         try {
@@ -220,24 +172,23 @@ public class IMAPDClient implements ReceiverDClient {
     }
 
     @Override
-    public Folder openFolderForRead(String credentialId, String folderName) {
+    public Folder openFolderForRead(String folderName) {
         if (folderName == null) {
             folderName = DEFAULT_INBOX_FOLDER_NAME;
         }
-        return this.openFolder(credentialId, folderName, Folder.READ_ONLY);
+        return this.openFolder(folderName, Folder.READ_ONLY);
     }
 
     @Override
-    public Folder openFolderForWrite(String credentialId, String folderName) {
+    public Folder openFolderForWrite(String folderName) {
         if (folderName == null) {
             folderName = DEFAULT_INBOX_FOLDER_NAME;
         }
-        return this.openFolder(credentialId, folderName, Folder.READ_WRITE);
+        return this.openFolder(folderName, Folder.READ_WRITE);
     }
 
-    private Folder openFolder(String credentialId, String folderName, int mode) {
+    private Folder openFolder(String folderName, int mode) {
         log.debug("Try to open folder: " + folderName);
-        IMAPStore store = storeMap.get(credentialId);
         if (store == null) {
             throw new FolderOperationException("The store is null");
         }
@@ -269,8 +220,7 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public boolean deleteMessage(String folderName, int id) {
-        String credentialId = this.currentCredentialId;
-        Folder folder = this.openFolderForWrite(credentialId, folderName);
+        Folder folder = this.openFolderForWrite(folderName);
 
         try {
             Message message = folder.getMessage(id);
@@ -296,8 +246,7 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public Map<Integer, Boolean> deleteMessages(String folderName, Collection<Integer> ids) {
-        String credentialId = this.currentCredentialId;
-        Folder folder = this.openFolderForWrite(credentialId, folderName);
+        Folder folder = this.openFolderForWrite(folderName);
         Map<Integer, Boolean> result = new HashMap<>();
         ids.forEach(id -> {
             try {
@@ -326,8 +275,7 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public Map<Integer, Boolean> deleteAllMessages(String folderName) {
-        String credentialId = this.currentCredentialId;
-        Folder folder = this.openFolderForWrite(credentialId, folderName);
+        Folder folder = this.openFolderForWrite(folderName);
         Map<Integer, Boolean> result = new HashMap<>();
         this.getMessages(folder, PageRequest.of(0, Integer.MAX_VALUE)).forEach(message -> {
             try {

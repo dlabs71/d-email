@@ -40,8 +40,7 @@ public class IMAPClientDeleteTests extends AbstractTestsClass {
         ImapProperties[] properties = ReceiveTestUtils.loadProperties();
         ImapProperties sslImapProperties = properties[0];
         this.emailSender = SenderTestUtils.createSender();
-        this.emailReceiver = DEmailReceiver.of(sslImapProperties)
-            .credentialId(ReceiveTestUtils.CREDENTIAL_ID_1);
+        this.emailReceiver = DEmailReceiver.of(sslImapProperties);
 
         String email = ReceiveTestUtils.getDefaultEmail(sslImapProperties);
         this.sendData(email);
