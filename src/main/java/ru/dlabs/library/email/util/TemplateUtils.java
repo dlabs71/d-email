@@ -15,6 +15,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
+import org.apache.velocity.runtime.resource.loader.JarResourceLoader;
 import ru.dlabs.library.email.exception.TemplateCreationException;
 
 /**
@@ -60,7 +61,7 @@ public class TemplateUtils {
      * This method creates a template object by using a path to the template.
      *
      * @param pathToTemplate a path to the template. This parameter must start with one
-     *                       of these substrings: 'file://' or 'classpath:'.
+     *                       of these substrings: 'file://', 'classpath:', 'jar:file:'.
      *
      * @return template object {@see Template}
      *
@@ -71,9 +72,12 @@ public class TemplateUtils {
             return createFileTemplate(pathToTemplate);
         } else if (pathToTemplate.startsWith("classpath:")) {
             return createClasspathTemplate(pathToTemplate);
+        } else if (pathToTemplate.startsWith("jar:file:")) {
+            return createJarFileTemplate(pathToTemplate);
         }
         throw new TemplateCreationException(
-            "Template path must starts with 'file://' or 'classpath:'. It's using template path: " + pathToTemplate);
+            "Template path must starts with 'file://', 'classpath:' or 'jar:file:'. It's using template path: " +
+                pathToTemplate);
     }
 
     /**
@@ -86,11 +90,13 @@ public class TemplateUtils {
     public Template createClasspathTemplate(String pathTemplate) {
         VelocityEngine velocityEngine = new VelocityEngine();
         TemplatePath templatePath = normalizeTemplatePath(pathTemplate);
-        velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-        velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-        velocityEngine.setProperty("file.resource.loader.path", templatePath.getPathToDir());
+        velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADERS, "classpath");
+        velocityEngine.setProperty("resource.loader.classpath.class", ClasspathResourceLoader.class.getName());
         velocityEngine.init();
-        return velocityEngine.getTemplate(templatePath.getTemplateName(), StandardCharsets.UTF_8.name());
+        return velocityEngine.getTemplate(
+            templatePath.getFullPath(),
+            StandardCharsets.UTF_8.name()
+        );
     }
 
     /**
@@ -103,11 +109,28 @@ public class TemplateUtils {
     public Template createFileTemplate(String pathTemplate) {
         VelocityEngine velocityEngine = new VelocityEngine();
         TemplatePath templatePath = normalizeTemplatePath(pathTemplate);
-        velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "file");
-        velocityEngine.setProperty("classpath.resource.loader.class", FileResourceLoader.class.getName());
-        velocityEngine.setProperty("file.resource.loader.path", templatePath.getPathToDir());
-        velocityEngine.setProperty("file.resource.loader.cache", false);
-        velocityEngine.setProperty("file.resource.loader.modificationCheckInterval", 0);
+        velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADERS, "file");
+        velocityEngine.setProperty("resource.loader.file.class", FileResourceLoader.class.getName());
+        velocityEngine.setProperty("resource.loader.file.path", templatePath.getPathToDir());
+        velocityEngine.setProperty("resource.loader.file.cache", false);
+        velocityEngine.setProperty("resource.loader.file.modification_check_interval", 0);
+        velocityEngine.init();
+        return velocityEngine.getTemplate(templatePath.getTemplateName(), StandardCharsets.UTF_8.name());
+    }
+
+    /**
+     * This method creates a template object from the file system resource
+     *
+     * @param pathTemplate a path to the file system resource
+     *
+     * @return template object {@see Template}
+     */
+    public Template createJarFileTemplate(String pathTemplate) {
+        VelocityEngine velocityEngine = new VelocityEngine();
+        TemplatePath templatePath = normalizeTemplatePath(pathTemplate);
+        velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADERS, "jar");
+        velocityEngine.setProperty("resource.loader.jar.class", JarResourceLoader.class.getName());
+        velocityEngine.setProperty("resource.loader.jar.path", templatePath.getPathToDir());
         velocityEngine.init();
         return velocityEngine.getTemplate(templatePath.getTemplateName(), StandardCharsets.UTF_8.name());
     }
@@ -116,7 +139,7 @@ public class TemplateUtils {
      * This method normalizes a template path. It'll remove different prefixes and split the incoming string
      * into a path to a directory and the name of a file in this directory.
      * <p>
-     * Prefixes are supported: 'file:///', 'classpath:'
+     * Prefixes are supported: 'file:///', 'classpath:', 'jar:file:'
      *
      * @param source a path to the resource
      *
@@ -130,6 +153,10 @@ public class TemplateUtils {
         }
         if (source.startsWith("classpath:")) {
             source = source.replace("classpath:", "");
+        }
+        if (source.startsWith("jar:file:")) {
+            String[] parts = source.split("!");
+            return new TemplatePath(parts[1], parts[0]);
         }
         source = Paths.get(source).toString();
         if (!source.contains(File.separator)) {
@@ -160,5 +187,9 @@ public class TemplateUtils {
 
         private final String templateName;
         private final String pathToDir;
+
+        public String getFullPath() {
+            return pathToDir + File.separator + templateName;
+        }
     }
 }

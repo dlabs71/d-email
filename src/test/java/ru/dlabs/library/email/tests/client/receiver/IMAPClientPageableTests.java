@@ -20,7 +20,7 @@ import ru.dlabs.library.email.dto.pageable.PageRequest;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
 import ru.dlabs.library.email.support.AbstractTestsClass;
-import ru.dlabs.library.email.tests.client.sender.SenderTestUtils;
+import ru.dlabs.library.email.tests.client.sender.utils.SenderTestUtils;
 
 /**
  * @author Ivanov Danila

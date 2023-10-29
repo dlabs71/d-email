@@ -22,5 +22,5 @@ public class EmailAttachment {
     private byte[] data;
     private AttachmentType type;
     private String contentType;
-    private Long size;
+    private Integer size;
 }

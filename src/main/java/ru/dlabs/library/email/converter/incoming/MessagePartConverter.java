@@ -93,7 +93,7 @@ public class MessagePartConverter {
                 .data(content)
                 .type(AttachmentType.find(part.getContentType()))
                 .contentType(EmailMessageUtils.decodeData(part.getContentType()))
-                .size(content == null ? 0 : (long) content.length)
+                .size(content == null ? 0 : content.length)
                 .build();
         } catch (MessagingException e) {
             throw new ReadMessageException(

@@ -60,7 +60,7 @@ public class AttachmentUtilTests {
         assertTrue(result1.length() > 0);
 
         File result2 = assertDoesNotThrow(
-            () -> AttachmentUtils.createFile("classpath:template/template.txt")
+            () -> AttachmentUtils.createFile("classpath:template-test/template-in-folder.txt")
         );
         assertTrue(result2.exists());
         assertTrue(result2.length() > 0);
@@ -86,7 +86,7 @@ public class AttachmentUtilTests {
         EmailAttachment result1 = assertDoesNotThrow(
             () -> AttachmentUtils.create("classpath:template.txt")
         );
-        assertEquals(sourceFile1.length(), result1.getSize());
+        assertEquals((int) sourceFile1.length(), result1.getSize());
         assertEquals(sourceFile1.getName(), result1.getName());
         assertEquals(AttachmentType.TEXT, result1.getType());
         assertEquals(sourceFile1.length(), result1.getData().length);
@@ -94,7 +94,7 @@ public class AttachmentUtilTests {
         EmailAttachment result2 = assertDoesNotThrow(
             () -> AttachmentUtils.create("classpath:attachments/file.jpg")
         );
-        assertEquals(sourceFile2.length(), result2.getSize());
+        assertEquals((int) sourceFile2.length(), result2.getSize());
         assertEquals(sourceFile2.getName(), result2.getName());
         assertEquals(AttachmentType.IMAGE, result2.getType());
         assertEquals(sourceFile2.length(), result2.getData().length);
@@ -102,7 +102,7 @@ public class AttachmentUtilTests {
         EmailAttachment result3 = assertDoesNotThrow(
             () -> AttachmentUtils.create("classpath:template.txt", detector)
         );
-        assertEquals(sourceFile1.length(), result3.getSize());
+        assertEquals((int) sourceFile1.length(), result3.getSize());
         assertEquals(sourceFile1.getName(), result3.getName());
         assertEquals(AttachmentType.TEXT, result3.getType());
         assertEquals(sourceFile1.length(), result3.getData().length);
@@ -110,7 +110,7 @@ public class AttachmentUtilTests {
         EmailAttachment result4 = assertDoesNotThrow(
             () -> AttachmentUtils.create("classpath:attachments/file.jpg", detector)
         );
-        assertEquals(sourceFile2.length(), result4.getSize());
+        assertEquals((int) sourceFile2.length(), result4.getSize());
         assertEquals(sourceFile2.getName(), result4.getName());
         assertEquals(AttachmentType.IMAGE, result4.getType());
         assertEquals(sourceFile2.length(), result4.getData().length);

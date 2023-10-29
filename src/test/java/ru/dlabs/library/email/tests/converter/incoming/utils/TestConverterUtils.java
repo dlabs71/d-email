@@ -132,7 +132,7 @@ public class TestConverterUtils {
         InternetAddress[] to,
         List<String> attachments
     ) {
-        MimeMessage mimeMessage = new MimeMessage((Session) null);
+        MimeMessage mimeMessage = new TestReceivedMessage();
         if (from != null) {
             mimeMessage.addFrom(from);
         }

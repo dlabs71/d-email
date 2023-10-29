@@ -35,7 +35,7 @@ public class BaseMessage implements Message {
     private List<EmailAttachment> attachments = new ArrayList<>();
 
     private TransferEncoder transferEncoder = TransferEncoder.byDefault();
-    private Integer size;
+    private Long size = 0L;
     private boolean seen = false;
 
     private LocalDateTime sentDate;

@@ -17,7 +17,6 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import lombok.Builder;
@@ -71,7 +70,10 @@ public class MessageAsserts {
         if (messageDto.getReceivedDate() == null) {
             assertNull(message.getReceivedDate());
         } else {
-            Long sendDateAfterConvert = messageDto.getReceivedDate().toEpochSecond(ZoneOffset.UTC);
+            Long sendDateAfterConvert = messageDto.getReceivedDate()
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli();
             Long sendDateBeforeConvert = message.getReceivedDate().getTime();
             assertEquals(sendDateBeforeConvert, sendDateAfterConvert);
         }
@@ -254,7 +256,7 @@ public class MessageAsserts {
 
             assertNotNull(messageAttachment);
             assertNotNull(attachmentType);
-            assertEquals(sourceFile.length(), messageAttachment.getSize());
+            assertEquals((int) sourceFile.length(), messageAttachment.getSize());
             assertEquals(attachmentType, messageAttachment.getType());
             assertEquals(Arrays.toString(contentOfFile), Arrays.toString(messageAttachment.getData()));
         }

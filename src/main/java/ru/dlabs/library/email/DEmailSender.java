@@ -262,6 +262,28 @@ public final class DEmailSender {
     }
 
     /**
+     * The method is distributing a message to a group recipients with attachments.
+     * A message body has a content type of text/html.
+     * A message body takes from "content" argument. It has a type String.
+     *
+     * @param emails      a collection of recipient email address. For example: example@mail.com
+     * @param subject     a subject of a message
+     * @param content     a message body
+     * @param attachments an array of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendHtml(
+        Collection<String> emails,
+        String subject,
+        String content,
+        EmailAttachment... attachments
+    ) {
+        Set<EmailParticipant> recipients = emails.stream().map(EmailParticipant::new).collect(Collectors.toSet());
+        return this.sendHtml(recipients, subject, content, Arrays.asList(attachments));
+    }
+
+    /**
      * The method is sending a message with attachments.
      * A message body has a content type of text/html.
      * A message body takes from "content" argument. It has a type String.
@@ -381,7 +403,7 @@ public final class DEmailSender {
      * @return a sending status {@link SendingStatus}
      */
     public SendingStatus sendHtmlTemplated(
-        Set<String> emails,
+        Collection<String> emails,
         String subject,
         String pathToTemplate,
         Map<String, Object> params,

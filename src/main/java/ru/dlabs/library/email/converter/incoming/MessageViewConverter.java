@@ -10,6 +10,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.angus.mail.imap.IMAPMessage;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.exception.CheckEmailException;
@@ -82,7 +83,12 @@ public class MessageViewConverter {
             String transferEncoder = ((MimeMessage) message).getHeader(CONTENT_TRANSFER_ENCODING_HDR, null);
             builder.transferEncoder(TransferEncoder.forName(transferEncoder));
 
-            builder.size(message.getSize());
+            if (message instanceof IMAPMessage) {
+                builder.size(((IMAPMessage) message).getSizeLong());
+            } else {
+                builder.size((long) message.getSize());
+            }
+
             if (message.getSentDate() != null) {
                 builder.sentDate(JavaCoreUtils.convert(message.getSentDate()));
             }

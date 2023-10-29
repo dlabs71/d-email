@@ -12,6 +12,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.angus.mail.imap.IMAPMessage;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.incoming.DefaultIncomingMessage;
@@ -119,7 +120,12 @@ public class BaseMessageConverter {
             String transferEncoder = ((MimeMessage) message).getHeader(CONTENT_TRANSFER_ENCODING_HDR, null);
             baseMessage.setTransferEncoder(TransferEncoder.forName(transferEncoder));
 
-            baseMessage.setSize(message.getSize());
+            if (message instanceof IMAPMessage) {
+                baseMessage.setSize(((IMAPMessage) message).getSizeLong());
+            } else {
+                baseMessage.setSize((long) message.getSize());
+            }
+
             if (message.getSentDate() != null) {
                 baseMessage.setSentDate(JavaCoreUtils.convert(message.getSentDate()));
             }

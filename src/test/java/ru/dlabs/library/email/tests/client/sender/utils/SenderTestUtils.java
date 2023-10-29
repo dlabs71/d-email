@@ -1,4 +1,4 @@
-package ru.dlabs.library.email.tests.client.sender;
+package ru.dlabs.library.email.tests.client.sender.utils;
 
 import java.io.IOException;
 import java.util.Properties;

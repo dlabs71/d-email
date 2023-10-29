@@ -27,7 +27,7 @@ public interface Message {
 
     List<EmailAttachment> getAttachments();
 
-    Integer getSize();
+    Long getSize();
 
     LocalDateTime getSentDate();
 

@@ -30,7 +30,7 @@ public class MessageView implements Message {
     private final String subject;
 
     private Integer id;
-    private Integer size;
+    private Long size;
     private TransferEncoder transferEncoder;
     private boolean seen;
 

@@ -15,7 +15,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
-import ru.dlabs.library.email.tests.client.sender.SenderTestUtils;
+import ru.dlabs.library.email.tests.client.sender.utils.SenderTestUtils;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageResponse;

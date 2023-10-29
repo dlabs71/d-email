@@ -20,6 +20,7 @@ public class ContentMessage {
     private final String data;
     private final Charset charset;
     private final ContentMessageType type;
+    private final Integer size;
 
     private String contentType;
 
@@ -33,6 +34,7 @@ public class ContentMessage {
         } else {
             this.charset = Charset.defaultCharset();
         }
+        this.size = data.getBytes(this.charset).length;
     }
 
     public ContentMessage(String data, String contentType, Charset charset) {
@@ -48,5 +50,6 @@ public class ContentMessage {
         if (charset != null) {
             this.contentType = HttpUtils.contentTypeWithCharset(contentType, charset);
         }
+        this.size = data.getBytes(this.charset).length;
     }
 }

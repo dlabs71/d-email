@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ru.dlabs.library.email.tests.client.receiver.ReceiveTestUtils.CREDENTIAL_ID_1;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
-import ru.dlabs.library.email.tests.client.sender.SenderTestUtils;
+import ru.dlabs.library.email.tests.client.sender.utils.SenderTestUtils;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.incoming.DefaultIncomingMessage;
 import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;

@@ -232,7 +232,7 @@ public class MessagePartConverterTest {
 
         Field field = ByteArrayInputStream.class.getDeclaredField("count");
         field.setAccessible(true);
-        Long sizeContent = ((Integer) field.get(emailPart.getContent())).longValue();
+        Integer sizeContent = (Integer) field.get(emailPart.getContent());
 
         assertEquals(sizeContent, attachment3.getSize());
         assertEquals(emailPart.getFileName(), attachment3.getName());

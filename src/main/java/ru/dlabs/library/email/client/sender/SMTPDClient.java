@@ -18,6 +18,7 @@ import ru.dlabs.library.email.property.SessionPropertyCollector;
 import ru.dlabs.library.email.property.SmtpProperties;
 import ru.dlabs.library.email.type.Protocol;
 import ru.dlabs.library.email.type.SendingStatus;
+import ru.dlabs.library.email.util.JavaCoreUtils;
 import ru.dlabs.library.email.util.MessageValidator;
 
 /**
@@ -41,6 +42,7 @@ public class SMTPDClient implements SenderDClient {
      * @param smtpProperties the properties for connecting to an SMTP server
      */
     public SMTPDClient(SmtpProperties smtpProperties) {
+        JavaCoreUtils.notNullArgument(smtpProperties, "smtpProperties");
         this.principal = new EmailParticipant(smtpProperties.getEmail(), smtpProperties.getName());
         this.authentication = new PasswordAuthentication(smtpProperties.getEmail(), smtpProperties.getPassword());
         try {

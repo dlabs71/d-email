@@ -94,6 +94,11 @@ public class AttachmentUtils {
      */
     public EmailAttachment create(String pathToFile, FileParametersDetector detector) throws AttachmentException {
         File file = createFile(pathToFile);
+        if (file.length() > Integer.MAX_VALUE) {
+            throw new AttachmentException(
+                "The file is too large. A file cannot be larger than " + Integer.MAX_VALUE + ". Filename = " +
+                    pathToFile);
+        }
         String contentType = createContentTypeForAttachment(file, detector);
         byte[] content;
         try {
@@ -105,7 +110,7 @@ public class AttachmentUtils {
         return EmailAttachment.builder()
             .name(file.getName())
             .data(content)
-            .size(file.length())
+            .size((int) file.length())
             .contentType(contentType)
             .type(AttachmentType.find(contentType))
             .build();

@@ -5,10 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.io.IOUtils;
 import org.apache.velocity.Template;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
@@ -47,8 +50,21 @@ public class TemplateUtilsTests {
         );
 
         assertDoesNotThrow(
-            () -> TemplateUtils.createTemplate("classpath:template/template.txt")
+            () -> TemplateUtils.createTemplate("classpath:template-test/template-in-folder.txt")
         );
+
+        String newPathToJar = Paths.get(System.getProperty("java.io.tmpdir"), "template.jar").toString();
+        File tmpFile = new File(newPathToJar);
+        file.createNewFile();
+        FileOutputStream outputStream = new FileOutputStream(tmpFile);
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("template-test/template.jar");
+        IOUtils.copy(inputStream, outputStream);
+        outputStream.close();
+        inputStream.close();
+        assertDoesNotThrow(
+            () -> TemplateUtils.createTemplate("jar:file:" + newPathToJar + "!/template-in-folder.txt")
+        );
+        file.deleteOnExit();
     }
 
     /**
@@ -63,7 +79,7 @@ public class TemplateUtilsTests {
         params.put("templateName", "Template");
         params.put("className", "TemplateUtils");
         String content = TemplateUtils.construct(
-            "classpath:template.txt",
+            "classpath:template-test/template-in-folder.txt",
             params
         );
 
@@ -84,16 +100,11 @@ public class TemplateUtilsTests {
         HashMap<String, Object> params = new HashMap<>();
         params.put("header", "Header Template");
         params.put("content", "It's the content of an HTML page.");
-        String content = TemplateUtils.construct("classpath:template.html", params);
+        String content = TemplateUtils.construct("classpath:template-test/template-in-folder.html", params);
 
         assertEquals(
-            "<div>\n" +
-                " <h1>Header Template</h1>\n" +
-                " <div>\n" +
-                "  <p>It's the content of an HTML page.</p>\n" +
-                " </div>\n" +
-                "</div>".replace("  ", "").trim(),
-            content.replace("   ", "").trim()
+            "<div><h1>Header Template</h1><div><p>It's the content of an HTML page.</p></div></div>",
+            content
         );
     }
 
@@ -114,6 +125,7 @@ public class TemplateUtilsTests {
         String path6 = "directory/file.txt";
         String path7 = "file:///home/project/data data/file file.txt";
         String path8 = "file:///home///project//data//file.txt";
+        String path9 = "jar:file:/template/archive.jar!/dir/file.txt";
 
         TemplateUtils.TemplatePath templatePath = TemplateUtils.normalizeTemplatePath(path1);
         assertEquals("/home/project/data", templatePath.getPathToDir());
@@ -146,5 +158,9 @@ public class TemplateUtilsTests {
         templatePath = TemplateUtils.normalizeTemplatePath(path8);
         assertEquals("/home/project/data", templatePath.getPathToDir());
         assertEquals("file.txt", templatePath.getTemplateName());
+
+        templatePath = TemplateUtils.normalizeTemplatePath(path9);
+        assertEquals("jar:file:/template/archive.jar", templatePath.getPathToDir());
+        assertEquals("/dir/file.txt", templatePath.getTemplateName());
     }
 }
