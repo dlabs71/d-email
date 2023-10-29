@@ -66,7 +66,7 @@ public class SMTPTextTests extends AbstractTestsClass {
         assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
-        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, false, false);
+        assertMailbox(this.receiver1, false, false);
     }
 
 
@@ -86,8 +86,8 @@ public class SMTPTextTests extends AbstractTestsClass {
         assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
-        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, false);
-        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_2, true, false);
+        assertMailbox(this.receiver1, true, false);
+        assertMailbox(this.receiver2, true, false);
     }
 
     @Test
@@ -108,8 +108,8 @@ public class SMTPTextTests extends AbstractTestsClass {
         assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
-        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, true);
-        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_2, true, true);
+        assertMailbox(this.receiver1, true, true);
+        assertMailbox(this.receiver2, true, true);
     }
 
     @Test
@@ -129,8 +129,8 @@ public class SMTPTextTests extends AbstractTestsClass {
         assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
-        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, true);
-        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_2, true, true);
+        assertMailbox(this.receiver1, true, true);
+        assertMailbox(this.receiver2, true, true);
     }
 
     @Test
@@ -139,6 +139,7 @@ public class SMTPTextTests extends AbstractTestsClass {
     public void sendTextTest_5() {
         this.receiver1.clearCurrentFolder();
 
+        Thread.sleep(sendDelayAfter);
         SendingStatus result = this.sender.sendText(
             this.recipientEmail1,
             SUBJECT,
@@ -150,7 +151,7 @@ public class SMTPTextTests extends AbstractTestsClass {
         assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
-        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, false, true);
+        assertMailbox(this.receiver1, false, true);
     }
 
     @Test
@@ -159,6 +160,7 @@ public class SMTPTextTests extends AbstractTestsClass {
     public void sendTextTest_6() {
         this.receiver1.clearCurrentFolder();
 
+        Thread.sleep(sendDelayAfter);
         SendingStatus result = this.sender.sendText(
             this.recipientEmail1,
             SUBJECT,
@@ -169,7 +171,7 @@ public class SMTPTextTests extends AbstractTestsClass {
         assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
-        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, false, true);
+        assertMailbox(this.receiver1, false, true);
     }
 
     @Test
@@ -179,7 +181,7 @@ public class SMTPTextTests extends AbstractTestsClass {
         this.receiver1.clearCurrentFolder();
         this.receiver2.clearCurrentFolder();
 
-
+        Thread.sleep(sendDelayAfter);
         SendingStatus result = this.sender.sendText(
             new HashSet<>(Arrays.asList(
                 EmailParticipant.of(this.recipientEmail1),
@@ -193,13 +195,13 @@ public class SMTPTextTests extends AbstractTestsClass {
         assertEquals(SendingStatus.SUCCESS, result);
 
         Thread.sleep(sendDelayAfter);
-        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_1, true, true);
-        assertMailbox(ReceiveTestUtils.CREDENTIAL_ID_2, true, true);
+        assertMailbox(this.receiver1, true, true);
+        assertMailbox(this.receiver2, true, true);
     }
 
-    private void assertMailbox(String credentialId, boolean twoRecipients, boolean withAttachments) {
-        PageResponse<IncomingMessage> inbox = this.receiver1.readEmail();
-        assertEquals(inbox.getData().size(), 1);
+    private void assertMailbox(DEmailReceiver receiver, boolean twoRecipients, boolean withAttachments) {
+        PageResponse<IncomingMessage> inbox = receiver.readEmail();
+        assertEquals(1, inbox.getData().size());
 
         IncomingMessage incomingMessage = inbox.getData().get(0);
         assertIncomingMessage(incomingMessage);

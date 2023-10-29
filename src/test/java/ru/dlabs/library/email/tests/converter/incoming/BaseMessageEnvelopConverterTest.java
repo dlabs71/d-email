@@ -1,12 +1,12 @@
-package ru.dlabs.library.email.tests.converter;
+package ru.dlabs.library.email.tests.converter.incoming;
 
 import jakarta.mail.Message;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.converter.incoming.BaseMessageConverter;
-import ru.dlabs.library.email.tests.converter.utils.MessageAsserts;
-import ru.dlabs.library.email.tests.converter.utils.TestConverterUtils;
+import ru.dlabs.library.email.tests.converter.incoming.utils.MessageAsserts;
+import ru.dlabs.library.email.tests.converter.incoming.utils.TestConverterUtils;
 import ru.dlabs.library.email.dto.message.common.BaseMessage;
 
 /**

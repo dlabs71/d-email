@@ -8,6 +8,7 @@ import jakarta.mail.BodyPart;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.util.ByteArrayDataSource;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -29,11 +30,19 @@ import ru.dlabs.library.email.exception.CreateMessageException;
 @UtilityClass
 public class JakartaMessagePartConverter {
 
-    public List<BodyPart> createBodyPart(OutgoingMessage message) throws CreateMessageException {
-        return message.getContents().stream().map(JakartaMessagePartConverter::createBodyPart).collect(Collectors.toList());
+    public List<BodyPart> convertBodyPart(OutgoingMessage message) throws CreateMessageException {
+        if (message == null || message.getContents() == null || message.getContents().isEmpty()) {
+            return Collections.emptyList();
+        }
+        return message.getContents().stream()
+            .map(JakartaMessagePartConverter::convertBodyPart)
+            .collect(Collectors.toList());
     }
 
-    public BodyPart createBodyPart(ContentMessage content) throws CreateMessageException {
+    public BodyPart convertBodyPart(ContentMessage content) throws CreateMessageException {
+        if (content == null) {
+            return null;
+        }
         try {
             BodyPart messageBodyPart = new MimeBodyPart();
             messageBodyPart.setText(content.getData());
@@ -47,18 +56,18 @@ public class JakartaMessagePartConverter {
         }
     }
 
-    public List<BodyPart> createAttachmentParts(OutgoingMessage message) throws CreateMessageException {
-        if (message.getAttachments() == null || message.getAttachments().isEmpty()) {
-            return null;
+    public List<BodyPart> convertAttachmentParts(OutgoingMessage message) throws CreateMessageException {
+        if (message == null || message.getAttachments() == null || message.getAttachments().isEmpty()) {
+            return Collections.emptyList();
         }
         return message.getAttachments()
             .stream()
-            .map(JakartaMessagePartConverter::createAttachmentPart)
+            .map(JakartaMessagePartConverter::convertAttachmentPart)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
-    public BodyPart createAttachmentPart(EmailAttachment attachment) throws CreateMessageException {
+    public BodyPart convertAttachmentPart(EmailAttachment attachment) throws CreateMessageException {
         if (attachment == null || attachment.getData() == null || attachment.getData().length == 0) {
             return null;
         }

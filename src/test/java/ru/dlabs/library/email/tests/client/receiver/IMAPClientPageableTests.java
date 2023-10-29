@@ -3,7 +3,6 @@ package ru.dlabs.library.email.tests.client.receiver;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
@@ -16,12 +15,12 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
-import ru.dlabs.library.email.tests.client.sender.SenderTestUtils;
 import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageRequest;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
 import ru.dlabs.library.email.support.AbstractTestsClass;
+import ru.dlabs.library.email.tests.client.sender.SenderTestUtils;
 
 /**
  * @author Ivanov Danila
@@ -57,12 +56,14 @@ public class IMAPClientPageableTests extends AbstractTestsClass {
 
     @SneakyThrows
     private void sendData(String email) {
+        Thread.sleep(sendDelayAfter);
         this.emailReceiver.clearCurrentFolder();
+        Thread.sleep(sendDelayAfter);
         for (int i = 0; i < countMessages; i++) {
             this.emailSender.sendText(email, "Тестовое сообщение " + i, "Содержание тестового сообщения " + i);
-            Thread.sleep(500);
+            Thread.sleep(1000);
         }
-        Thread.sleep(sendDelayAfter + 1000);
+        Thread.sleep(2L * sendDelayAfter);
     }
 
     @Test

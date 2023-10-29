@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.dlabs.library.email.dto.message.outgoing.OutgoingMessage;
 import ru.dlabs.library.email.exception.CreateMessageException;
 import ru.dlabs.library.email.util.EmailMessageUtils;
+import ru.dlabs.library.email.util.JavaCoreUtils;
 
 /**
  * <p>
@@ -30,20 +31,31 @@ import ru.dlabs.library.email.util.EmailMessageUtils;
 @UtilityClass
 public class JakartaMessageConverter {
 
-    public Message convert(OutgoingMessage message, Session session, String emailFrom, String nameFrom)
+    public Message convert(
+        OutgoingMessage message,
+        Session session,
+        String emailFrom,
+        String nameFrom
+    )
         throws CreateMessageException, MessagingException {
+        if (message == null) {
+            return null;
+        }
+        JavaCoreUtils.notNullArgument(session, "session");
+        JavaCoreUtils.notNullArgument(emailFrom, "emailFrom");
+
         // It's creating an envelope of the message
         MimeMessage envelop = createEnvelop(message, session, emailFrom, nameFrom);
 
         MimeMultipart multipart = new MimeMultipart();
         // It's creating and adding a content of the message
-        List<BodyPart> parts = JakartaMessagePartConverter.createBodyPart(message);
+        List<BodyPart> parts = JakartaMessagePartConverter.convertBodyPart(message);
         for (BodyPart part : parts) {
             multipart.addBodyPart(part);
         }
 
         // It's creating and adding attachments of the message
-        List<BodyPart> attachments = JakartaMessagePartConverter.createAttachmentParts(message);
+        List<BodyPart> attachments = JakartaMessagePartConverter.convertAttachmentParts(message);
         if (attachments != null) {
             for (BodyPart attachment : attachments) {
                 multipart.addBodyPart(attachment);
@@ -56,12 +68,22 @@ public class JakartaMessageConverter {
         return envelop;
     }
 
-    public MimeMessage createEnvelop(OutgoingMessage message, Session session, String emailFrom, String nameFrom)
+    public MimeMessage createEnvelop(
+        OutgoingMessage message,
+        Session session,
+        String emailFrom,
+        String nameFrom
+    )
         throws CreateMessageException {
+        if (message == null) {
+            return null;
+        }
+        JavaCoreUtils.notNullArgument(session, "session");
+        JavaCoreUtils.notNullArgument(emailFrom, "emailFrom");
+
         try {
             MimeMessage envelop = new MimeMessage(session);
             envelop.setFrom(EmailMessageUtils.createAddress(emailFrom, nameFrom));
-            envelop.reply(false);
             envelop.setSubject(message.getSubject());
             envelop.setSentDate(new Date());
             envelop.setRecipients(Message.RecipientType.TO, EmailMessageUtils.createAddresses(message.getRecipients()));

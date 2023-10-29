@@ -43,4 +43,10 @@ public class JavaCoreUtils {
     public LocalDateTime convert(Date date) {
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
+
+    public void notNullArgument(Object object, String argName) {
+        if (object == null) {
+            throw new IllegalArgumentException(argName + "is marked non-null but is null");
+        }
+    }
 }

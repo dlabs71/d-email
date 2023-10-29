@@ -1,4 +1,4 @@
-package ru.dlabs.library.email.tests.converter;
+package ru.dlabs.library.email.tests.converter.incoming;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -34,8 +34,8 @@ import ru.dlabs.library.email.converter.incoming.MessagePartConverter;
 import ru.dlabs.library.email.dto.message.common.ContentMessage;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
-import ru.dlabs.library.email.tests.converter.utils.MessageAsserts;
-import ru.dlabs.library.email.tests.converter.utils.TestConverterUtils;
+import ru.dlabs.library.email.tests.converter.incoming.utils.MessageAsserts;
+import ru.dlabs.library.email.tests.converter.incoming.utils.TestConverterUtils;
 import ru.dlabs.library.email.type.AttachmentType;
 import ru.dlabs.library.email.type.ContentMessageType;
 import ru.dlabs.library.email.util.JavaCoreUtils;

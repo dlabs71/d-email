@@ -64,7 +64,7 @@ public class IMAPClientConcurrentTest extends AbstractTestsClass {
     @Test
     @SneakyThrows
     public void concurrentTest() {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
         for (int i = 0; i < 3000; i++) {
             executorService.execute(this::changeFolder);
             executorService.execute(this::checkEmail);

@@ -1,4 +1,4 @@
-package ru.dlabs.library.email.tests.converter.utils;
+package ru.dlabs.library.email.tests.converter.incoming.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
