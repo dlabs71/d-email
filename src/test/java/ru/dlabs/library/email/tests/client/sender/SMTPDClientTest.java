@@ -8,12 +8,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import ru.dlabs.library.email.client.sender.SMTPDClient;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.outgoing.DefaultOutgoingMessage;
+import ru.dlabs.library.email.dto.message.outgoing.OutgoingMessage;
 import ru.dlabs.library.email.exception.ValidationMessageException;
 import ru.dlabs.library.email.property.SmtpProperties;
 import ru.dlabs.library.email.support.AbstractTestsClass;
@@ -29,20 +31,26 @@ import ru.dlabs.library.email.tests.client.sender.utils.SenderTestUtils;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Order(411)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SMTPDClientTest extends AbstractTestsClass {
 
     private SmtpProperties sslSmtpProperties;
     private String recipientEmail;
 
-    @BeforeEach
+    @BeforeAll
     public void loadConfig() {
         Properties props = PropUtils.loadPropertiesFromFile(SenderTestUtils.PROP_FILE_NAME);
         this.recipientEmail = props.getProperty("recipientEmail");
-
         this.sslSmtpProperties = SenderTestUtils.loadSslProperties();
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link SMTPDClient#SMTPDClient(SmtpProperties)}</li>
+     * </ul>
+     */
     @Test
     public void clientTest() {
         assertThrows(IllegalArgumentException.class, () -> new SMTPDClient(null));
@@ -55,6 +63,14 @@ public class SMTPDClientTest extends AbstractTestsClass {
         assertEquals(smtpdClient.getPrincipal().getName(), sslSmtpProperties.getName());
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link SMTPDClient#send(OutgoingMessage)}</li>
+     * </ul>
+     * <p>
+     * Validate message
+     */
     @Test
     public void validateMessageTest() {
         SMTPDClient sender = new SMTPDClient(sslSmtpProperties);

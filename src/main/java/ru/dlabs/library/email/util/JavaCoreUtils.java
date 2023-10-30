@@ -9,6 +9,7 @@ import java.util.Date;
 import lombok.experimental.UtilityClass;
 
 /**
+ * The utility class contains helpful method for working with Java Core.
  * <p>
  * <div><strong>Project name:</strong> d-email</div>
  * <div><strong>Creation date:</strong> 2023-10-25</div>
@@ -21,7 +22,7 @@ import lombok.experimental.UtilityClass;
 public class JavaCoreUtils {
 
     /**
-     * It converts Input Stream to byte array
+     * It converts Input Stream to byte array.
      *
      * @param in sourced input stream
      *
@@ -40,10 +41,25 @@ public class JavaCoreUtils {
         return os.toByteArray();
     }
 
+    /**
+     * Converts Date to LocalDateTime.
+     *
+     * @param date input date
+     *
+     * @return LocalDateTime
+     */
     public LocalDateTime convert(Date date) {
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 
+    /**
+     * If the input parameter 'object' is null, then throw an IllegalArgumentException.
+     *
+     * @param object  an object being checked
+     * @param argName Name parameter for a message of the exception
+     *
+     * @throws IllegalArgumentException if the 'object' parameter is null
+     */
     public void notNullArgument(Object object, String argName) {
         if (object == null) {
             throw new IllegalArgumentException(argName + "is marked non-null but is null");

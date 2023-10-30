@@ -2,11 +2,11 @@ package ru.dlabs.library.email.tests.client.receiver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -15,22 +15,27 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import ru.dlabs.library.email.DEmailReceiver;
 import ru.dlabs.library.email.DEmailSender;
-import ru.dlabs.library.email.tests.client.sender.utils.SenderTestUtils;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
 import ru.dlabs.library.email.support.AbstractTestsClass;
+import ru.dlabs.library.email.tests.client.receiver.utils.ReceiveTestUtils;
+import ru.dlabs.library.email.tests.client.sender.utils.SenderTestUtils;
 
 /**
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-31</div>
+ * </p>
+ *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-08-31
+ * @since 1.0.0
  */
-@Order(323)
+@Order(423)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class IMAPClientCheckTests extends AbstractTestsClass {
+public class IMAPClientEmailCheckTests extends AbstractTestsClass {
 
     private final static Integer COUNT_OF_MESSAGES = 3;
 
@@ -42,7 +47,7 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
     private String recipientEmail;
     private String senderEmail;
 
-    @BeforeEach
+    @BeforeAll
     public void loadConfig() throws IOException {
         ImapProperties[] properties = ReceiveTestUtils.loadProperties();
         this.sslImapProperties = properties[0];
@@ -52,20 +57,27 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
 
         this.senderEmail = this.emailSender.sender().getEmail();
         this.recipientEmail = ReceiveTestUtils.getDefaultEmail(this.simpleImapProperties);
-
-        this.sendData(this.recipientEmail);
     }
 
+    @BeforeEach
     @SneakyThrows
-    private void sendData(String email) {
+    public void sendData() {
         DEmailReceiver.of(this.simpleImapProperties)
             .clearCurrentFolder();
-        this.emailSender.sendText(email, "Тестовое сообщение 1", "Содержание тестового сообщения 1");
-        this.emailSender.sendText(email, "Тестовое сообщение 2", "Содержание тестового сообщения 2");
-        this.emailSender.sendText(email, "Тестовое сообщение 3", "Содержание тестового сообщения 3");
+        this.emailSender.sendText(this.recipientEmail, "Тестовое сообщение 1", "Содержание тестового сообщения 1");
+        this.emailSender.sendText(this.recipientEmail, "Тестовое сообщение 2", "Содержание тестового сообщения 2");
+        this.emailSender.sendText(this.recipientEmail, "Тестовое сообщение 3", "Содержание тестового сообщения 3");
         Thread.sleep(sendDelayAfter);
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailReceiver#checkEmail()}</li>
+     * </ul>
+     * <p>
+     * Using of the simple type connection (NO SSL and NO TLS)
+     */
     @Test
     public void checkSimpleEmailTest() {
         PageResponse<MessageView> response = DEmailReceiver.of(this.simpleImapProperties)
@@ -77,6 +89,14 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
         checkMessage(incomingMessage);
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailReceiver#checkEmail()}</li>
+     * </ul>
+     * <p>
+     *  Using of the SSL connection
+     */
     @Test
     public void checkSSLEmailTest() {
         PageResponse<MessageView> response = DEmailReceiver.of(this.sslImapProperties)
@@ -88,6 +108,14 @@ public class IMAPClientCheckTests extends AbstractTestsClass {
         checkMessage(incomingMessage);
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailReceiver#checkEmail()}</li>
+     * </ul>
+     * <p>
+     *  Using of the TLS connection
+     */
     @Test
     public void checkTLSEmailTest() {
         PageResponse<MessageView> response = DEmailReceiver.of(this.tlsImapProperties)

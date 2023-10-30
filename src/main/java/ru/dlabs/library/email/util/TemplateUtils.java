@@ -19,10 +19,17 @@ import org.apache.velocity.runtime.resource.loader.JarResourceLoader;
 import ru.dlabs.library.email.exception.TemplateCreationException;
 
 /**
- * It's the helper for creating formatted strings using the Velocity engine
+ * It's the helper for creating formatted strings using the Velocity engine.
+ *
+ * <p>For more information about the velocity template engine, use the link:
+ * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-27</div>
+ * </p>
  *
  * @author Ivanov Danila
- * @version 1.0
+ * @since 1.0.0
  */
 @UtilityClass
 public class TemplateUtils {
@@ -45,7 +52,7 @@ public class TemplateUtils {
     /**
      * It returns the string constructed from the template and its parameters.
      *
-     * @param template the object template {@see Template}
+     * @param template the object template (see also {@link Template})
      * @param params   parameters of a template
      *
      * @return the converted string
@@ -63,7 +70,7 @@ public class TemplateUtils {
      * @param pathToTemplate a path to the template. This parameter must start with one
      *                       of these substrings: 'file://', 'classpath:', 'jar:file:'.
      *
-     * @return template object {@see Template}
+     * @return template object (see also {@link Template})
      *
      * @throws TemplateCreationException this exception will occur if the path to the template isn't valid
      */
@@ -76,23 +83,24 @@ public class TemplateUtils {
             return createJarFileTemplate(pathToTemplate);
         }
         throw new TemplateCreationException(
-            "Template path must starts with 'file://', 'classpath:' or 'jar:file:'. It's using template path: " +
-                pathToTemplate);
+            "Template path must starts with 'file://', 'classpath:' or 'jar:file:'. It's using template path: "
+                + pathToTemplate);
     }
 
     /**
-     * This method creates a template object from classpath resource
+     * This method creates a template object from classpath resource.
      *
      * @param pathTemplate a path to the classpath resource
      *
-     * @return template object {@see Template}
+     * @return template object (see also {@link Template})
      */
     public Template createClasspathTemplate(String pathTemplate) {
         VelocityEngine velocityEngine = new VelocityEngine();
-        TemplatePath templatePath = normalizeTemplatePath(pathTemplate);
         velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADERS, "classpath");
         velocityEngine.setProperty("resource.loader.classpath.class", ClasspathResourceLoader.class.getName());
         velocityEngine.init();
+
+        TemplatePath templatePath = normalizeTemplatePath(pathTemplate);
         return velocityEngine.getTemplate(
             templatePath.getFullPath(),
             StandardCharsets.UTF_8.name()
@@ -100,11 +108,11 @@ public class TemplateUtils {
     }
 
     /**
-     * This method creates a template object from the file system resource
+     * This method creates a template object from the file system resource.
      *
      * @param pathTemplate a path to the file system resource
      *
-     * @return template object {@see Template}
+     * @return template object (see also {@link Template})
      */
     public Template createFileTemplate(String pathTemplate) {
         VelocityEngine velocityEngine = new VelocityEngine();
@@ -119,11 +127,11 @@ public class TemplateUtils {
     }
 
     /**
-     * This method creates a template object from the file system resource
+     * This method creates a template object from the file system resource.
      *
      * @param pathTemplate a path to the file system resource
      *
-     * @return template object {@see Template}
+     * @return template object (see also {@link Template})
      */
     public Template createJarFileTemplate(String pathTemplate) {
         VelocityEngine velocityEngine = new VelocityEngine();
@@ -138,8 +146,8 @@ public class TemplateUtils {
     /**
      * This method normalizes a template path. It'll remove different prefixes and split the incoming string
      * into a path to a directory and the name of a file in this directory.
-     * <p>
-     * Prefixes are supported: 'file:///', 'classpath:', 'jar:file:'
+     *
+     * <p>Prefixes are supported: 'file:///', 'classpath:', 'jar:file:'
      *
      * @param source a path to the resource
      *
@@ -168,7 +176,7 @@ public class TemplateUtils {
 
     /**
      * This method creates the object TemplatePath from a string path to the resource.
-     * It contains the path to the directory and the filename
+     * It contains the path to the directory and the filename.
      *
      * @param source a path to the resource
      *
@@ -181,11 +189,17 @@ public class TemplateUtils {
         return new TemplatePath(filename, String.join(File.separator, pathToDirectory));
     }
 
+    /**
+     * The class describes a path to template.
+     */
     @Getter
     @RequiredArgsConstructor
     public static class TemplatePath {
 
+        /** A name for a template file. **/
         private final String templateName;
+
+        /** A path to a directory. **/
         private final String pathToDir;
 
         public String getFullPath() {

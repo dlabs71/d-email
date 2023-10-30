@@ -3,18 +3,19 @@ package ru.dlabs.library.email.tests.client.sender;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Properties;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import ru.dlabs.library.email.DEmailSender;
+import ru.dlabs.library.email.dto.message.outgoing.OutgoingMessage;
 import ru.dlabs.library.email.property.SmtpProperties;
 import ru.dlabs.library.email.support.AbstractTestsClass;
 import ru.dlabs.library.email.support.PropUtils;
 import ru.dlabs.library.email.tests.client.sender.utils.SenderTestUtils;
 import ru.dlabs.library.email.type.SendingStatus;
 
-@Order(31)
+@Order(412)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SMTPClientConnectionTests extends AbstractTestsClass {
 
@@ -23,7 +24,7 @@ public class SMTPClientConnectionTests extends AbstractTestsClass {
     private SmtpProperties simpleSmtpProperties;
     private String recipientEmail;
 
-    @BeforeEach
+    @BeforeAll
     public void loadConfig() {
         Properties props = PropUtils.loadPropertiesFromFile(SenderTestUtils.PROP_FILE_NAME);
         this.recipientEmail = props.getProperty("recipientEmail");
@@ -34,6 +35,14 @@ public class SMTPClientConnectionTests extends AbstractTestsClass {
         this.simpleSmtpProperties = properties[2];
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#send(OutgoingMessage)}</li>
+     * </ul>
+     * <p>
+     * Using of the SSL connection
+     */
     @Test
     public void sendSslTextMessageTest() {
         DEmailSender sender = DEmailSender.of(this.sslSmtpProperties);
@@ -44,6 +53,14 @@ public class SMTPClientConnectionTests extends AbstractTestsClass {
         assertEquals(SendingStatus.SUCCESS, result);
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#send(OutgoingMessage)}</li>
+     * </ul>
+     * <p>
+     * Using of the TSL connection
+     */
     @Test
     public void sendTlsTextMessageTest() {
         DEmailSender sender = DEmailSender.of(this.tlsSmtpProperties);
@@ -54,6 +71,14 @@ public class SMTPClientConnectionTests extends AbstractTestsClass {
         assertEquals(SendingStatus.SUCCESS, result);
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#send(OutgoingMessage)}</li>
+     * </ul>
+     * <p>
+     * Using of the simple type connection (NO SSL and NO TLS)
+     */
     @Test
     public void sendSimpleTextMessageTest() {
         DEmailSender sender = DEmailSender.of(this.simpleSmtpProperties);

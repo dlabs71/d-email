@@ -4,10 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -21,13 +24,13 @@ import ru.dlabs.library.email.dto.message.incoming.IncomingMessage;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.support.AbstractTestsClass;
 import ru.dlabs.library.email.support.PropUtils;
-import ru.dlabs.library.email.tests.client.receiver.ReceiveTestUtils;
+import ru.dlabs.library.email.tests.client.receiver.utils.ReceiveTestUtils;
 import ru.dlabs.library.email.tests.client.sender.utils.Assertions;
 import ru.dlabs.library.email.tests.client.sender.utils.SenderTestUtils;
 import ru.dlabs.library.email.type.SendingStatus;
 import ru.dlabs.library.email.util.AttachmentUtils;
 
-@Order(31)
+@Order(413)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
@@ -45,7 +48,7 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
     private DEmailReceiver receiver2;
     private DEmailSender sender;
 
-    @BeforeEach
+    @BeforeAll
     public void loadConfig() {
         Properties props = PropUtils.loadPropertiesFromFile(SenderTestUtils.PROP_FILE_NAME);
         this.recipientEmail1 = props.getProperty("recipientEmail1");
@@ -55,6 +58,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         this.sender = SenderTestUtils.createSender();
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendText(String, String, String)}</li>
+     * </ul>
+     */
     @Test
     @Order(1)
     @SneakyThrows
@@ -77,7 +86,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         Assertions.assertIncomingMessageEmptyAttachments(incomingMessage.getAttachments());
     }
 
-
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendText(Collection, String, String)} </li>
+     * </ul>
+     */
     @Test
     @Order(2)
     @SneakyThrows
@@ -113,6 +127,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         Assertions.assertIncomingMessageEmptyAttachments(incomingMessage2.getAttachments());
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendText(Collection, String, String, EmailAttachment...)}</li>
+     * </ul>
+     */
     @Test
     @Order(3)
     @SneakyThrows
@@ -156,6 +176,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         );
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendText(Collection, String, String, List)} </li>
+     * </ul>
+     */
     @Test
     @Order(4)
     @SneakyThrows
@@ -198,6 +224,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         );
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendText(String, String, String, EmailAttachment...)}  </li>
+     * </ul>
+     */
     @Test
     @Order(5)
     @SneakyThrows
@@ -229,6 +261,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         );
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendText(String, String, String, List)}  </li>
+     * </ul>
+     */
     @Test
     @Order(6)
     @SneakyThrows
@@ -259,6 +297,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         );
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendText(Set, String, String, List)}   </li>
+     * </ul>
+     */
     @Test
     @Order(7)
     @SneakyThrows
@@ -304,6 +348,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         );
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendHtml(String, String, String)}</li>
+     * </ul>
+     */
     @Test
     @Order(8)
     @SneakyThrows
@@ -326,7 +376,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         Assertions.assertIncomingMessageEmptyAttachments(incomingMessage.getAttachments());
     }
 
-
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendHtml(Collection, String, String)} </li>
+     * </ul>
+     */
     @Test
     @Order(9)
     @SneakyThrows
@@ -362,6 +417,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         Assertions.assertIncomingMessageEmptyAttachments(incomingMessage2.getAttachments());
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendHtml(Collection, String, String, EmailAttachment...)}</li>
+     * </ul>
+     */
     @Test
     @Order(10)
     @SneakyThrows
@@ -405,6 +466,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         );
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendHtml(Collection, String, String, List)}</li>
+     * </ul>
+     */
     @Test
     @Order(11)
     @SneakyThrows
@@ -447,6 +514,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         );
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendHtml(String, String, String, EmailAttachment...)} </li>
+     * </ul>
+     */
     @Test
     @Order(12)
     @SneakyThrows
@@ -478,6 +551,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         );
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendHtml(String, String, String, List)}</li>
+     * </ul>
+     */
     @Test
     @Order(13)
     @SneakyThrows
@@ -508,6 +587,12 @@ public class SMTPSendSimpleMessageTests extends AbstractTestsClass {
         );
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailSender#sendHtml(Set, String, String, List)} </li>
+     * </ul>
+     */
     @Test
     @Order(14)
     @SneakyThrows

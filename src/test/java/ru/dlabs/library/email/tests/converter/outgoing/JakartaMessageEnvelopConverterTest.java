@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Properties;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.converter.outgoing.JakartaMessageConverter;
 import ru.dlabs.library.email.dto.message.outgoing.DefaultOutgoingMessage;
@@ -22,6 +23,7 @@ import ru.dlabs.library.email.tests.converter.outgoing.utils.TestConverterUtils;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Order(311)
 public class JakartaMessageEnvelopConverterTest {
 
     /**

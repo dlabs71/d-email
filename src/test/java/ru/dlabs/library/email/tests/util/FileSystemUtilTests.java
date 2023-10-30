@@ -9,6 +9,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.mime.FileParametersDetector;
 import ru.dlabs.library.email.support.ApacheTikaDetector;
@@ -23,6 +24,7 @@ import ru.dlabs.library.email.util.FileSystemUtils;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Order(110)
 public class FileSystemUtilTests {
 
     private final FileParametersDetector tikaDetector = new ApacheTikaDetector();

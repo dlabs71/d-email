@@ -2,6 +2,7 @@ package ru.dlabs.library.email.tests.pageable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.dto.pageable.PageRequest;
 
@@ -14,6 +15,7 @@ import ru.dlabs.library.email.dto.pageable.PageRequest;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Order(200)
 public class PageRequestTest {
 
     /**

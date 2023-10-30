@@ -7,8 +7,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -19,6 +21,7 @@ import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
 import ru.dlabs.library.email.support.AbstractTestsClass;
+import ru.dlabs.library.email.tests.client.receiver.utils.ReceiveTestUtils;
 import ru.dlabs.library.email.tests.client.sender.utils.SenderTestUtils;
 
 /**
@@ -31,6 +34,7 @@ import ru.dlabs.library.email.tests.client.sender.utils.SenderTestUtils;
  * @since 1.0.0
  */
 @Slf4j
+@Order(426)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class IMAPClientConcurrentTest extends AbstractTestsClass {
@@ -43,17 +47,17 @@ public class IMAPClientConcurrentTest extends AbstractTestsClass {
     private DEmailSender emailSender;
     private boolean hasError;
 
-    @BeforeEach
+    @BeforeAll
     public void loadConfig() {
         ImapProperties[] properties = ReceiveTestUtils.loadProperties();
         this.emailSender = SenderTestUtils.createSender();
         this.emailReceiver = DEmailReceiver.of(properties[2]);
-
-        this.sendData(this.emailSender.sender().getEmail());
     }
 
+    @BeforeEach
     @SneakyThrows
-    private void sendData(String email) {
+    public void sendData() {
+        String email = this.emailSender.sender().getEmail();
         this.emailReceiver.clearCurrentFolder();
         this.emailSender.sendText(email, "Тестовое сообщение 1", "Содержание тестового сообщения 1");
         this.emailSender.sendText(email, "Тестовое сообщение 2", "Содержание тестового сообщения 2");
@@ -61,6 +65,12 @@ public class IMAPClientConcurrentTest extends AbstractTestsClass {
         Thread.sleep(sendDelayAfter);
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailReceiver} in multithreading environment</li>
+     * </ul>
+     */
     @Test
     @SneakyThrows
     public void concurrentTest() {

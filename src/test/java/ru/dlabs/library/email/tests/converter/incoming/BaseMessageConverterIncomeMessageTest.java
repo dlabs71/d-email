@@ -5,6 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.converter.incoming.BaseMessageConverter;
 import ru.dlabs.library.email.tests.converter.incoming.utils.MessageAsserts;
@@ -20,6 +21,7 @@ import ru.dlabs.library.email.dto.message.incoming.DefaultIncomingMessage;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Order(324)
 public class BaseMessageConverterIncomeMessageTest {
 
     /**

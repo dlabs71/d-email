@@ -11,6 +11,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.dto.message.common.EmailAttachment;
 import ru.dlabs.library.email.exception.AttachmentException;
@@ -21,11 +22,15 @@ import ru.dlabs.library.email.type.AttachmentType;
 import ru.dlabs.library.email.util.AttachmentUtils;
 
 /**
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-18</div>
+ * </p>
+ *
  * @author Ivanov Danila
- * @since 0.0.1
- * Project name: d-email
- * Creation date: 2023-09-18
+ * @since 1.0.0
  */
+@Order(150)
 public class AttachmentUtilTests {
 
     /**

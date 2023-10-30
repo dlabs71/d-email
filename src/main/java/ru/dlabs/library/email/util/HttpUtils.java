@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import lombok.experimental.UtilityClass;
 
 /**
+ * The utility class contains helpful methods for work with different parts of HTTP.
  * <p>
  * <div><strong>Project name:</strong> d-email</div>
  * <div><strong>Creation date:</strong> 2023-10-15</div>
@@ -17,13 +18,18 @@ import lombok.experimental.UtilityClass;
 public class HttpUtils {
 
     public static final String CONTENT_TYPE_HDR = "Content-type";
-    public static final String FORMAT_HDR = "format";
     public static final String CONTENT_TRANSFER_ENCODING_HDR = "Content-Transfer-Encoding";
     public static final String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
     public static final String TEXT_CONTENT_TYPE = "text/plain";
     public static final String HTML_CONTENT_TYPE = "text/html";
     public static final String DEFAULT_BINARY_CONTENT_TYPE = "application/octet-stream";
 
+    /**
+     * Returns the string value for the Content-Type header with the 'charset' directive.
+     * For example: text/html; charset=utf-8
+     *
+     * @see HttpUtils#contentTypeWithCharset(String, String)
+     */
     public String contentTypeWithCharset(String contentType, Charset charset) {
         return contentTypeWithCharset(contentType, charset.displayName());
     }
@@ -60,6 +66,13 @@ public class HttpUtils {
         return contentTypeWithCharset(contentType, DEFAULT_ENCODING);
     }
 
+    /**
+     * Returns value from 'charset' directive from a Content-Type header value.
+     *
+     * @param contentTypeValue a Content-Type header value
+     *
+     * @return value from 'charset' directive. For example: utf-8
+     */
     public String defineCharsetFromHeaderValue(String contentTypeValue) {
         if (contentTypeValue == null || contentTypeValue.isEmpty()) {
             return null;

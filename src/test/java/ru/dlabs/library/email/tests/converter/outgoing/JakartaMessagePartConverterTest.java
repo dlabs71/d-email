@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.converter.outgoing.JakartaMessageConverter;
 import ru.dlabs.library.email.dto.message.outgoing.DefaultOutgoingMessage;
@@ -25,6 +26,7 @@ import ru.dlabs.library.email.tests.converter.outgoing.utils.TestConverterUtils;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Order(312)
 public class JakartaMessagePartConverterTest {
 
     /**

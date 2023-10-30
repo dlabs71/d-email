@@ -5,11 +5,25 @@ import ru.dlabs.library.email.dto.message.common.Message;
 import ru.dlabs.library.email.exception.ValidationMessageException;
 
 /**
- * Message validation functions
+ * The utility class contains methods for validating messages.
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-27</div>
+ * </p>
+ *
+ * @author Ivanov Danila
+ * @since 1.0.0
  */
 @UtilityClass
 public class MessageValidator {
 
+    /**
+     * The method is common validation messages.
+     *
+     * @param message a message for validation
+     *
+     * @throws ValidationMessageException if the message didn't pass the validation
+     */
     public void validate(Message message) {
         if (message == null) {
             throw new ValidationMessageException("Email message cannot be null");

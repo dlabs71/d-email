@@ -1,8 +1,6 @@
 package ru.dlabs.library.email.property;
 
 import java.nio.charset.Charset;
-import java.util.Map;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +20,8 @@ import ru.dlabs.library.email.type.EncryptionType;
 @NoArgsConstructor
 public class ImapProperties extends CommonProperties {
 
-    private Credentials credentials;
+    private String email;
+    private String password;
     private boolean partialFetch = true;
     private Integer fetchSize = 1048576;
     private Integer statusCacheTimeout = 1000;
@@ -31,7 +30,8 @@ public class ImapProperties extends CommonProperties {
     private Integer connectionPoolTimeout = 45000;
 
     public ImapProperties(
-        Credentials credentials,
+        String email,
+        String password,
         boolean partialFetch,
         Integer fetchSize,
         Integer statusCacheTimeout,
@@ -48,7 +48,8 @@ public class ImapProperties extends CommonProperties {
         Charset charset
     ) {
         super(host, port, encryptionType, readTimeout, connectionTimeout, writeTimeout, debug, charset);
-        this.credentials = credentials;
+        this.email = email;
+        this.password = password;
         this.partialFetch = partialFetch;
         this.fetchSize = fetchSize;
         this.statusCacheTimeout = statusCacheTimeout;
@@ -61,30 +62,14 @@ public class ImapProperties extends CommonProperties {
         return new ImapProperties.ImapPropertiesBuilder();
     }
 
-    @Getter
-    @AllArgsConstructor
-    public static class Credentials implements Cloneable {
-
-        private String email;
-        private String password;
-
-        @Override
-        public Credentials clone() {
-            try {
-                return (Credentials) super.clone();
-            } catch (CloneNotSupportedException e) {
-                throw new AssertionError();
-            }
-        }
-    }
-
     @Setter
     @ToString
     @NoArgsConstructor
     @Accessors(chain = true, fluent = true)
     public static class ImapPropertiesBuilder {
 
-        private Credentials credentials;
+        private String email;
+        private String password;
         private boolean partialFetch = true;
         private Integer fetchSize = 1048576;
         private Integer statusCacheTimeout = 1000;
@@ -102,7 +87,8 @@ public class ImapProperties extends CommonProperties {
 
         public ImapProperties build() {
             return new ImapProperties(
-                credentials,
+                email,
+                password,
                 partialFetch,
                 fetchSize,
                 statusCacheTimeout,

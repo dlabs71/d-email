@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.dlabs.library.email.util.HttpUtils.DEFAULT_ENCODING;
 
 import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.util.HttpUtils;
 
@@ -16,6 +17,7 @@ import ru.dlabs.library.email.util.HttpUtils;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Order(100)
 public class HttpUtilTests {
 
     /**

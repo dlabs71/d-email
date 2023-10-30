@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.converter.incoming.MessagePartConverter;
 import ru.dlabs.library.email.dto.message.common.ContentMessage;
@@ -49,6 +50,7 @@ import ru.dlabs.library.email.util.JavaCoreUtils;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Order(322)
 public class MessagePartConverterTest {
 
     /**
@@ -90,6 +92,12 @@ public class MessagePartConverterTest {
         assertRecipients(message2.getRecipients(Message.RecipientType.TO), participants2);
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link MessagePartConverter#getContentDefaultAsBytes(Part)}</li>
+     * </ul>
+     */
     @Test
     @SneakyThrows
     public void getContentDefaultAsBytesTest() {
@@ -141,6 +149,12 @@ public class MessagePartConverterTest {
         assertEquals(content, new String(result5));
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link MessagePartConverter#getContentDefault(Part)}</li>
+     * </ul>
+     */
     @Test
     @SneakyThrows
     public void getContentDefaultTest() {
@@ -246,6 +260,12 @@ public class MessagePartConverterTest {
         assertEquals(Arrays.toString(contentBuf), Arrays.toString(attachment3.getData()));
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link MessagePartConverter#getContent(Part)} </li>
+     * </ul>
+     */
     @Test
     public void getContentTest() {
         List<String> attachmentPaths = Arrays.asList(

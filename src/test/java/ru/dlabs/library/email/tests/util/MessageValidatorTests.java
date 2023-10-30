@@ -6,15 +6,33 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
+import ru.dlabs.library.email.dto.message.common.Message;
 import ru.dlabs.library.email.dto.message.outgoing.DefaultOutgoingMessage;
 import ru.dlabs.library.email.dto.message.outgoing.TemplatedOutgoingMessage;
 import ru.dlabs.library.email.exception.ValidationMessageException;
 import ru.dlabs.library.email.util.MessageValidator;
 
+/**
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-29</div>
+ * </p>
+ *
+ * @author Ivanov Danila
+ * @since 1.0.0
+ */
+@Order(120)
 public class MessageValidatorTests {
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link MessageValidator#validate(Message)}</li>
+     * </ul>
+     */
     @Test
     public void textMessageValidationTest() {
         Set<EmailParticipant> participants = new HashSet<>();
@@ -42,6 +60,12 @@ public class MessageValidatorTests {
         assertEquals("List recipients cannot be null or empty in the email message", exception.getMessage());
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link MessageValidator#validate(Message)}</li>
+     * </ul>
+     */
     @Test
     public void templateMessageValidationTest() {
         Set<EmailParticipant> participants = new HashSet<>();

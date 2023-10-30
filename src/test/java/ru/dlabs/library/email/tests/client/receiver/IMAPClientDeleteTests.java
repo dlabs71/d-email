@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -19,34 +21,39 @@ import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
 import ru.dlabs.library.email.support.AbstractTestsClass;
+import ru.dlabs.library.email.tests.client.receiver.utils.ReceiveTestUtils;
 import ru.dlabs.library.email.tests.client.sender.utils.SenderTestUtils;
 
 /**
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-31</div>
+ * </p>
+ *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-08-31
+ * @since 1.0.0
  */
-@Order(321)
+@Order(422)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class IMAPClientDeleteTests extends AbstractTestsClass {
 
     private DEmailSender emailSender;
     private DEmailReceiver emailReceiver;
+    private ImapProperties sslImapProperties;
 
-    @BeforeEach
+    @BeforeAll
     public void loadConfig() {
         ImapProperties[] properties = ReceiveTestUtils.loadProperties();
-        ImapProperties sslImapProperties = properties[0];
+        this.sslImapProperties = properties[0];
         this.emailSender = SenderTestUtils.createSender();
         this.emailReceiver = DEmailReceiver.of(sslImapProperties);
-
-        String email = ReceiveTestUtils.getDefaultEmail(sslImapProperties);
-        this.sendData(email);
     }
 
+    @BeforeEach
     @SneakyThrows
-    private void sendData(String email) {
+    public void sendData() {
+        String email = ReceiveTestUtils.getDefaultEmail(sslImapProperties);
         this.emailSender.sendText(email, "Тестовое сообщение 1", "Содержание тестового сообщения 1");
         this.emailSender.sendText(email, "Тестовое сообщение 2", "Содержание тестового сообщения 2");
         this.emailSender.sendText(email, "Тестовое сообщение 3", "Содержание тестового сообщения 3");
@@ -55,6 +62,12 @@ public class IMAPClientDeleteTests extends AbstractTestsClass {
         Thread.sleep(sendDelayAfter);
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailReceiver#deleteMessageById(Integer)}</li>
+     * </ul>
+     */
     @Test
     @Order(1)
     public void deleteMessage() {
@@ -68,6 +81,12 @@ public class IMAPClientDeleteTests extends AbstractTestsClass {
         assertEquals(1, total - response.getTotalCount());
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailReceiver#deleteMessages(Collection)}</li>
+     * </ul>
+     */
     @Test
     @Order(2)
     public void deleteSeveralMessages() {
@@ -86,6 +105,12 @@ public class IMAPClientDeleteTests extends AbstractTestsClass {
         assertEquals(2, total - response.getTotalCount());
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailReceiver#clearCurrentFolder()}</li>
+     * </ul>
+     */
     @Test
     @Order(3)
     public void deleteAllMessages() {

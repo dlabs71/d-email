@@ -13,11 +13,22 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.Template;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import ru.dlabs.library.email.exception.TemplateCreationException;
 import ru.dlabs.library.email.util.TemplateUtils;
 
+/**
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-29</div>
+ * </p>
+ *
+ * @author Ivanov Danila
+ * @since 1.0.0
+ */
+@Order(140)
 public class TemplateUtilsTests {
 
     /**

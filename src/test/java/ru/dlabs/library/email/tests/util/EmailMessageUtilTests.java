@@ -10,11 +10,22 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.util.EmailMessageUtils;
 
+/**
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-27</div>
+ * </p>
+ *
+ * @author Ivanov Danila
+ * @since 1.0.0
+ */
 @Slf4j
+@Order(130)
 public class EmailMessageUtilTests {
 
     /**

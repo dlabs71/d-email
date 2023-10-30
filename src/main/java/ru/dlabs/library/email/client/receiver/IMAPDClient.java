@@ -27,6 +27,7 @@ import ru.dlabs.library.email.exception.SessionException;
 import ru.dlabs.library.email.property.ImapProperties;
 import ru.dlabs.library.email.property.SessionPropertyCollector;
 import ru.dlabs.library.email.type.Protocol;
+import ru.dlabs.library.email.util.JavaCoreUtils;
 
 /**
  * This class is an implementation of the interface {@link ReceiverDClient}.
@@ -46,7 +47,7 @@ public class IMAPDClient implements ReceiverDClient {
     private final Session session;
     private final Properties properties;
     private final IMAPStore store;
-    private final ImapProperties.Credentials credentials;
+    private final EmailParticipant principal;
 
     /**
      * Constructor of the class. An IMAP connection will be created by creating the class at once.
@@ -54,10 +55,11 @@ public class IMAPDClient implements ReceiverDClient {
      * @param imapProperties properties for creating an IMAP connection
      */
     public IMAPDClient(ImapProperties imapProperties) {
-        this.credentials = imapProperties.getCredentials().clone();
+        JavaCoreUtils.notNullArgument(imapProperties, "imapProperties");
+        this.principal = EmailParticipant.of(imapProperties.getEmail());
         this.properties = this.collectProperties(imapProperties);
         this.session = this.connect();
-        this.store = createStore(this.session, this.credentials);
+        this.store = createStore(this.session, imapProperties.getEmail(), imapProperties.getPassword());
     }
 
     private Properties collectProperties(ImapProperties imapProperties) {
@@ -80,7 +82,7 @@ public class IMAPDClient implements ReceiverDClient {
     @Override
     public Session connect() throws SessionException {
         try {
-            return Session.getDefaultInstance(this.properties);
+            return Session.getInstance(this.properties);
         } catch (Exception e) {
             throw new SessionException(
                 "The creation of a connection failed because of the following error: " + e.getMessage());
@@ -94,16 +96,14 @@ public class IMAPDClient implements ReceiverDClient {
 
     @Override
     public EmailParticipant getPrincipal() {
-        if (this.credentials == null) {
-            return null;
-        }
-        return new EmailParticipant(this.credentials.getEmail());
+        return principal;
     }
 
-    private static IMAPStore createStore(Session session, ImapProperties.Credentials credentials) {
+    private static IMAPStore createStore(Session session, String email, String password) {
         try {
+            log.info("Connect to mailbox: " + email);
             IMAPStore store = (IMAPStore) session.getStore(PROTOCOL.getProtocolName());
-            store.connect(credentials.getEmail(), credentials.getPassword());
+            store.connect(email, password);
             return store;
         } catch (MessagingException e) {
             throw new SessionException("Creating session finished with the error: " + e.getMessage(), e);
@@ -311,15 +311,6 @@ public class IMAPDClient implements ReceiverDClient {
             return Arrays.stream(folder.getMessages(pageRequest.getStart() + 1, end));
         } catch (MessagingException e) {
             throw new FolderOperationException("The get list message operation has failed: " + e.getMessage());
-        }
-    }
-
-    private void markedAsSeen(Message message) {
-        try {
-            message.setFlag(Flags.Flag.SEEN, true);
-            message.saveChanges();
-        } catch (MessagingException e) {
-            log.warn("The message wasn't marked as seen because of the following error: " + e.getMessage());
         }
     }
 }

@@ -1,7 +1,6 @@
-package ru.dlabs.library.email.tests.client.receiver;
+package ru.dlabs.library.email.tests.client.receiver.utils;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Properties;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -11,9 +10,13 @@ import ru.dlabs.library.email.support.PropUtils;
 import ru.dlabs.library.email.type.EncryptionType;
 
 /**
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-09</div>
+ * </p>
+ *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-09-09
+ * @since 1.0.0
  */
 @UtilityClass
 public class ReceiveTestUtils {
@@ -39,24 +42,23 @@ public class ReceiveTestUtils {
 
     public ImapProperties.ImapPropertiesBuilder loadCommonProperties(Properties properties, String credentialId)
         throws IOException {
-        HashMap<String, ImapProperties.Credentials> credentialsMap = new HashMap<>();
-        credentialsMap.put(
-            CREDENTIAL_ID_1,
-            new ImapProperties.Credentials(
-                properties.getProperty("email1"),
-                properties.getProperty("password1")
-            )
-        );
-        credentialsMap.put(
-            CREDENTIAL_ID_2,
-            new ImapProperties.Credentials(
-                properties.getProperty("email2"),
-                properties.getProperty("password2")
-            )
-        );
+        String email = null;
+        String password = null;
+
+        if (CREDENTIAL_ID_1.equals(credentialId)) {
+            email = properties.getProperty("email1");
+            password = properties.getProperty("password1");
+        }
+
+        if (CREDENTIAL_ID_2.equals(credentialId)) {
+            email = properties.getProperty("email2");
+            password = properties.getProperty("password2");
+        }
+
         return ImapProperties.builder()
             .host(properties.getProperty("host"))
-            .credentials(credentialsMap.get(credentialId))
+            .email(email)
+            .password(password)
             .debug("true".equals(properties.getProperty("debug", "false")));
     }
 
@@ -106,6 +108,6 @@ public class ReceiveTestUtils {
     }
 
     public String getDefaultEmail(ImapProperties properties) {
-        return properties.getCredentials().getEmail();
+        return properties.getEmail();
     }
 }

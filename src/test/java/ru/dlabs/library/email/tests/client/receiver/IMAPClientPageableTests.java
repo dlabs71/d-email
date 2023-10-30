@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -20,14 +21,19 @@ import ru.dlabs.library.email.dto.pageable.PageRequest;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
 import ru.dlabs.library.email.support.AbstractTestsClass;
+import ru.dlabs.library.email.tests.client.receiver.utils.ReceiveTestUtils;
 import ru.dlabs.library.email.tests.client.sender.utils.SenderTestUtils;
 
 /**
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-31</div>
+ * </p>
+ *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-08-31
+ * @since 1.0.0
  */
-@Order(322)
+@Order(425)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class IMAPClientPageableTests extends AbstractTestsClass {
@@ -37,16 +43,14 @@ public class IMAPClientPageableTests extends AbstractTestsClass {
 
     private DEmailSender emailSender;
     private DEmailReceiver emailReceiver;
+    private ImapProperties sslImapProperties;
 
-    @BeforeEach
+    @BeforeAll
     public void loadConfig() {
         ImapProperties[] properties = ReceiveTestUtils.loadProperties();
-        ImapProperties sslImapProperties = properties[0];
+        this.sslImapProperties = properties[0];
         this.emailSender = SenderTestUtils.createSender();
         this.emailReceiver = DEmailReceiver.of(sslImapProperties);
-
-        String email = ReceiveTestUtils.getDefaultEmail(sslImapProperties);
-        this.sendData(email);
     }
 
     @AfterEach
@@ -54,9 +58,10 @@ public class IMAPClientPageableTests extends AbstractTestsClass {
         this.emailReceiver.clearCurrentFolder();
     }
 
+    @BeforeEach
     @SneakyThrows
-    private void sendData(String email) {
-        Thread.sleep(sendDelayAfter);
+    public void sendData() {
+        String email = ReceiveTestUtils.getDefaultEmail(sslImapProperties);
         this.emailReceiver.clearCurrentFolder();
         Thread.sleep(sendDelayAfter);
         for (int i = 0; i < countMessages; i++) {
@@ -66,6 +71,13 @@ public class IMAPClientPageableTests extends AbstractTestsClass {
         Thread.sleep(2L * sendDelayAfter);
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailReceiver#checkEmail(PageRequest)} </li>
+     * </ul>
+     * <p>
+     */
     @Test
     public void pageableTest() {
         PageRequest pageRequest = PageRequest.of(0, pageSize);
@@ -89,6 +101,13 @@ public class IMAPClientPageableTests extends AbstractTestsClass {
         assertFalse(intersection);
     }
 
+    /**
+     * The test for:
+     * <ul>
+     *     <li>{@link DEmailReceiver#checkEmail(PageRequest)} </li>
+     * </ul>
+     * <p>
+     */
     @Test
     public void changePageSizeTest() {
         PageResponse<MessageView> response1 = this.emailReceiver.checkEmail(PageRequest.of(0, pageSize));

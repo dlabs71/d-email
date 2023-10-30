@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 
 /**
- * The utility class for working with email messages
+ * The utility class is for working with email messages and parts of ones.
  *
  * <p>
  * <div><strong>Project name:</strong> d-email</div>
@@ -29,7 +29,7 @@ import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 public class EmailMessageUtils {
 
     /**
-     * It's creating an {@link InternetAddress} object from email and name strings
+     * It's creating an {@link InternetAddress} object from email and name strings.
      *
      * @param email the mail address string (RFC822 format)
      * @param name  the personal name
@@ -49,7 +49,7 @@ public class EmailMessageUtils {
 
     /**
      * It's creating an array of {@link InternetAddress} objects from a list of {@link EmailParticipant} objects.
-     * If any element in the parameter is incorrect then it will miss in the result
+     * If any element in the parameter is incorrect then it will miss in the result.
      *
      * @param recipients the list of recipients
      *

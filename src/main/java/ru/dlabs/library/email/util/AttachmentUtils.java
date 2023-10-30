@@ -17,7 +17,7 @@ import ru.dlabs.library.email.mime.FileParametersDetector;
 import ru.dlabs.library.email.type.AttachmentType;
 
 /**
- * This is the utility class for creating {@link EmailAttachment} objects.
+ * This is the utility class is for creating {@link EmailAttachment} objects.
  *
  * <p>
  * <div><strong>Project name:</strong> d-email</div>
@@ -58,8 +58,7 @@ public class AttachmentUtils {
                 throw new AttachmentException(
                     "The resource cannot be loaded. "
                         + "The parameter pathToFile must start with a: 'file://'; 'classpath:' or '/'. "
-                        + "The pathToFile = " + pathToFile
-                );
+                        + "The pathToFile = " + pathToFile);
             }
 
             File file = new File(url.toURI());
@@ -76,6 +75,11 @@ public class AttachmentUtils {
         }
     }
 
+    /**
+     * Creates an object of the {@link EmailAttachment} class by the path to file.
+     *
+     * @see AttachmentUtils#create(String, FileParametersDetector)
+     */
     public EmailAttachment create(String pathToFile) throws AttachmentException {
         return create(pathToFile, DefaultFileParametersDetector.getInstance());
     }
@@ -96,8 +100,9 @@ public class AttachmentUtils {
         File file = createFile(pathToFile);
         if (file.length() > Integer.MAX_VALUE) {
             throw new AttachmentException(
-                "The file is too large. A file cannot be larger than " + Integer.MAX_VALUE + ". Filename = " +
-                    pathToFile);
+                "The file is too large. A file cannot be larger than "
+                    + Integer.MAX_VALUE + ". Filename = "
+                    + pathToFile);
         }
         String contentType = createContentTypeForAttachment(file, detector);
         byte[] content;
@@ -107,15 +112,15 @@ public class AttachmentUtils {
         } catch (IOException ex) {
             throw new AttachmentException("Read the file was failed. " + ex.getMessage());
         }
-        return EmailAttachment.builder()
-            .name(file.getName())
-            .data(content)
-            .size((int) file.length())
-            .contentType(contentType)
-            .type(AttachmentType.find(contentType))
-            .build();
+        return EmailAttachment.builder().name(file.getName()).data(content).size((int) file.length()).contentType(
+            contentType).type(AttachmentType.find(contentType)).build();
     }
 
+    /**
+     * This method creates string for the value of Content-Type header.
+     *
+     * @see AttachmentUtils#createContentTypeForAttachment(File, FileParametersDetector)
+     */
     public String createContentTypeForAttachment(File file) {
         return createContentTypeForAttachment(file, null);
     }
@@ -124,10 +129,10 @@ public class AttachmentUtils {
      * This method creates string for the value of Content-Type header.
      * If a mime type of file is a 'text/' then a result will contain 'charset='.
      *
-     * @param file
-     * @param detector
+     * @param file     a path to the file
+     * @param detector {@linkplain FileParametersDetector} detector for getting different file parameters
      *
-     * @return
+     * @return a completed string for using in the Content-Type header
      */
     public String createContentTypeForAttachment(File file, FileParametersDetector detector) {
         String mimeType = FileSystemUtils.detectFileMimeType(file, detector);

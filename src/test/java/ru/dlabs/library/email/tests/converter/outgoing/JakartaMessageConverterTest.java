@@ -8,6 +8,7 @@ import static ru.dlabs.library.email.util.HttpUtils.TEXT_CONTENT_TYPE;
 import jakarta.mail.BodyPart;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import ru.dlabs.library.email.converter.outgoing.JakartaMessagePartConverter;
 import ru.dlabs.library.email.dto.message.common.ContentMessage;
@@ -27,6 +28,7 @@ import ru.dlabs.library.email.util.AttachmentUtils;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Order(313)
 public class JakartaMessageConverterTest {
 
     /**
