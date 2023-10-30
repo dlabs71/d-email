@@ -4,13 +4,16 @@ import java.util.Arrays;
 import lombok.Getter;
 
 /**
- * It's the enum with attachment types, which are based on MIME types
+ * It's the enum with attachment types, which are based on MIME types.
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">MIME types</a>
+ *
  * <p>
- * https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-01</div>
+ * </p>
  *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-09-01
+ * @since 1.0.0
  */
 @Getter
 public enum AttachmentType {
@@ -25,6 +28,11 @@ public enum AttachmentType {
 
     private final String mimeTypePattern;
 
+    /**
+     * The constructor of this enum.
+     *
+     * @param mimeTypePattern a regex pattern of MIME types
+     */
     AttachmentType(String mimeTypePattern) {
         this.mimeTypePattern = mimeTypePattern;
     }

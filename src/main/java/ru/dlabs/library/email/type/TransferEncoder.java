@@ -4,6 +4,9 @@ import java.util.Arrays;
 import lombok.Getter;
 
 /**
+ * The enum of supported values of Content-Transfer-Encoding header.
+ * You can read of this header here - <a href="https://www.w3.org/Protocols/rfc1341/5_Content-Transfer-Encoding.html">Content-Transfer-Encoding</a>
+ *
  * <p>
  * <div><strong>Project name:</strong> d-email</div>
  * <div><strong>Creation date:</strong> 2023-10-16</div>
@@ -21,18 +24,36 @@ public enum TransferEncoder {
 
     private final String name;
 
+    /**
+     * The constructor of this enum.
+     *
+     * @param name a value of Content-Transfer-Encoding header
+     */
     TransferEncoder(String name) {
         this.name = name;
     }
 
+    /**
+     * Returns default value for a Content-Transfer-Encoding header.
+     */
     public static TransferEncoder byDefault() {
         return TransferEncoder.EIGHT_BIT;
     }
 
+    /**
+     * Finds corresponding enum value for string in the argument.
+     *
+     * @param value a value of a Content-Transfer-Encoding header.
+     *
+     * @return a value of a Content-Transfer-Encoding header or null
+     */
     public static TransferEncoder forName(String value) {
         if (value == null) {
             return null;
         }
-        return Arrays.stream(values()).filter(item -> item.getName().equals(value)).findFirst().orElse(null);
+        return Arrays.stream(values())
+            .filter(item -> item.getName().equals(value))
+            .findFirst()
+            .orElse(null);
     }
 }
