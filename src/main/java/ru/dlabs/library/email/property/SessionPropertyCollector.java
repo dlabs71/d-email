@@ -8,14 +8,28 @@ import ru.dlabs.library.email.type.EncryptionType;
 import ru.dlabs.library.email.type.Protocol;
 
 /**
- * Utility class for settings and workings with the email session connection
+ * Utility class for settings and workings with the email session connection.
+ *
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-30</div>
+ * </p>
  *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-08-30
+ * @since 1.0.0
  */
 public final class SessionPropertyCollector {
 
+    /**
+     * Returns a Properties object for set up an email connection configuration.
+     *
+     * @param properties properties. {@link ImapProperties}, {@link SmtpProperties}
+     * @param protocol   a using protocol
+     *
+     * @return object {@link Properties}
+     *
+     * @throws GeneralSecurityException if a {@link MailSSLSocketFactory} will is broken
+     */
     public static Properties createCommonProperties(CommonProperties properties, Protocol protocol)
         throws GeneralSecurityException {
         Properties props = new Properties();
@@ -38,9 +52,18 @@ public final class SessionPropertyCollector {
             props.put(createProperty(protocol, "starttls.enable"), true);
             props.put(createProperty(protocol, "starttls.required"), true);
         }
+        props.putAll(properties.getExtraProperties());
         return props;
     }
 
+    /**
+     * Utility method for creating property names based on protocol and property postfix.
+     *
+     * @param protocol a protocol IMAP, SMTP, etc.
+     * @param property a property postfix
+     *
+     * @return a property name
+     */
     public static String createProperty(Protocol protocol, String property) {
         return "mail." + protocol.getPropName() + "." + property;
     }

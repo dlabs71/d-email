@@ -1,6 +1,8 @@
 package ru.dlabs.library.email.property;
 
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,18 +11,34 @@ import lombok.experimental.Accessors;
 import ru.dlabs.library.email.type.EncryptionType;
 
 /**
- * The properties for connecting to an email server by the SMTP protocol
+ * The properties for connecting to an email server by the SMTP protocol.
+ *
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-31</div>
+ * </p>
  *
  * @author Ivanov Danila
- * @version 1.0
+ * @since 1.0.0
  */
 @Getter
 @Setter
 @NoArgsConstructor
 public class SmtpProperties extends CommonProperties {
 
+    /**
+     * Email address of a mailbox to witch to connect.
+     */
     private String email;
+
+    /**
+     * Password of a mailbox to witch to connect.
+     */
     private String password;
+
+    /**
+     * Name of an email account
+     */
     private String name;
 
     public SmtpProperties(
@@ -34,9 +52,20 @@ public class SmtpProperties extends CommonProperties {
         Integer connectionTimeout,
         Integer writeTimeout,
         boolean debug,
-        Charset charset
+        Charset charset,
+        Map<String, Object> extraProperties
     ) {
-        super(host, port, encryptionType, readTimeout, connectionTimeout, writeTimeout, debug, charset);
+        super(
+            host,
+            port,
+            encryptionType,
+            readTimeout,
+            connectionTimeout,
+            writeTimeout,
+            debug,
+            charset,
+            extraProperties
+        );
         this.email = email;
         this.password = password;
         this.name = name;
@@ -63,6 +92,7 @@ public class SmtpProperties extends CommonProperties {
         private Integer writeTimeout = 30000;
         private boolean debug = false;
         private Charset charset = Charset.defaultCharset();
+        private Map<String, Object> extraProperties = new HashMap<>();
 
         public SmtpProperties build() {
             return new SmtpProperties(
@@ -76,7 +106,8 @@ public class SmtpProperties extends CommonProperties {
                 connectionTimeout,
                 writeTimeout,
                 debug,
-                charset
+                charset,
+                extraProperties
             );
         }
     }
