@@ -6,13 +6,17 @@ import ru.dlabs.library.email.type.AttachmentType;
 import ru.dlabs.library.email.util.AttachmentUtils;
 
 /**
- * This class described an email attachment.
+ * This class describes an email message attachment.
+ *
+ * <p>For simplifying attachment creation, use the {@link AttachmentUtils} utility class.
+ *
  * <p>
- * For simplifying attachment creation, use the {@link AttachmentUtils} utility class.
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-01</div>
+ * </p>
  *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-09-01
+ * @since 1.0.0
  */
 @Getter
 @Builder

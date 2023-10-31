@@ -1,16 +1,17 @@
 package ru.dlabs.library.email.dto.message.outgoing;
 
 import ru.dlabs.library.email.dto.message.common.Message;
-import ru.dlabs.library.email.type.ContentMessageType;
 
 /**
- * Interface an outgoing message
+ * This interface defines any outgoing email message. Extends by the {@link Message} interface.
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-07</div>
+ * </p>
  *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-09-07
+ * @since 1.0.0
  */
 public interface OutgoingMessage extends Message {
 
-    ContentMessageType getContentType();
 }

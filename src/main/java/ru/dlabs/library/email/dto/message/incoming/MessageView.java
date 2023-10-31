@@ -14,11 +14,17 @@ import ru.dlabs.library.email.dto.message.common.Message;
 import ru.dlabs.library.email.type.TransferEncoder;
 
 /**
- * This class described common data about an email message. Without a message body and message attachments.
+ * This class describes only common data about an email message. Without a message body and message attachments.
+ *
+ * <p>Uses in the check email operations.
+ *
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-07</div>
+ * </p>
  *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-08-31
+ * @since 1.0.0
  */
 @Getter
 @Builder
@@ -37,11 +43,17 @@ public class MessageView implements Message {
     private LocalDateTime sentDate;
     private LocalDateTime receivedDate;
 
+    /**
+     * Returns empty list.
+     */
     @Override
     public List<ContentMessage> getContents() {
         return Collections.emptyList();
     }
 
+    /**
+     * Returns empty list.
+     */
     @Override
     public List<EmailAttachment> getAttachments() {
         return Collections.emptyList();

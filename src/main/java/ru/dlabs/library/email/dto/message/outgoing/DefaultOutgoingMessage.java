@@ -17,18 +17,19 @@ import ru.dlabs.library.email.type.ContentMessageType;
 import ru.dlabs.library.email.type.TransferEncoder;
 
 /**
- * Class describe a simple outgoing email message
+ * This class describes a default outgoing email message.
+ * It extends the {@link BaseMessage} and also implements the {@link OutgoingMessage} interface.
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-18</div>
+ * </p>
  *
  * @author Ivanov Danila
- * @since 0.0.1
- * Project name: d-email
- * Creation date: 2023-09-18
+ * @since 1.0.0
  */
 @Getter
 @ToString
 public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessage {
-
-    private final ContentMessageType contentType;
 
     public DefaultOutgoingMessage(
         String subject,
@@ -60,8 +61,6 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
         this.setTransferEncoder(transferEncoder == null ? TransferEncoder.byDefault() : transferEncoder);
         this.setRecipients(recipientEmail);
         this.setAttachments(attachments);
-        this.contentType = contentType;
-
 
         if (content != null) {
             ContentMessage contentMessage = new ContentMessage(content, contentType.getMimeType(), charsetContent);

@@ -14,9 +14,14 @@ import lombok.Setter;
 import ru.dlabs.library.email.type.TransferEncoder;
 
 /**
+ * This class describes a base email message. It's implementation of {@link Message} interface.
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-02</div>
+ * </p>
+ *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-09-01
+ * @since 1.0.0
  */
 @Setter
 @Getter
@@ -41,6 +46,9 @@ public class BaseMessage implements Message {
     private LocalDateTime sentDate;
     private LocalDateTime receivedDate;
 
+    /**
+     * Add new content to the list contents.
+     */
     public void addContent(ContentMessage content) {
         if (this.contents == null) {
             this.contents = new ArrayList<>();
@@ -48,6 +56,9 @@ public class BaseMessage implements Message {
         this.contents.add(content);
     }
 
+    /**
+     * Add several contents to the list contents.
+     */
     public void addAllContent(Collection<ContentMessage> contents) {
         if (this.contents == null) {
             this.contents = new ArrayList<>();
@@ -55,10 +66,16 @@ public class BaseMessage implements Message {
         this.contents.addAll(contents);
     }
 
+    /**
+     * Returns all the contents as one string, separated by '\n'.
+     */
     public String getAllContentsAsString() {
         return this.getAllContentsAsString("\n");
     }
 
+    /**
+     * Returns all the contents as one string, separated by a delimiter, which is set up in the parameter.
+     */
     public String getAllContentsAsString(String delimiter) {
         return this.getContents().stream().map(ContentMessage::getData).collect(Collectors.joining(delimiter));
     }

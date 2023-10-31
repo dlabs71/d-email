@@ -8,10 +8,14 @@ import lombok.Getter;
 import ru.dlabs.library.email.exception.ValidationMessageException;
 
 /**
- * Class describe an email message recipient
+ * This class describes an email message participant (sender or receiver).
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-27</div>
+ * </p>
  *
  * @author Ivanov Danila
- * @version 1.0
+ * @since 1.0.0
  */
 @EqualsAndHashCode(of = { "email" })
 public class EmailParticipant {
@@ -23,8 +27,17 @@ public class EmailParticipant {
     private final String email;
     @Getter
     private String name;
+
+    /**
+     * Uses for only toString.
+     */
     private String displayViewCache;
 
+    /**
+     * The constructor of this class.
+     *
+     * @param email a participant email. It must is not null.
+     */
     public EmailParticipant(String email) {
         if (email == null) {
             throw new ValidationMessageException("The recipient's email must not be null");
@@ -32,19 +45,43 @@ public class EmailParticipant {
         this.email = email;
     }
 
+    /**
+     * The constructor of this class.
+     *
+     * @param email a participant email. It must is not null.
+     * @param name  a real name of the participant. For example: John Silver, Billy Bones, etc.
+     */
     public EmailParticipant(String email, String name) {
         this(email);
         this.name = name;
     }
 
+    /**
+     * The builder of this class.
+     *
+     * @param email a participant email. It must is not null.
+     * @param name  a real name of the participant.
+     *
+     * @return a created object
+     */
     public static EmailParticipant of(String email, String name) {
         return new EmailParticipant(email, name);
     }
 
+    /**
+     * The builder of this class.
+     *
+     * @param email a participant email. It must is not null.
+     *
+     * @return a created object
+     */
     public static EmailParticipant of(String email) {
         return new EmailParticipant(email);
     }
 
+    /**
+     * Returns a string email address in conformity with RFC822.
+     */
     @Override
     public String toString() {
         if (displayViewCache != null) {
@@ -54,7 +91,8 @@ public class EmailParticipant {
         if (name != null) {
             try {
                 encodedName = MimeUtility.encodeWord(name);
-            } catch (UnsupportedEncodingException ex) {
+            } catch (UnsupportedEncodingException ignored) {
+                encodedName = name;
             }
         }
 
