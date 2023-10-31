@@ -11,15 +11,15 @@ import lombok.Getter;
 /**
  * This class implements {@link FileParametersDetector} interface. Its purpose is to define MIMEType by a file.
  * It is based on two methods:
+ *
  * <ol>
- *     <li>It probes the content type of a file using {@link Files#probeContentType(Path)}</lo>
- *     <li>It tries to guess a content type using {@link URLConnection#guessContentTypeFromName(String)}</lo>
+ *     <li>It probes the content type of a file using {@link Files#probeContentType(Path)}</li>
+ *     <li>It tries to guess a content type using {@link URLConnection#guessContentTypeFromName(String)}</li>
  * </ol>
- * <p>
- * These methods are used in the same order as above in the text. If its can't define MIMEType
+ *
+ * <p>These methods are used in the same order as above in the text. If its can't define MIMEType
  * then the {@link DefaultFileParametersDetector#detectMimeType(File)} method will return
  * the default value (application/octet-stream).
- *
  *
  * <p>
  * <div><strong>Project name:</strong> d-email</div>
@@ -32,13 +32,13 @@ import lombok.Getter;
 public class DefaultFileParametersDetector implements FileParametersDetector {
 
     @Getter
-    public static final DefaultFileParametersDetector instance = new DefaultFileParametersDetector();
+    private static final DefaultFileParametersDetector instance = new DefaultFileParametersDetector();
     public static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
     /**
      * Returns MIMEType by a file.
-     * <p>
-     * It uses the next methods: {@link Files#probeContentType(Path)} and
+     *
+     * <p>It uses the next methods: {@link Files#probeContentType(Path)} and
      * {@link URLConnection#guessContentTypeFromName(String)} or else returns the default value
      * from the constant {@link DefaultFileParametersDetector#DEFAULT_CONTENT_TYPE}
      *
@@ -57,6 +57,14 @@ public class DefaultFileParametersDetector implements FileParametersDetector {
         return contentType != null ? contentType : DEFAULT_CONTENT_TYPE;
     }
 
+    /**
+     * Returns always system default charset.
+     * You can override this method or create your own implementation of the {@link FileParametersDetector} interface.
+     *
+     * @param file a file for getting content charset
+     *
+     * @return system default charset
+     */
     @Override
     public Charset detectEncoding(File file) {
         return Charset.defaultCharset();

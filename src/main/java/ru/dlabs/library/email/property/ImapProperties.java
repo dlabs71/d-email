@@ -11,11 +11,15 @@ import lombok.experimental.Accessors;
 import ru.dlabs.library.email.type.EncryptionType;
 
 /**
- * The properties for connecting to an email server by the IMAP protocol
+ * The properties for connecting to an email server by the IMAP protocol.
+ *
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-30</div>
+ * </p>
  *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-08-30
+ * @since 1.0.0
  */
 @Getter
 @Setter
@@ -80,6 +84,9 @@ public class ImapProperties extends CommonProperties {
      */
     private Integer connectionPoolTimeout = 45000;
 
+    /**
+     * The constructor of this class.
+     */
     public ImapProperties(
         String email,
         String password,
@@ -120,10 +127,16 @@ public class ImapProperties extends CommonProperties {
         this.connectionPoolTimeout = connectionPoolTimeout;
     }
 
+    /**
+     * Returns builder for this class.
+     */
     public static ImapProperties.ImapPropertiesBuilder builder() {
         return new ImapProperties.ImapPropertiesBuilder();
     }
 
+    /**
+     * Builder class for make {@link ImapProperties} class instance.
+     */
     @Setter
     @ToString
     @NoArgsConstructor
@@ -148,6 +161,9 @@ public class ImapProperties extends CommonProperties {
         private Charset charset = Charset.defaultCharset();
         private Map<String, Object> extraProperties = new HashMap<>();
 
+        /**
+         * Builds and returns a new instance of {@link ImapProperties}.
+         */
         public ImapProperties build() {
             return new ImapProperties(
                 email,

@@ -37,10 +37,13 @@ public class SmtpProperties extends CommonProperties {
     private String password;
 
     /**
-     * Name of an email account
+     * Name of an email account.
      */
     private String name;
 
+    /**
+     * The constructor of this class.
+     */
     public SmtpProperties(
         String email,
         String password,
@@ -71,10 +74,16 @@ public class SmtpProperties extends CommonProperties {
         this.name = name;
     }
 
+    /**
+     * Returns the builder of this class.
+     */
     public static SmtpPropertiesBuilder builder() {
         return new SmtpPropertiesBuilder();
     }
 
+    /**
+     * Builder class for {@link SmtpProperties}.
+     */
     @Setter
     @ToString
     @NoArgsConstructor
@@ -94,6 +103,9 @@ public class SmtpProperties extends CommonProperties {
         private Charset charset = Charset.defaultCharset();
         private Map<String, Object> extraProperties = new HashMap<>();
 
+        /**
+         * Builds and returns a new instance of {@link SmtpProperties}.
+         */
         public SmtpProperties build() {
             return new SmtpProperties(
                 email,
