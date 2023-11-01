@@ -31,6 +31,15 @@ import ru.dlabs.library.email.type.TransferEncoder;
 @ToString
 public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessage {
 
+    /**
+     * The constructor of this class. Creates an instance with a single text content.
+     * Transfer encoding is used by default ({@link TransferEncoder#byDefault()}).
+     *
+     * @param subject        a subject of a message
+     * @param content        a text content of a message
+     * @param recipientEmail message recipients
+     * @param attachments    message attached files
+     */
     public DefaultOutgoingMessage(
         String subject,
         String content,
@@ -48,6 +57,17 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
         );
     }
 
+    /**
+     * The constructor of this class. Creates an instance with a single content (text or html).
+     *
+     * @param subject         a subject of a message
+     * @param content         a text content of a message (plain text or html)
+     * @param charsetContent  a charset of the content
+     * @param contentType     a value of a Content-Type header for content
+     * @param recipientEmail  message recipients
+     * @param attachments     message attached files
+     * @param transferEncoder a value for a Content-Transfer-Encoding header
+     */
     public DefaultOutgoingMessage(
         String subject,
         String content,
@@ -70,10 +90,44 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
         }
     }
 
+    /**
+     * The constructor of this class. Creates an instance with a multiple contents.
+     *
+     * @param subject         a subject of a message
+     * @param contents        a text content of a message (plain text or html)
+     * @param recipientEmail  message recipients
+     * @param attachments     message attached files
+     * @param transferEncoder a value for a Content-Transfer-Encoding header
+     */
+    public DefaultOutgoingMessage(
+        String subject,
+        List<ContentMessage> contents,
+        Set<EmailParticipant> recipientEmail,
+        List<EmailAttachment> attachments,
+        TransferEncoder transferEncoder
+    ) {
+        this.setSubject(subject);
+        this.setTransferEncoder(transferEncoder == null ? TransferEncoder.byDefault() : transferEncoder);
+        this.setRecipients(recipientEmail);
+        this.setAttachments(attachments);
+
+        if (contents != null) {
+            this.addAllContent(contents);
+        } else {
+            this.setContents(new ArrayList<>());
+        }
+    }
+
+    /**
+     * Returns an instance of the builder for this class.
+     */
     public static Builder outgoingMessageBuilder() {
         return new Builder();
     }
 
+    /**
+     * Builder of this class.
+     */
     @ToString
     @NoArgsConstructor
     public static class Builder {
@@ -85,59 +139,100 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
         private TransferEncoder transferEncoder = TransferEncoder.byDefault();
         private Set<EmailParticipant> recipientEmail = new HashSet<>();
         private List<EmailAttachment> attachments = new ArrayList<>();
+        private List<ContentMessage> contents = new ArrayList<>();
 
+        /**
+         * Builds and returns a new instance of {@link DefaultOutgoingMessage}.
+         */
         public DefaultOutgoingMessage build() {
+            if (content != null) {
+                contents.add(new ContentMessage(content, contentType.getMimeType(), charsetContent));
+            }
+
             return new DefaultOutgoingMessage(
                 subject,
-                content,
-                charsetContent,
-                contentType,
+                contents,
                 recipientEmail,
                 attachments,
                 transferEncoder
             );
         }
 
+        /**
+         * Sets a subject of this message.
+         */
         public Builder subject(String subject) {
             this.subject = subject;
             return this;
         }
 
+        /**
+         * Sets a content of this message.
+         */
         public Builder content(String content) {
             this.content = content;
             return this;
         }
 
+        /**
+         * Sets a charset content of this message.
+         */
         public Builder charsetContent(Charset charsetContent) {
             this.charsetContent = charsetContent;
             return this;
         }
 
+        /**
+         * Sets a value for a Content-Transfer-Encoding header.
+         */
         public Builder transferEncoder(TransferEncoder encoding) {
             this.transferEncoder = encoding;
             return this;
         }
 
+        /**
+         * Sets a value of a Content-Type header for content.
+         */
         public Builder contentType(ContentMessageType contentType) {
             this.contentType = contentType;
             return this;
         }
 
+        /**
+         * Sets email recipients.
+         */
         public Builder recipientEmail(Set<EmailParticipant> recipientEmail) {
             this.recipientEmail = recipientEmail;
             return this;
         }
 
+        /**
+         * Sets email attachments.
+         */
         public Builder attachments(List<EmailAttachment> attachments) {
             this.attachments = attachments;
             return this;
         }
 
+        /**
+         * Adds email attachments.
+         */
         public Builder addAttachment(EmailAttachment attachment) {
             if (this.attachments == null) {
                 this.attachments = new ArrayList<>();
             }
             this.attachments.add(attachment);
+            return this;
+        }
+
+        /**
+         * Adds content to the message.
+         */
+        public Builder addContent(ContentMessage contentMessage) {
+            if (this.contents == null) {
+                this.contents = new ArrayList<>();
+            }
+            this.contents.add(contentMessage);
             return this;
         }
     }

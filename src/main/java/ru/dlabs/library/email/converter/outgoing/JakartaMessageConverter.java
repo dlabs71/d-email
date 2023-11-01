@@ -19,6 +19,9 @@ import ru.dlabs.library.email.util.EmailMessageUtils;
 import ru.dlabs.library.email.util.JavaCoreUtils;
 
 /**
+ * The Utility class to convert a {@link OutgoingMessage} to an instance
+ * of the {@link Message} class or its inheritors.
+ *
  * <p>
  * <div><strong>Project name:</strong> d-email</div>
  * <div><strong>Creation date:</strong> 2023-10-17</div>
@@ -31,6 +34,19 @@ import ru.dlabs.library.email.util.JavaCoreUtils;
 @UtilityClass
 public class JakartaMessageConverter {
 
+    /**
+     * It converts an instance of the {@link OutgoingMessage} to the {@link Message}.
+     *
+     * @param message   an instance of the {@link OutgoingMessage}
+     * @param session   an instance of connection to email server. Needs to construct {@link MimeMessage}
+     * @param emailFrom an email address a sender
+     * @param nameFrom  a real name of a sender
+     *
+     * @return instance of the {@link Message}
+     *
+     * @throws CreateMessageException if the message's envelope creation failed
+     * @throws MessagingException     if any error while message creating
+     */
     public Message convert(
         OutgoingMessage message,
         Session session,
@@ -68,6 +84,19 @@ public class JakartaMessageConverter {
         return envelop;
     }
 
+    /**
+     * Creates envelop of the {@link jakarta.mail.Message} from the {@link OutgoingMessage}.
+     * Creates a new instance and fills in common fields.
+     *
+     * @param message   an instance of the {@link OutgoingMessage}
+     * @param session   an instance of connection to email server. Needs to construct {@link MimeMessage}
+     * @param emailFrom an email address a sender
+     * @param nameFrom  a real name of a sender
+     *
+     * @return instance of the {@link Message}
+     *
+     * @throws CreateMessageException if any error while message creating
+     */
     public MimeMessage createEnvelop(
         OutgoingMessage message,
         Session session,

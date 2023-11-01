@@ -22,8 +22,10 @@ import ru.dlabs.library.email.util.EmailMessageUtils;
 import ru.dlabs.library.email.util.JavaCoreUtils;
 
 /**
- * The Utility class to convert a jakarta.mail.Message to an instance of the BaseMessage class or its inheritors
- * </p>
+ * The Utility class to convert a {@link jakarta.mail.Message} to an instance
+ * of the {@link BaseMessage} class or its inheritors.
+ *
+ * <p>
  * <div><strong>Project name:</strong> d-email</div>
  * <div><strong>Creation date:</strong> 2023-09-01</div>
  * </p>

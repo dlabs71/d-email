@@ -35,19 +35,23 @@ import ru.dlabs.library.email.util.EmailMessageUtils;
 import ru.dlabs.library.email.util.JavaCoreUtils;
 
 /**
- * Utility class for converting different parts of a message {@link Message} for using in
+ * Utility class for converting different parts of a message {@link jakarta.mail.Message} for using in
  * a message DTO implement {@link ru.dlabs.library.email.dto.message.common.Message} interface.
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-02</div>
+ * </p>
  *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-09-02
+ * @since 1.0.0
  */
 @Slf4j
 @UtilityClass
 public class MessagePartConverter {
 
     /**
-     * Returns a Set of {@link EmailParticipant} from message recipients have the type {@link Message.RecipientType.TO}
+     * Returns a Set of {@link EmailParticipant} from message recipients have the type
+     * {@link jakarta.mail.Message.RecipientType#TO}.
      *
      * @param message the message from Java API
      *
@@ -76,9 +80,9 @@ public class MessagePartConverter {
     }
 
     /**
-     * Converts the part of a {@link Message} to an object of the class {@link EmailAttachment}
+     * Converts the part of a {@link jakarta.mail.Message} to an object of the class {@link EmailAttachment}.
      *
-     * @param part the part of a {@link Message}
+     * @param part the part of a {@link jakarta.mail.Message}
      *
      * @return an object of the class {@link EmailAttachment}
      */
@@ -117,6 +121,12 @@ public class MessagePartConverter {
     }
 
 
+    /**
+     * Gets all the contents and attachments from the email message and fills in the 'result' argument.
+     *
+     * @param part   an email message
+     * @param result a container for result
+     */
     public void getContent(Part part, ContentAndAttachments result) {
         if (part == null) {
             return;
@@ -177,6 +187,13 @@ public class MessagePartConverter {
         }
     }
 
+    /**
+     * Tries to get content as string.
+     *
+     * @param part the part of a {@link jakarta.mail.Message}
+     *
+     * @return a content email message as string
+     */
     public String getContentDefault(Part part) {
         if (part == null) {
             return null;
@@ -215,6 +232,13 @@ public class MessagePartConverter {
 
     }
 
+    /**
+     * Tries to get content as array of bytes.
+     *
+     * @param bodyPart the part of a {@link jakarta.mail.Message}
+     *
+     * @return a content email message as an erray of bytes.
+     */
     public byte[] getContentDefaultAsBytes(Part bodyPart) {
         if (bodyPart == null) {
             return null;
@@ -249,7 +273,7 @@ public class MessagePartConverter {
 
     /**
      * Special transporting class contains a content and attachments of a message.
-     * It is used for only the {@code getContent()} method.
+     * It is used for only the {@link #getContent(Part)} method.
      * One message can contain several body (content) with different content types.
      */
     @Getter
@@ -258,10 +282,21 @@ public class MessagePartConverter {
         private final List<Content> contents = new ArrayList<>();
         private final List<EmailAttachment> attachments = new ArrayList<>();
 
+        /**
+         * Adds content to list of contents.
+         *
+         * @param contentType a value of Content-Type header for this content
+         * @param data        a content as string
+         */
         public void addContent(String contentType, String data) {
             this.contents.add(new Content(contentType, data));
         }
 
+        /**
+         * Adds attachment to the corresponding list.
+         *
+         * @param attachment instance of the {@link EmailAttachment} class
+         */
         public void addAttachment(EmailAttachment attachment) {
             this.attachments.add(attachment);
         }
@@ -282,13 +317,16 @@ public class MessagePartConverter {
             )).collect(Collectors.toList());
         }
 
+        /**
+         * Returns true if all the lists are empty.
+         */
         public boolean isEmpty() {
             return contents.isEmpty() && attachments.isEmpty();
         }
     }
 
     /**
-     * Inner class describing a content of a message
+     * Inner class describing a content of a message.
      */
     @Getter
     @AllArgsConstructor
@@ -297,6 +335,11 @@ public class MessagePartConverter {
         private String contentType;
         private String data;
 
+        /**
+         * Returns true if the content type pattern matches the content type in this class.
+         *
+         * @param contentTypePattern a content type pattern
+         */
         public boolean isMimeType(String contentTypePattern) {
             try {
                 return new ContentType(contentTypePattern).match(this.contentType);

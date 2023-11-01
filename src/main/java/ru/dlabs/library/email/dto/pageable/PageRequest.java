@@ -18,12 +18,12 @@ import lombok.Getter;
 public class PageRequest {
 
     /**
-     * Index of an element
+     * Index of an element.
      */
     private int start;
 
     /**
-     * Length of a data selection
+     * Length of a data selection.
      */
     private int length;
 
@@ -32,7 +32,7 @@ public class PageRequest {
     }
 
     /**
-     * Calculates the next start index
+     * Calculates the next start index.
      *
      * @return current instance of the class {@link PageRequest}
      */
@@ -42,7 +42,7 @@ public class PageRequest {
     }
 
     /**
-     * Gets end index of the data selection
+     * Gets end index of the data selection.
      *
      * @return int index
      */

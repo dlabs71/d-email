@@ -14,6 +14,7 @@ import ru.dlabs.library.email.dto.message.incoming.MessageView;
 import ru.dlabs.library.email.dto.pageable.PageRequest;
 import ru.dlabs.library.email.dto.pageable.PageResponse;
 import ru.dlabs.library.email.property.ImapProperties;
+import ru.dlabs.library.email.util.JavaCoreUtils;
 
 /**
  * The class implements a facade pattern for receiving messages.
@@ -38,7 +39,8 @@ import ru.dlabs.library.email.property.ImapProperties;
  */
 public final class DEmailReceiver {
 
-    private static final PageRequest DEFAULT_PAGE_REQUEST = PageRequest.of(0, 50);
+    public static final PageRequest DEFAULT_PAGE_REQUEST = PageRequest.of(0, 50);
+    public static final String FOLDER_NAME_KEY_METADATA = "folderName";
     private final ReceiverDClient receiverClient;
 
     private String folderName = DEFAULT_INBOX_FOLDER_NAME;
@@ -120,7 +122,9 @@ public final class DEmailReceiver {
             return PageResponse.of(new ArrayList<>(), totalCount);
         }
         List<MessageView> messageViews = this.receiverClient.checkEmailMessages(currentFolderName, pageRequest);
-        return PageResponse.of(messageViews, totalCount, currentFolderName);
+
+        Map<String, Object> metadata = JavaCoreUtils.makeMap(FOLDER_NAME_KEY_METADATA, currentFolderName);
+        return PageResponse.of(messageViews, totalCount, metadata);
     }
 
     /**
@@ -152,11 +156,12 @@ public final class DEmailReceiver {
      */
     public PageResponse<IncomingMessage> readEmail(PageRequest pageRequest) {
         int totalCount = this.receiverClient.getTotalCount(folderName);
+        Map<String, Object> metadata = JavaCoreUtils.makeMap(FOLDER_NAME_KEY_METADATA, folderName);
         if (totalCount <= 0 || totalCount <= pageRequest.getStart()) {
-            return PageResponse.of(new ArrayList<>(), totalCount);
+            return PageResponse.of(new ArrayList<>(), totalCount, metadata);
         }
         List<IncomingMessage> messages = this.receiverClient.readMessages(folderName, pageRequest);
-        return PageResponse.of(messages, totalCount);
+        return PageResponse.of(messages, totalCount, metadata);
     }
 
     /**

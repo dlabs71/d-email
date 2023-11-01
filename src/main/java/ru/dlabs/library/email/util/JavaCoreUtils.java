@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.experimental.UtilityClass;
 
 /**
@@ -64,5 +66,30 @@ public class JavaCoreUtils {
         if (object == null) {
             throw new IllegalArgumentException(argName + "is marked non-null but is null");
         }
+    }
+
+    /**
+     * Returns a Map contains entry with key and value from arguments.
+     *
+     * @param key   a key of Entry Map
+     * @param value a value of Entry Map
+     * @param <T>   a type of value object
+     */
+    public <T> Map<String, T> makeMap(String key, T value) {
+        Map<String, T> map = new HashMap<>();
+        map.put(key, value);
+        return map;
+    }
+
+    /**
+     * Returns a Map contains entry with key and value from arguments.
+     *
+     * @param <T> a type of value object
+     */
+    public <T> Map<String, T> makeMap(String key1, T value1, String key2, T value2) {
+        Map<String, T> map = new HashMap<>();
+        map.put(key1, value1);
+        map.put(key2, value2);
+        return map;
     }
 }

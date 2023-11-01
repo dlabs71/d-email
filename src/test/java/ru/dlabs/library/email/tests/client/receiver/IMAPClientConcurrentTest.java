@@ -2,6 +2,7 @@ package ru.dlabs.library.email.tests.client.receiver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static ru.dlabs.library.email.DEmailReceiver.FOLDER_NAME_KEY_METADATA;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -90,11 +91,11 @@ public class IMAPClientConcurrentTest extends AbstractTestsClass {
     public void checkEmail() {
         try {
             PageResponse<MessageView> response = emailReceiver.checkEmail();
-            log.info("Read from folder: " + response.getFolderName() + ". Size: " + response.getData().size());
-            if (OUTBOX_NAME.equals(response.getFolderName())) {
+            log.info("Read from folder: " + response.getMetadata().get(FOLDER_NAME_KEY_METADATA) + ". Size: " + response.getData().size());
+            if (OUTBOX_NAME.equals(response.getMetadata().get(FOLDER_NAME_KEY_METADATA))) {
                 assertEquals(0, response.getData().size());
             }
-            if (INBOX_NAME.equals(response.getFolderName())) {
+            if (INBOX_NAME.equals(response.getMetadata().get(FOLDER_NAME_KEY_METADATA))) {
                 assertEquals(COUNT_OF_MESSAGES, response.getData().size());
             }
         } catch (Exception ex) {
@@ -106,11 +107,11 @@ public class IMAPClientConcurrentTest extends AbstractTestsClass {
     public void readEmail() {
         try {
             PageResponse<IncomingMessage> response = emailReceiver.readEmail();
-            log.info("Read from folder: " + response.getFolderName() + ". Size: " + response.getData().size());
-            if (OUTBOX_NAME.equals(response.getFolderName())) {
+            log.info("Read from folder: " + response.getMetadata().get(FOLDER_NAME_KEY_METADATA) + ". Size: " + response.getData().size());
+            if (OUTBOX_NAME.equals(response.getMetadata().get(FOLDER_NAME_KEY_METADATA))) {
                 assertEquals(0, response.getData().size());
             }
-            if (INBOX_NAME.equals(response.getFolderName())) {
+            if (INBOX_NAME.equals(response.getMetadata().get(FOLDER_NAME_KEY_METADATA))) {
                 assertEquals(COUNT_OF_MESSAGES, response.getData().size());
             }
         } catch (Exception ex) {

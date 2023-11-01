@@ -19,6 +19,8 @@ import ru.dlabs.library.email.dto.message.outgoing.OutgoingMessage;
 import ru.dlabs.library.email.exception.CreateMessageException;
 
 /**
+ * Utility class for converting different parts of a message {@link OutgoingMessage} for using in
+ * a message DTO implement {@link jakarta.mail.Message} class.
  * <p>
  * <div><strong>Project name:</strong> d-email</div>
  * <div><strong>Creation date:</strong> 2023-10-25</div>
@@ -30,6 +32,13 @@ import ru.dlabs.library.email.exception.CreateMessageException;
 @UtilityClass
 public class JakartaMessagePartConverter {
 
+    /**
+     * Converts all the contents of the {@link OutgoingMessage} to a list of {@link BodyPart}.
+     *
+     * @param message an instance of the {@link OutgoingMessage}
+     *
+     * @throws CreateMessageException
+     */
     public List<BodyPart> convertBodyPart(OutgoingMessage message) throws CreateMessageException {
         if (message == null || message.getContents() == null || message.getContents().isEmpty()) {
             return Collections.emptyList();
@@ -39,6 +48,15 @@ public class JakartaMessagePartConverter {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Converts content from {@link OutgoingMessage} to an instance the {@link BodyPart}.
+     *
+     * @param content a message content. An instance of the {@link ContentMessage}
+     *
+     * @return an instance of the {@link BodyPart} to uses in the {@link jakarta.mail.Message}.
+     *
+     * @throws CreateMessageException
+     */
     public BodyPart convertBodyPart(ContentMessage content) throws CreateMessageException {
         if (content == null) {
             return null;

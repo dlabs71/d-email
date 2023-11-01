@@ -19,22 +19,26 @@ import ru.dlabs.library.email.util.EmailMessageUtils;
 import ru.dlabs.library.email.util.JavaCoreUtils;
 
 /**
- * Utility class is for converting a jakarta.mail.Message to an instance of the MessageView class
+ * Utility class is for converting a {@link jakarta.mail.Message} to an instance of the {@link MessageView} class.
+ *
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-01</div>
+ * </p>
  *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-09-01
+ * @since 1.0.0
  */
 @Slf4j
 @UtilityClass
 public class MessageViewConverter {
 
     /**
-     * It converts the message to an instance of the MessageView class
+     * It converts the message to an instance of the {@link MessageView} class.
      *
      * @param message the source message
      *
-     * @return instance of the MessageView class
+     * @return instance of the {@link MessageView} class
      */
     public MessageView convert(Message message) {
         if (message == null) {
