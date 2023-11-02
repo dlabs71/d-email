@@ -20,26 +20,25 @@ import ru.dlabs.library.email.util.JavaCoreUtils;
  * The class implements a facade pattern for receiving messages.
  * After creating the class, you must set a folder name using
  * the {@link DEmailReceiver#folder(String folderName)} method.
- * If you don't, then the client will try to use the "INBOX" folder.
+ * If you don't it, then the client will try to use the "INBOX" folder.
+ *
+ * <p>Checking and reading emails executes as pageable. By the default page has the size = 50 elements
+ * and start index is 0. You can use a customize page request by using the methods supports pageable requests
+ * (e.g. {@link DEmailReceiver#readEmail(PageRequest)} or {@link DEmailReceiver#checkEmail(PageRequest)}).
  * <p>
- * If you use several accounts, you must clearly set credentialId by using
- * the {@link DEmailReceiver#credentialId(String credentialId)} method. It creates the correct connection.
- * But if you use only one account to connect, the connection will create with creating the client (in a constructor).
- * <p>
- * Checking and reading emails executes as pageable. By the default page has a size = 50 elements. You can change it
- * by using the {@link DEmailReceiver#pageSize(int pageSize)} method.
- * Then you call {@link DEmailReceiver#checkEmail()} or {@link DEmailReceiver#readEmail()}
- * the page number increase by 1.
- * Accordingly, to read or check email messages from a 0 page, you must use
- * the {@link DEmailReceiver#start(int start)} method before it.
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-02</div>
+ * </p>
  *
  * @author Ivanov Danila
- * Project name: d-email
- * Creation date: 2023-09-02
+ * @since 1.0.0
  */
 public final class DEmailReceiver {
 
+    /** Default page request. **/
     public static final PageRequest DEFAULT_PAGE_REQUEST = PageRequest.of(0, 50);
+
+    /** The key to the folder name in the metadata of the response. **/
     public static final String FOLDER_NAME_KEY_METADATA = "folderName";
     private final ReceiverDClient receiverClient;
 
@@ -55,7 +54,7 @@ public final class DEmailReceiver {
     }
 
     /**
-     * Creates instance of the {@link DEmailReceiver} class
+     * Creates instance of the {@link DEmailReceiver} class.
      *
      * @param properties properties for connecting to an email server by IMAP protocol
      *
@@ -66,7 +65,7 @@ public final class DEmailReceiver {
     }
 
     /**
-     * Changes folder for reading messages
+     * Changes folder for reading messages.
      *
      * @param folderName the name of folder
      *
@@ -78,7 +77,7 @@ public final class DEmailReceiver {
     }
 
     /**
-     * Returns email receiver object
+     * Returns email receiver object.
      *
      * @return object of the {@link EmailParticipant} class
      */
@@ -86,18 +85,18 @@ public final class DEmailReceiver {
         return receiverClient.getPrincipal();
     }
 
+    /**
+     * Returns a using folder in the mailbox.
+     */
     public String getCurrentFolder() {
         return folderName;
     }
 
     /**
-     * Checks email. Returns only common information about messages. The messages won't have a read flag.
-     * <p>
-     * This method supports page requests. After successful execution,
-     * the global {@link DEmailReceiver#DEFAULT_PAGE_REQUEST} parameter
-     * will increase the page number.
-     * Use the {@link DEmailReceiver#start(int start)} and {@link DEmailReceiver#pageSize(int pageSize)}
-     * methods for managing page parameters.
+     * Checks email (first 50 messages). Returns only common information about messages.
+     * The messages won't have a read flag.
+     *
+     * <p>This method uses default page requests from the constant {@link DEmailReceiver#DEFAULT_PAGE_REQUEST}.
      *
      * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link MessageView}.
      */
@@ -107,8 +106,8 @@ public final class DEmailReceiver {
 
     /**
      * Checks email. Returns only common information about messages. The messages won't have a read flag.
-     * <p>
-     * This method supports page requests. You need to manage a page request yourself.
+     *
+     * <p>This method supports page requests. You need to manage a page request yourself.
      * Use the pageRequest parameter for it.
      *
      * @param pageRequest the configuration of a page request
@@ -128,14 +127,10 @@ public final class DEmailReceiver {
     }
 
     /**
-     * Reads email. Returns full information about messages (with a content and attachment). The read flag will be
-     * set up in every message.
-     * <p>
-     * This method supports page requests. After successful execution,
-     * the global {@link DEmailReceiver#DEFAULT_PAGE_REQUEST} parameter
-     * will increase the page number.
-     * Use the {@link DEmailReceiver#start(int start)} and {@link DEmailReceiver#pageSize(int pageSize)}
-     * methods for managing page parameters.
+     * Reads email (first 50 messages). Returns full information about messages (with a content and attachment).
+     * The read flag will be set up in every message.
+     *
+     * <p>This method uses default page requests from the constant {@link DEmailReceiver#DEFAULT_PAGE_REQUEST}.
      *
      * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link IncomingMessage}.
      */
@@ -146,8 +141,8 @@ public final class DEmailReceiver {
     /**
      * Reads email. Returns full information about messages (with a content and attachment). The read flag will be
      * set up in every message.
-     * <p>
-     * This method supports page requests. You need to manage a page request yourself.
+     *
+     * <p>This method supports page requests. You need to manage a page request yourself.
      * Use the pageRequest parameter for it.
      *
      * @param pageRequest the configuration of a page request
@@ -189,7 +184,7 @@ public final class DEmailReceiver {
     }
 
     /**
-     * Delete several messages by its identifiers
+     * Delete several messages by its identifiers.
      *
      * @param ids the list of message identifiers
      *
@@ -200,7 +195,7 @@ public final class DEmailReceiver {
     }
 
     /**
-     * Delete one message by the identifier
+     * Delete one message by the identifier.
      *
      * @param id the message identifier
      *

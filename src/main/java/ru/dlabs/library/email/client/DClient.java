@@ -5,15 +5,19 @@ import ru.dlabs.library.email.dto.message.common.EmailParticipant;
 import ru.dlabs.library.email.exception.SessionException;
 
 /**
- * Interface is any email client
+ * Interface for any email client.
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-10-25</div>
+ * </p>
  *
  * @author Ivanov Danila
- * @version 1.0
+ * @since 1.0.0
  */
 public interface DClient {
 
     /**
-     * It connects to email server
+     * Connects to the email server.
      *
      * @return {@link Session} object
      *
@@ -21,7 +25,13 @@ public interface DClient {
      */
     Session connect() throws SessionException;
 
+    /**
+     * Returns a using protocol name.
+     */
     String getProtocolName();
 
+    /**
+     * Returns name and email address used for connection.
+     */
     EmailParticipant getPrincipal();
 }

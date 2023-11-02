@@ -19,8 +19,8 @@ import ru.dlabs.library.email.dto.message.outgoing.OutgoingMessage;
 import ru.dlabs.library.email.exception.CreateMessageException;
 
 /**
- * Utility class for converting different parts of a message {@link OutgoingMessage} for using in
- * a message DTO implement {@link jakarta.mail.Message} class.
+ * Utility class for converting different parts of a message {@link OutgoingMessage} for using in a message
+ * implementing the {@link jakarta.mail.Message} class.
  * <p>
  * <div><strong>Project name:</strong> d-email</div>
  * <div><strong>Creation date:</strong> 2023-10-25</div>
@@ -37,7 +37,7 @@ public class JakartaMessagePartConverter {
      *
      * @param message an instance of the {@link OutgoingMessage}
      *
-     * @throws CreateMessageException
+     * @throws CreateMessageException If creating one or more {@code BodyPart} instances failed
      */
     public List<BodyPart> convertBodyPart(OutgoingMessage message) throws CreateMessageException {
         if (message == null || message.getContents() == null || message.getContents().isEmpty()) {
@@ -49,13 +49,13 @@ public class JakartaMessagePartConverter {
     }
 
     /**
-     * Converts content from {@link OutgoingMessage} to an instance the {@link BodyPart}.
+     * Converts a message content from {@link OutgoingMessage} to an instance of the {@link BodyPart} class.
      *
      * @param content a message content. An instance of the {@link ContentMessage}
      *
      * @return an instance of the {@link BodyPart} to uses in the {@link jakarta.mail.Message}.
      *
-     * @throws CreateMessageException
+     * @throws CreateMessageException If creating a {@code BodyPart} instance failed
      */
     public BodyPart convertBodyPart(ContentMessage content) throws CreateMessageException {
         if (content == null) {
@@ -74,6 +74,15 @@ public class JakartaMessagePartConverter {
         }
     }
 
+    /**
+     * Converts all the attachments in the {@link OutgoingMessage} to a list of {@link BodyPart}.
+     *
+     * @param message an instance of the {@link OutgoingMessage}
+     *
+     * @return an instance of the {@link BodyPart} to uses in the {@link jakarta.mail.Message}.
+     *
+     * @throws CreateMessageException If creating a {@code BodyPart} instance failed
+     */
     public List<BodyPart> convertAttachmentParts(OutgoingMessage message) throws CreateMessageException {
         if (message == null || message.getAttachments() == null || message.getAttachments().isEmpty()) {
             return Collections.emptyList();
@@ -85,6 +94,15 @@ public class JakartaMessagePartConverter {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Converts an email attachment to a {@link BodyPart} instances.
+     *
+     * @param attachment an instance of the {@link EmailAttachment} class.
+     *
+     * @return an instance of {@link BodyPart} for using in the {@link jakarta.mail.Message} class or its inheritors.
+     *
+     * @throws CreateMessageException If creating a {@code BodyPart} instance failed
+     */
     public BodyPart convertAttachmentPart(EmailAttachment attachment) throws CreateMessageException {
         if (attachment == null || attachment.getData() == null || attachment.getData().length == 0) {
             return null;

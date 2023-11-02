@@ -93,6 +93,9 @@ public abstract class CommonProperties {
      */
     private Map<String, Object> extraProperties;
 
+    /**
+     * Returns extra properties or immutable empty map if ones are null.
+     */
     public Map<String, Object> getExtraProperties() {
         if (extraProperties == null) {
             return Collections.emptyMap();

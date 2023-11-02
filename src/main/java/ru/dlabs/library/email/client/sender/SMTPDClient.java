@@ -22,10 +22,18 @@ import ru.dlabs.library.email.util.JavaCoreUtils;
 import ru.dlabs.library.email.util.MessageValidator;
 
 /**
- * SMTP email client for sending messages using the SMTP protocol
+ * This class is an implementation of the interface {@link SenderDClient}.
+ * It provides opportunities for sending email messages using the SMTP protocol. An SMTP connection will be
+ * established by creating the class at once.
+ *
+ * <p>You should use the instance of the {@link SmtpProperties} class, for configure this class.
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-27</div>
+ * </p>
  *
  * @author Ivanov Danila
- * @version 1.0
+ * @since 1.0.0
  */
 @Slf4j
 public class SMTPDClient implements SenderDClient {
@@ -37,7 +45,7 @@ public class SMTPDClient implements SenderDClient {
     private final EmailParticipant principal;
 
     /**
-     * Default constructor. It creates the email client object and connects to an SMTP server
+     * Default constructor. It creates the email client object and connects to an SMTP server.
      *
      * @param smtpProperties the properties for connecting to an SMTP server
      */
@@ -55,6 +63,13 @@ public class SMTPDClient implements SenderDClient {
         this.session = this.connect();
     }
 
+    /**
+     * Connects to the email server using the SMTP protocol.
+     *
+     * @return {@link Session} object
+     *
+     * @throws SessionException The connection to the server has failed. The properties are broken.
+     */
     @Override
     public Session connect() throws SessionException {
         Authenticator auth = new Authenticator() {
@@ -70,17 +85,29 @@ public class SMTPDClient implements SenderDClient {
         }
     }
 
+    /**
+     * Returns a using protocol name.
+     */
     @Override
     public String getProtocolName() {
         return PROTOCOL.getProtocolName();
     }
 
+    /**
+     * Returns name and email address used for connection.
+     */
     @Override
     public EmailParticipant getPrincipal() {
         return this.principal;
     }
 
-
+    /**
+     * It sends to message.
+     *
+     * @param message the message object
+     *
+     * @return the result status {@link SendingStatus}
+     */
     @Override
     public SendingStatus send(OutgoingMessage message) {
         MessageValidator.validate(message);

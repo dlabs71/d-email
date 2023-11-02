@@ -32,25 +32,40 @@ import ru.dlabs.library.email.util.JavaCoreUtils;
 /**
  * This class is an implementation of the interface {@link ReceiverDClient}.
  * It provides opportunities for reading messages from email using the IMAP protocol. An IMAP connection will be
- * created by creating the class at once. Then you need to set up a store - email account. An IMAP connection may
- * work with several accounts using different stores. But this class works only on one store at one time. If you
- * want to change a store, you must use the {@see setStore} method to do it. For your convenience, we hold your email
- * accounts in a Map structure in the {@link ImapProperties}. Thus, for setting a store, you use
- * the "credentialId" - key in the Map of credentials.
+ * established by creating the class at once. Then, you need to set up a store - email account. An IMAP connection may
+ * work with only one account at one time.
+ *
+ * <p>You should use the instance of the {@link ImapProperties} class, for configure this class.
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-10-25</div>
+ * </p>
+ *
+ * @author Ivanov Danila
+ * @since 1.0.0
  */
 @Slf4j
 public class IMAPDClient implements ReceiverDClient {
 
+    /** The using protocol in this class. **/
     private static final Protocol PROTOCOL = Protocol.IMAP;
+
+    /** The default name of the inbox mail folder. **/
     public static final String DEFAULT_INBOX_FOLDER_NAME = "INBOX";
+
+    /** The default name of the outbox mail folder. **/
     public static final String DEFAULT_OUTBOX_FOLDER_NAME = "OUTBOX";
+
+
     private final Session session;
     private final Properties properties;
     private final IMAPStore store;
     private final EmailParticipant principal;
 
     /**
-     * Constructor of the class. An IMAP connection will be created by creating the class at once.
+     * Constructor of the class.
+     *
+     * <p>An IMAP connection and store will be created with the class at once.
      *
      * @param imapProperties properties for creating an IMAP connection
      */
@@ -79,6 +94,13 @@ public class IMAPDClient implements ReceiverDClient {
         return props;
     }
 
+    /**
+     * Connects to the email server using the IMAP protocol.
+     *
+     * @return {@link Session} object
+     *
+     * @throws SessionException The connection to the server has failed. The properties are broken.
+     */
     @Override
     public Session connect() throws SessionException {
         try {
@@ -89,16 +111,31 @@ public class IMAPDClient implements ReceiverDClient {
         }
     }
 
+    /**
+     * Returns a using protocol name.
+     */
     @Override
     public String getProtocolName() {
         return PROTOCOL.getProtocolName();
     }
 
+    /**
+     * Returns name and email address used for connection.
+     */
     @Override
     public EmailParticipant getPrincipal() {
         return principal;
     }
 
+    /**
+     * Create and connect to store (email account).
+     *
+     * @param session  has already configured session
+     * @param email    an email address of the mailbox
+     * @param password a password of the mailbox
+     *
+     * @return an instance of the {@link IMAPStore} class
+     */
     private static IMAPStore createStore(Session session, String email, String password) {
         try {
             log.info("Connect to mailbox: " + email);
@@ -110,6 +147,13 @@ public class IMAPDClient implements ReceiverDClient {
         }
     }
 
+    /**
+     * Returns the total count of email messages in the folder.
+     *
+     * @param folderName the folder name (For example: INBOX, OUTBOX, etc.)
+     *
+     * @return total count of messages
+     */
     @Override
     public Integer getTotalCount(String folderName) {
         Folder folder = this.openFolderForRead(folderName);
@@ -132,6 +176,15 @@ public class IMAPDClient implements ReceiverDClient {
         }
     }
 
+    /**
+     * Returns short information about messages. without content. Use it when you "check" an email.
+     * Messages won't be marked as read.
+     *
+     * @param folderName  the folder name in you account
+     * @param pageRequest selection size information
+     *
+     * @return list of a {@link MessageView}
+     */
     @Override
     public List<MessageView> checkEmailMessages(String folderName, PageRequest pageRequest) {
         Folder folder = this.openFolderForRead(folderName);
@@ -142,6 +195,15 @@ public class IMAPDClient implements ReceiverDClient {
         return result;
     }
 
+    /**
+     * Return full information about messages. Use it when you "read" an email.
+     * Messages will be marked as read.
+     *
+     * @param folderName  the folder name in you account
+     * @param pageRequest selection size information
+     *
+     * @return list of a {@link IncomingMessage}
+     */
     @Override
     public List<IncomingMessage> readMessages(String folderName, PageRequest pageRequest) {
         Folder folder = this.openFolderForWrite(folderName);
@@ -153,6 +215,15 @@ public class IMAPDClient implements ReceiverDClient {
         return result;
     }
 
+    /**
+     * Reads message by its ID (number message).
+     * Message will be marked as read.
+     *
+     * @param folderName the folder name in you account
+     * @param id         unique identifier of a message within the folder
+     *
+     * @return object of a class {@link IncomingMessage}
+     */
     @Override
     public IncomingMessage readMessageById(String folderName, int id) {
         Folder folder = this.openFolderForWrite(folderName);
@@ -171,6 +242,14 @@ public class IMAPDClient implements ReceiverDClient {
         return incomingMessage;
     }
 
+    /**
+     * Opens the folder for only read. Changes are forbidden.
+     * If you even read the message, it won't be marked as read.
+     *
+     * @param folderName the folder name in you account
+     *
+     * @return an object of the class {@link Folder}
+     */
     @Override
     public Folder openFolderForRead(String folderName) {
         if (folderName == null) {
@@ -179,6 +258,13 @@ public class IMAPDClient implements ReceiverDClient {
         return this.openFolder(folderName, Folder.READ_ONLY);
     }
 
+    /**
+     * Opens the folder for read and write.
+     *
+     * @param folderName the folder name in you account
+     *
+     * @return an object of the class {@link Folder}
+     */
     @Override
     public Folder openFolderForWrite(String folderName) {
         if (folderName == null) {
@@ -205,6 +291,11 @@ public class IMAPDClient implements ReceiverDClient {
         return folder;
     }
 
+    /**
+     * Closes the opened folder.
+     *
+     * @param folder an object of the class {@link Folder}
+     */
     @Override
     public void closeFolder(Folder folder) {
         if (folder == null) {
@@ -218,6 +309,14 @@ public class IMAPDClient implements ReceiverDClient {
         }
     }
 
+    /**
+     * Deletes a message in a folder by its ID.
+     *
+     * @param folderName the folder name in you account
+     * @param id         unique identifier of a message within the folder
+     *
+     * @return true if the message was deleted successfully, or else false
+     */
     @Override
     public boolean deleteMessage(String folderName, int id) {
         Folder folder = this.openFolderForWrite(folderName);
@@ -244,6 +343,14 @@ public class IMAPDClient implements ReceiverDClient {
         return true;
     }
 
+    /**
+     * Deletes several messages in a folder by their IDs.
+     *
+     * @param folderName the folder name in you account
+     * @param ids        unique identifiers of messages within the folder
+     *
+     * @return a map with a key is a message ID, and a value is the result of deletion (true or false).
+     */
     @Override
     public Map<Integer, Boolean> deleteMessages(String folderName, Collection<Integer> ids) {
         Folder folder = this.openFolderForWrite(folderName);
@@ -273,6 +380,13 @@ public class IMAPDClient implements ReceiverDClient {
         return result;
     }
 
+    /**
+     * Deletes all messages in a folder.
+     *
+     * @param folderName the folder name in you account
+     *
+     * @return a map with a key is a message ID, and a value is the result of deletion (true or false).
+     */
     @Override
     public Map<Integer, Boolean> deleteAllMessages(String folderName) {
         Folder folder = this.openFolderForWrite(folderName);

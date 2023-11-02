@@ -11,6 +11,13 @@ import ru.dlabs.library.email.dto.pageable.PageRequest;
 
 /**
  * The general interface for a receiver client (IMAP, POP3, etc.).
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-08-31</div>
+ * </p>
+ *
+ * @author Ivanov Danila
+ * @since 1.0.0
  */
 public interface ReceiverDClient extends DClient {
 
@@ -76,14 +83,14 @@ public interface ReceiverDClient extends DClient {
     Folder openFolderForWrite(String folderName);
 
     /**
-     * Closes the opened folder
+     * Closes the opened folder.
      *
      * @param folder an object of the class {@link Folder}
      */
     void closeFolder(Folder folder);
 
     /**
-     * Deletes a message in a folder by its ID
+     * Deletes a message in a folder by its ID.
      *
      * @param folderName the folder name in you account
      * @param id         unique identifier of a message within the folder
@@ -93,7 +100,7 @@ public interface ReceiverDClient extends DClient {
     boolean deleteMessage(String folderName, int id);
 
     /**
-     * Deletes several messages in a folder by their IDs
+     * Deletes several messages in a folder by their IDs.
      *
      * @param folderName the folder name in you account
      * @param ids        unique identifiers of messages within the folder
@@ -103,7 +110,7 @@ public interface ReceiverDClient extends DClient {
     Map<Integer, Boolean> deleteMessages(String folderName, Collection<Integer> ids);
 
     /**
-     * Deletes all messages in a folder
+     * Deletes all messages in a folder.
      *
      * @param folderName the folder name in you account
      *

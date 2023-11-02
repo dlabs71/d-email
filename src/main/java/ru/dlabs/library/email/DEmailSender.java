@@ -26,9 +26,13 @@ import ru.dlabs.library.email.util.AttachmentUtils;
 /**
  * This class implements the Facade pattern for sending email messages.
  * This class use the SMTP protocol.
+ * <p>
+ * <div><strong>Project name:</strong> d-email</div>
+ * <div><strong>Creation date:</strong> 2023-09-18</div>
+ * </p>
  *
  * @author Ivanov Danila
- * @version 1.0
+ * @since 1.0.0
  */
 public final class DEmailSender {
 
@@ -36,7 +40,7 @@ public final class DEmailSender {
     private final Charset defaultCharset;
 
     /**
-     * Constructor of the class
+     * Constructor of the class.
      *
      * @param smtpProperties properties for connecting to an email server by the SMTP protocol ({@link SmtpProperties})
      */
@@ -46,7 +50,7 @@ public final class DEmailSender {
     }
 
     /**
-     * Creates instance of the {@link DEmailSender} class
+     * Creates instance of the {@link DEmailSender} class.
      *
      * @param properties properties for connecting to an email server by the SMTP protocol ({@link SmtpProperties})
      *
@@ -57,7 +61,7 @@ public final class DEmailSender {
     }
 
     /**
-     * Returns information about sender as object of the class {@link EmailParticipant}
+     * Returns information about sender as object of the class {@link EmailParticipant}.
      *
      * @return the object of the class {@link EmailParticipant}
      */
@@ -67,8 +71,10 @@ public final class DEmailSender {
 
     /**
      * The method is sending a message.
-     * A message body has a content type of text/plain.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param email   a recipient email address. For example: example@mail.com
      * @param subject a subject of a message
@@ -82,8 +88,10 @@ public final class DEmailSender {
 
     /**
      * The method is distributing a message to a group recipients.
-     * A message body has a content type of text/plain.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param emails  a collection of recipient email address. For example: example@mail.com
      * @param subject a subject of a message
@@ -97,8 +105,10 @@ public final class DEmailSender {
 
     /**
      * The method is distributing a message to a group recipients with attachments.
-     * A message body has a content type of text/plain.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param emails      a collection of recipient email address. For example: example@mail.com
      * @param subject     a subject of a message
@@ -118,8 +128,10 @@ public final class DEmailSender {
 
     /**
      * The method is distributing a message to a group recipients with attachments.
-     * A message body has a content type of text/plain.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param emails      a collection of recipient email address. For example: example@mail.com
      * @param subject     a subject of a message
@@ -140,8 +152,10 @@ public final class DEmailSender {
 
     /**
      * The method is sending a message with attachments.
-     * A message body has a content type of text/plain.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param email       a recipient email address. For example: example@mail.com
      * @param subject     a subject of a message
@@ -156,8 +170,10 @@ public final class DEmailSender {
 
     /**
      * The method is sending a message with attachments.
-     * A message body has a content type of text/plain.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param email       a recipient email address. For example: example@mail.com
      * @param subject     a subject of a message
@@ -174,8 +190,10 @@ public final class DEmailSender {
 
     /**
      * The method is distributing a message to a group recipients with attachments.
-     * A message body has a content type of text/plain.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param recipients  the set of information about recipients ({@link EmailParticipant})
      * @param subject     a subject of a message
@@ -195,8 +213,10 @@ public final class DEmailSender {
 
     /**
      * The method is sending a message.
-     * A message body has a content type of text/html.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param email   a recipient email address. For example: example@mail.com
      * @param subject a subject of a message
@@ -210,8 +230,10 @@ public final class DEmailSender {
 
     /**
      * The method is distributing a message to a group recipients.
-     * A message body has a content type of text/html.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param emails  a collection of recipient email address. For example: example@mail.com
      * @param subject a subject of a message
@@ -225,8 +247,10 @@ public final class DEmailSender {
 
     /**
      * The method is distributing a message to a group recipients with attachments.
-     * A message body has a content type of text/html.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param emails      a collection of recipient email address. For example: example@mail.com
      * @param subject     a subject of a message
@@ -241,8 +265,10 @@ public final class DEmailSender {
 
     /**
      * The method is distributing a message to a group recipients with attachments.
-     * A message body has a content type of text/html.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param emails      a collection of recipient email address. For example: example@mail.com
      * @param subject     a subject of a message
@@ -263,8 +289,10 @@ public final class DEmailSender {
 
     /**
      * The method is distributing a message to a group recipients with attachments.
-     * A message body has a content type of text/html.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param emails      a collection of recipient email address. For example: example@mail.com
      * @param subject     a subject of a message
@@ -285,8 +313,10 @@ public final class DEmailSender {
 
     /**
      * The method is sending a message with attachments.
-     * A message body has a content type of text/html.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param email       a recipient email address. For example: example@mail.com
      * @param subject     a subject of a message
@@ -301,8 +331,10 @@ public final class DEmailSender {
 
     /**
      * The method is sending a message with attachments.
-     * A message body has a content type of text/html.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param email       a recipient email address. For example: example@mail.com
      * @param subject     a subject of a message
@@ -319,8 +351,10 @@ public final class DEmailSender {
 
     /**
      * The method is distributing a message to a group recipients with attachments.
-     * A message body has a content type of text/html.
-     * A message body takes from "content" argument. It has a type String.
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body takes from "content" argument. It has a type String.
      *
      * @param recipients  the set of information about recipients ({@link EmailParticipant})
      * @param subject     a subject of a message
@@ -340,10 +374,12 @@ public final class DEmailSender {
 
     /**
      * The method is sending a message.
-     * A message body has a content type of text/html.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body is created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
      * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
      *
      * @param email          a recipient email address. For example: example@mail.com
@@ -364,10 +400,12 @@ public final class DEmailSender {
 
     /**
      * The method is distributing a message to a group recipients.
-     * A message body has a content type of text/html.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body is created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
      * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
      *
      * @param emails         a collection of recipient email address. For example: example@mail.com
@@ -388,10 +426,12 @@ public final class DEmailSender {
 
     /**
      * The method is distributing a message to a group recipients with attachments.
-     * A message body has a content type of text/html.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body is created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
      * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
      *
      * @param emails         a collection of recipient email address. For example: example@mail.com
@@ -414,10 +454,12 @@ public final class DEmailSender {
 
     /**
      * The method is distributing a message to a group recipients with attachments.
-     * A message body has a content type of text/html.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body is created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
      * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
      *
      * @param emails         a collection of recipient email address. For example: example@mail.com
@@ -441,10 +483,12 @@ public final class DEmailSender {
 
     /**
      * The method is sending a message with attachments.
-     * A message body has a content type of text/html.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body is created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
      * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
      *
      * @param email          a recipient email address. For example: example@mail.com
@@ -467,10 +511,12 @@ public final class DEmailSender {
 
     /**
      * The method is sending a message with attachments.
-     * A message body has a content type of text/html.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
+     *
+     * <p>A message body has a content type of text/html.
+     *
+     * <p>A message body is created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
      * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
      *
      * @param email          a recipient email address. For example: example@mail.com
@@ -494,200 +540,13 @@ public final class DEmailSender {
     }
 
     /**
-     * The method is sending a message.
-     * A message body has a content type of text/plain.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
-     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
-     *
-     * @param email          a recipient email address. For example: example@mail.com
-     * @param subject        a subject of a message
-     * @param pathToTemplate a path to template
-     * @param params         parameters for the template
-     *
-     * @return a sending status {@link SendingStatus}
-     */
-    public SendingStatus sendTextTemplated(
-        String email,
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params
-    ) {
-        return this.sendTextTemplated(email, subject, pathToTemplate, params, new ArrayList<>());
-    }
-
-    /**
-     * The method is distributing a message to a group of recipients.
-     * A message body has a content type of text/plain.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
-     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
-     *
-     * @param emails         a collection of recipient email address. For example: example@mail.com
-     * @param subject        a subject of a message
-     * @param pathToTemplate a path to template
-     * @param params         parameters for the template
-     *
-     * @return a sending status {@link SendingStatus}
-     */
-    public SendingStatus sendTextTemplated(
-        Collection<String> emails,
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params
-    ) {
-        return this.sendTextTemplated(emails, subject, pathToTemplate, params, new ArrayList<>());
-    }
-
-    /**
      * The method is distributing a message to a group of recipients with attachments.
-     * A message body has a content type of text/plain.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
-     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
      *
-     * @param emails         a collection of recipient email address. For example: example@mail.com
-     * @param subject        a subject of a message
-     * @param pathToTemplate a path to template
-     * @param params         parameters for the template
-     * @param attachments    an array of attachments ({@link EmailAttachment})
+     * <p>A message body has a content type of text/html.
      *
-     * @return a sending status {@link SendingStatus}
-     */
-    public SendingStatus sendTextTemplated(
-        Collection<String> emails,
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params,
-        EmailAttachment... attachments
-    ) {
-        return this.sendTextTemplated(emails, subject, pathToTemplate, params, Arrays.asList(attachments));
-    }
-
-    /**
-     * The method is distributing a message to a group of recipients with attachments.
-     * A message body has a content type of text/plain.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
-     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     * <p>A message body is created using the Apache Velocity Template engine.
      *
-     * @param emails         a collection of recipient email address. For example: example@mail.com
-     * @param subject        a subject of a message
-     * @param pathToTemplate a path to template
-     * @param params         parameters for the template
-     * @param attachments    a list of attachments ({@link EmailAttachment})
-     *
-     * @return a sending status {@link SendingStatus}
-     */
-    public SendingStatus sendTextTemplated(
-        Collection<String> emails,
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params,
-        List<EmailAttachment> attachments
-    ) {
-        Set<EmailParticipant> recipients = emails.stream().map(EmailParticipant::new).collect(Collectors.toSet());
-        return this.sendTextTemplated(recipients, subject, pathToTemplate, params, attachments);
-    }
-
-    /**
-     * The method is sending a message with attachments.
-     * A message body has a content type of text/plain.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
-     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
-     *
-     * @param email          a recipient email address. For example: example@mail.com
-     * @param subject        a subject of a message
-     * @param pathToTemplate a path to template
-     * @param params         parameters for the template
-     * @param attachments    an array of attachments ({@link EmailAttachment})
-     *
-     * @return a sending status {@link SendingStatus}
-     */
-    public SendingStatus sendTextTemplated(
-        String email,
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params,
-        EmailAttachment... attachments
-    ) {
-        return this.sendTextTemplated(email, subject, pathToTemplate, params, Arrays.asList(attachments));
-    }
-
-    /**
-     * The method is sending a message with attachments.
-     * A message body has a content type of text/plain.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
-     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
-     *
-     * @param email          a recipient email address. For example: example@mail.com
-     * @param subject        a subject of a message
-     * @param pathToTemplate a path to template
-     * @param params         parameters for the template
-     * @param attachments    a list of attachments ({@link EmailAttachment})
-     *
-     * @return a sending status {@link SendingStatus}
-     */
-    public SendingStatus sendTextTemplated(
-        String email,
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params,
-        List<EmailAttachment> attachments
-    ) {
-        Set<EmailParticipant> recipients = new HashSet<>();
-        recipients.add(new EmailParticipant(email));
-        return this.sendTextTemplated(recipients, subject, pathToTemplate, params, attachments);
-    }
-
-    /**
-     * The method is distributing a message to a group of recipients with attachments.
-     * A message body has a content type of text/plain.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
-     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
-     *
-     * @param recipients     the set of information about recipients ({@link EmailParticipant})
-     * @param subject        a subject of a message
-     * @param pathToTemplate a path to template
-     * @param params         parameters for the template
-     * @param attachments    a list of attachments ({@link EmailAttachment})
-     *
-     * @return a sending status {@link SendingStatus}
-     */
-    public SendingStatus sendTextTemplated(
-        Set<EmailParticipant> recipients,
-        String subject,
-        String pathToTemplate,
-        Map<String, Object> params,
-        List<EmailAttachment> attachments
-    ) {
-        return this.sendTemplatedMessage(
-            recipients,
-            subject,
-            pathToTemplate,
-            params,
-            ContentMessageType.TEXT,
-            null,
-            attachments
-        );
-    }
-
-    /**
-     * The method is distributing a message to a group of recipients with attachments.
-     * A message body has a content type of text/html.
-     * A message body is created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
+     * <p>For more information about the velocity template engine, use the link:
      * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
      *
      * @param recipients     the set of information about recipients ({@link EmailParticipant})
@@ -717,13 +576,217 @@ public final class DEmailSender {
     }
 
     /**
-     * The common method is sending a templated message.
-     * A message body created using the Apache Velocity Template engine.
-     * <p>
-     * For more information about the velocity template engine, use the link:
+     * The method is sending a message.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body is created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
      * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
-     * <p>
-     * For simplifying attachment creation, use the {@link AttachmentUtils} utility class
+     *
+     * @param email          a recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        String email,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params
+    ) {
+        return this.sendTextTemplated(email, subject, pathToTemplate, params, new ArrayList<>());
+    }
+
+    /**
+     * The method is distributing a message to a group of recipients.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body is created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param emails         a collection of recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        Collection<String> emails,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params
+    ) {
+        return this.sendTextTemplated(emails, subject, pathToTemplate, params, new ArrayList<>());
+    }
+
+    /**
+     * The method is distributing a message to a group of recipients with attachments.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body is created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param emails         a collection of recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    an array of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        Collection<String> emails,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        EmailAttachment... attachments
+    ) {
+        return this.sendTextTemplated(emails, subject, pathToTemplate, params, Arrays.asList(attachments));
+    }
+
+    /**
+     * The method is distributing a message to a group of recipients with attachments.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body is created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param emails         a collection of recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        Collection<String> emails,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        List<EmailAttachment> attachments
+    ) {
+        Set<EmailParticipant> recipients = emails.stream().map(EmailParticipant::new).collect(Collectors.toSet());
+        return this.sendTextTemplated(recipients, subject, pathToTemplate, params, attachments);
+    }
+
+    /**
+     * The method is sending a message with attachments.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body is created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param email          a recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    an array of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        String email,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        EmailAttachment... attachments
+    ) {
+        return this.sendTextTemplated(email, subject, pathToTemplate, params, Arrays.asList(attachments));
+    }
+
+    /**
+     * The method is sending a message with attachments.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body is created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param email          a recipient email address. For example: example@mail.com
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        String email,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        List<EmailAttachment> attachments
+    ) {
+        Set<EmailParticipant> recipients = new HashSet<>();
+        recipients.add(new EmailParticipant(email));
+        return this.sendTextTemplated(recipients, subject, pathToTemplate, params, attachments);
+    }
+
+    /**
+     * The method is distributing a message to a group of recipients with attachments.
+     *
+     * <p>A message body has a content type of text/plain.
+     *
+     * <p>A message body is created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * @param recipients     the set of information about recipients ({@link EmailParticipant})
+     * @param subject        a subject of a message
+     * @param pathToTemplate a path to template
+     * @param params         parameters for the template
+     * @param attachments    a list of attachments ({@link EmailAttachment})
+     *
+     * @return a sending status {@link SendingStatus}
+     */
+    public SendingStatus sendTextTemplated(
+        Set<EmailParticipant> recipients,
+        String subject,
+        String pathToTemplate,
+        Map<String, Object> params,
+        List<EmailAttachment> attachments
+    ) {
+        return this.sendTemplatedMessage(
+            recipients,
+            subject,
+            pathToTemplate,
+            params,
+            ContentMessageType.TEXT,
+            null,
+            attachments
+        );
+    }
+
+    /**
+     * The common method is sending a templated message.
+     *
+     * <p>A message body created using the Apache Velocity Template engine.
+     *
+     * <p>For more information about the velocity template engine, use the link:
+     * <a href="https://velocity.apache.org/engine/1.7/user-guide.html#what-is-velocity">Apache Velocity Project</a>
+     *
+     * <p>For simplifying attachment creation, use the {@link AttachmentUtils} utility class
      *
      * @param recipients     the set of information about recipients ({@link EmailParticipant})
      * @param subject        a subject of a message
@@ -762,8 +825,8 @@ public final class DEmailSender {
 
     /**
      * The common method is sending a text message.
-     * <p>
-     * For simplifying attachment creation, use the {@link AttachmentUtils} utility class
+     *
+     * <p>For simplifying attachment creation, use the {@link AttachmentUtils} utility class
      *
      * @param recipients  the set of recipients
      * @param subject     the message subject
@@ -792,7 +855,7 @@ public final class DEmailSender {
     }
 
     /**
-     * The common method for sending {@link OutgoingMessage} messages
+     * The common method for sending {@link OutgoingMessage} messages.
      *
      * @param message an outgoing message
      *
