@@ -75,4 +75,13 @@ public class ContentMessage {
 
         this.size = data.getBytes(this.charset).length;
     }
+
+    @Override
+    public String toString() {
+        return "ContentMessage{"
+            + ", charset=" + charset
+            + ", size=" + size
+            + ", contentType='" + contentType + '\''
+            + '}';
+    }
 }

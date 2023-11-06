@@ -79,4 +79,16 @@ public class BaseMessage implements Message {
     public String getAllContentsAsString(String delimiter) {
         return this.getContents().stream().map(ContentMessage::getData).collect(Collectors.joining(delimiter));
     }
+
+    @Override
+    public String toString() {
+        return "BaseMessage{"
+            + "subject='" + subject + '\''
+            + ", content=" + contents
+            + ", recipients=" + recipients
+            + ", sender=" + sender
+            + ", attachments=" + attachments
+            + ", transferEncoder=" + transferEncoder
+            + '}';
+    }
 }

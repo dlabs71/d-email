@@ -32,6 +32,4 @@ public enum Protocol {
         this.propName = propName;
         this.protocolName = protocolName;
     }
-
-
 }

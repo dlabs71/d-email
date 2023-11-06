@@ -63,6 +63,10 @@ public class MessagePartConverter {
         }
         try {
             Address[] recipients = message.getRecipients(Message.RecipientType.TO);
+            log.debug(
+                "Starts converting email recipients. Count of the recipients is {}",
+                recipients != null ? recipients.length : null
+            );
             if (recipients == null || recipients.length == 0) {
                 return new HashSet<>();
             }
@@ -87,17 +91,19 @@ public class MessagePartConverter {
      * @return an object of the class {@link EmailAttachment}
      */
     public EmailAttachment getAttachment(Part part) {
+        log.debug("Starts converting attachment from the Part {}", part);
         if (part == null) {
             return null;
         }
         try {
             byte[] content = getContentDefaultAsBytes(part);
+            log.debug("Content length of the part message: {}", content.length);
             return EmailAttachment.builder()
                 .name(EmailMessageUtils.decodeData(part.getFileName()))
                 .data(content)
                 .type(AttachmentType.find(part.getContentType()))
                 .contentType(EmailMessageUtils.decodeData(part.getContentType()))
-                .size(content == null ? 0 : content.length)
+                .size(content.length)
                 .build();
         } catch (MessagingException e) {
             throw new ReadMessageException(
@@ -128,6 +134,7 @@ public class MessagePartConverter {
      * @param result a container for result
      */
     public void getContent(Part part, ContentAndAttachments result) {
+        log.debug("Gets content from the email part {} and with result {}", part, result);
         if (part == null) {
             return;
         }
@@ -141,11 +148,13 @@ public class MessagePartConverter {
         } catch (IOException e) {
             log.warn(e.getMessage());
             // This is mean that content message is full empty
+            log.debug("The part is empty.");
             return;
         }
 
         try {
             if (!Part.ATTACHMENT.equals(part.getDisposition())) {
+                log.debug("The part is content. Part mime type is {}", part.getContentType());
                 if (part.isMimeType("text/*")) {
                     result.addContent(part.getContentType(), (String) part.getContent());
                     return;
@@ -168,6 +177,7 @@ public class MessagePartConverter {
                 }
             }
 
+            log.debug("The part is attachment with content type {}", part.getContentType());
             // check if the part is attachment
             if (!AttachmentType.UNKNOWN.equals(AttachmentType.find(part.getContentType()))) {
                 EmailAttachment attachment = getAttachment(part);
@@ -178,6 +188,7 @@ public class MessagePartConverter {
             }
 
             // adds result
+            log.debug("The part has an unknown content type. It'll be added as content.");
             result.addContent(part.getContentType(), getContentDefault(part));
         } catch (MessagingException | IOException e) {
             throw new ReadMessageException(
@@ -210,6 +221,7 @@ public class MessagePartConverter {
                 ex
             );
         }
+        log.debug("Got an object content from the part. It instances of {}", content.getClass());
         if (content instanceof String) {
             return (String) content;
         } else if (content instanceof InputStream) {
@@ -237,18 +249,19 @@ public class MessagePartConverter {
      *
      * @param bodyPart the part of a {@link jakarta.mail.Message}
      *
-     * @return a content email message as an erray of bytes.
+     * @return a content email message as an array of bytes. If the body part is null or empty,
+     *     then it'll return an empty byte array
      */
     public byte[] getContentDefaultAsBytes(Part bodyPart) {
         if (bodyPart == null) {
-            return null;
+            return new byte[0];
         }
         Object content;
         try {
             content = bodyPart.getContent();
         } catch (IOException ex) {
             log.warn(ex.getMessage());
-            return null;
+            return new byte[0];
         } catch (MessagingException ex) {
             throw new ReadMessageException(
                 "An error occurred in getting content from the message: " + ex.getMessage(),
@@ -322,6 +335,14 @@ public class MessagePartConverter {
          */
         public boolean isEmpty() {
             return contents.isEmpty() && attachments.isEmpty();
+        }
+
+        @Override
+        public String toString() {
+            return "ContentAndAttachments{"
+                + "contentsSize=" + contents.size()
+                + ", attachmentsSize=" + attachments.size()
+                + '}';
         }
     }
 

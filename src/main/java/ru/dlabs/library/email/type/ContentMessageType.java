@@ -5,6 +5,7 @@ import static ru.dlabs.library.email.util.HttpUtils.TEXT_CONTENT_TYPE;
 
 import java.util.Arrays;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The enum contains all types of message content. It's active use in outgoing messages.
@@ -17,6 +18,7 @@ import lombok.Getter;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Slf4j
 @Getter
 public enum ContentMessageType {
     TEXT(TEXT_CONTENT_TYPE),
@@ -41,6 +43,10 @@ public enum ContentMessageType {
      * @return an enum value or null
      */
     public static ContentMessageType forContentType(String contentType) {
+        log.debug(
+            "Tries to look up the content type in the ContentMessageType. String content type is {}",
+            contentType
+        );
         if (contentType == null) {
             return null;
         }

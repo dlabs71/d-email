@@ -28,7 +28,6 @@ import ru.dlabs.library.email.type.TransferEncoder;
  * @since 1.0.0
  */
 @Getter
-@ToString
 public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessage {
 
     /**
@@ -123,6 +122,11 @@ public class DefaultOutgoingMessage extends BaseMessage implements OutgoingMessa
      */
     public static Builder outgoingMessageBuilder() {
         return new Builder();
+    }
+
+    @Override
+    public String toString() {
+        return "DefaultOutgoingMessage." + super.toString();
     }
 
     /**

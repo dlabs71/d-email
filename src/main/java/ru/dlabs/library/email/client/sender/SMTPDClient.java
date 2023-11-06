@@ -53,6 +53,7 @@ public class SMTPDClient implements SenderDClient {
         JavaCoreUtils.notNullArgument(smtpProperties, "smtpProperties");
         this.principal = new EmailParticipant(smtpProperties.getEmail(), smtpProperties.getName());
         this.authentication = new PasswordAuthentication(smtpProperties.getEmail(), smtpProperties.getPassword());
+        log.debug("Principal and authentication object were created. {}", this.principal);
         try {
             this.properties = SessionPropertyCollector.createCommonProperties(smtpProperties, PROTOCOL);
             this.properties.put("mail.smtp.auth", "true");
@@ -60,7 +61,9 @@ public class SMTPDClient implements SenderDClient {
             throw new SessionException(
                 "The creation of a connection failed because of the following error: " + e.getMessage());
         }
+        log.debug("Configuration properties were created");
         this.session = this.connect();
+        log.debug("Session was created. Client is ready to sending messages!");
     }
 
     /**
@@ -111,6 +114,7 @@ public class SMTPDClient implements SenderDClient {
     @Override
     public SendingStatus send(OutgoingMessage message) {
         MessageValidator.validate(message);
+        log.debug("Starts sending message. Message is {}", message);
 
         // It's creating an envelope of the message
         Message jakartaMessage;
@@ -122,7 +126,10 @@ public class SMTPDClient implements SenderDClient {
                 this.principal.getName()
             );
         } catch (CreateMessageException | MessagingException ex) {
-            log.error(ex.getMessage(), ex);
+            log.error(
+                "Convert outgoing message DTO to jakarta message object failed by the next reason: " + ex.getMessage(),
+                ex
+            );
             return SendingStatus.ERROR_IN_MESSAGE;
         }
 

@@ -2,6 +2,7 @@ package ru.dlabs.library.email.tests.client.receiver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -52,6 +53,6 @@ public class IMAPDClientTest extends AbstractTestsClass {
         assertNotNull(imapdClient.getPrincipal());
         assertNotNull(imapdClient.getProtocolName());
         assertEquals(imapdClient.getPrincipal().getEmail(), sslImapProperties.getEmail());
-        assertEquals(imapdClient.getPrincipal().getName(), sslImapProperties.getEmail());
+        assertNull(imapdClient.getPrincipal().getName());
     }
 }

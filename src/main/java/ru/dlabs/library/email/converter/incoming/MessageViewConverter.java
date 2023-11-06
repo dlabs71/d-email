@@ -41,12 +41,14 @@ public class MessageViewConverter {
      * @return instance of the {@link MessageView} class
      */
     public MessageView convert(Message message) {
+        log.debug("Starts converting jakarta Message to MessageView. Jakarta Message is {}", message);
         if (message == null) {
             return null;
         }
         MessageView.MessageViewBuilder builder = MessageView.builder();
         builder.id(message.getMessageNumber());
         builder.recipients(MessagePartConverter.getRecipients(message));
+        log.debug("Recipients converted successfully");
 
         // Extraction of the subject
         try {
@@ -58,6 +60,7 @@ public class MessageViewConverter {
             throw new CheckEmailException(
                 "The attempt to get recipients of the message has failed: " + e.getMessage());
         }
+        log.debug("Subject converted successfully");
 
         // Extraction of the sender address
         Address[] froms;
@@ -72,11 +75,13 @@ public class MessageViewConverter {
         if (froms != null && froms.length > 0) {
             InternetAddress internetAddress = (InternetAddress) froms[0];
             builder.sender(new EmailParticipant(internetAddress.getAddress(), internetAddress.getPersonal()));
+            log.debug("Sender converted successfully. The size of the list of senders is {}", froms.length);
         }
 
         // Set the read flag
         try {
             builder.seen(message.isSet(Flags.Flag.SEEN));
+            log.debug("Seen flag converted successfully");
         } catch (MessagingException e) {
             log.warn(
                 "It is impossible to determine whether a message has been flagged as seen. " + e.getMessage());
@@ -86,19 +91,26 @@ public class MessageViewConverter {
         try {
             String transferEncoder = ((MimeMessage) message).getHeader(CONTENT_TRANSFER_ENCODING_HDR, null);
             builder.transferEncoder(TransferEncoder.forName(transferEncoder));
+            log.debug("Transfer encoding converted successfully. Transfer Encoding is {}", transferEncoder);
 
+            long size;
             if (message instanceof IMAPMessage) {
-                builder.size(((IMAPMessage) message).getSizeLong());
+                size = ((IMAPMessage) message).getSizeLong();
             } else {
-                builder.size((long) message.getSize());
+                size = message.getSize();
             }
+            builder.size(size);
+            log.debug("Size of message converted successfully. Size is {}", size);
 
             if (message.getSentDate() != null) {
                 builder.sentDate(JavaCoreUtils.convert(message.getSentDate()));
             }
+            log.debug("Sent date of message converted successfully");
+
             if (message.getReceivedDate() != null) {
                 builder.receivedDate(JavaCoreUtils.convert(message.getReceivedDate()));
             }
+            log.debug("Received date of message converted successfully");
         } catch (MessagingException e) {
             throw new CheckEmailException(
                 "The attempt to get recipients of the message has failed: " + e.getMessage());

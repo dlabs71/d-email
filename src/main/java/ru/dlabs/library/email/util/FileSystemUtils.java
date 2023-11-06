@@ -40,10 +40,12 @@ public class FileSystemUtils {
      *                 If null, it'll use {@link DefaultFileParametersDetector}
      *
      * @return {@link Charset} class is the corresponding encoding of the file.
-     *         If the detector cannot define an encoding, then it returns the system default encoding.
+     *     If the detector cannot define an encoding, then it returns the system default encoding.
      */
     public Charset detectFileEncoding(File file, FileParametersDetector detector) {
+        log.debug("Tries to detect content encoding for file {}. Using detector is {}", file, detector);
         if (file == null || !file.exists()) {
+            log.debug("An attempt to detect file content encoding failed because the file is null or doesn't exist");
             return null;
         }
         if (detector == null) {
@@ -53,6 +55,7 @@ public class FileSystemUtils {
         if (encoding == null) {
             encoding = Charset.defaultCharset();
         }
+        log.debug("File encoding is {}", encoding);
         return encoding;
     }
 
@@ -73,10 +76,12 @@ public class FileSystemUtils {
      *                 If null, it'll use {@link DefaultFileParametersDetector}
      *
      * @return MIME type of file. If the detector cannot define the MIME type,
-     *         then it returns the default value ({@link HttpUtils#DEFAULT_BINARY_CONTENT_TYPE})
+     *     then it returns the default value ({@link HttpUtils#DEFAULT_BINARY_CONTENT_TYPE})
      */
     public String detectFileMimeType(File file, FileParametersDetector detector) {
+        log.debug("Tries to detect MIME type for file {}. Using detector is {}", file, detector);
         if (file == null || !file.exists()) {
+            log.debug("An attempt to detect file MINE type failed because the file is null or doesn't exist");
             return null;
         }
         if (detector == null) {
@@ -87,6 +92,7 @@ public class FileSystemUtils {
         if (mimeType == null) {
             mimeType = DEFAULT_BINARY_CONTENT_TYPE;
         }
+        log.debug("File MIME type is {}", mimeType);
         return mimeType;
     }
 }

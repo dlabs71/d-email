@@ -9,6 +9,7 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -31,6 +32,7 @@ import ru.dlabs.library.email.exception.TemplateCreationException;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Slf4j
 @UtilityClass
 public class TemplateUtils {
 
@@ -95,6 +97,7 @@ public class TemplateUtils {
      * @return template object (see also {@link Template})
      */
     public Template createClasspathTemplate(String pathTemplate) {
+        log.debug("A template will create from classpath source using the path equal to {}", pathTemplate);
         VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADERS, "classpath");
         velocityEngine.setProperty("resource.loader.classpath.class", ClasspathResourceLoader.class.getName());
@@ -115,6 +118,7 @@ public class TemplateUtils {
      * @return template object (see also {@link Template})
      */
     public Template createFileTemplate(String pathTemplate) {
+        log.debug("A template will create from file system source using the path equal to {}", pathTemplate);
         VelocityEngine velocityEngine = new VelocityEngine();
         TemplatePath templatePath = normalizeTemplatePath(pathTemplate);
         velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADERS, "file");
@@ -134,6 +138,7 @@ public class TemplateUtils {
      * @return template object (see also {@link Template})
      */
     public Template createJarFileTemplate(String pathTemplate) {
+        log.debug("A template will create from jar using the path equal to {}", pathTemplate);
         VelocityEngine velocityEngine = new VelocityEngine();
         TemplatePath templatePath = normalizeTemplatePath(pathTemplate);
         velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADERS, "jar");
@@ -156,6 +161,7 @@ public class TemplateUtils {
      * @throws java.nio.file.InvalidPathException if the parameter 'source' has incorrect value
      */
     public TemplatePath normalizeTemplatePath(String source) {
+        log.debug("Starts template path normalizing for {}", source);
         if (source.startsWith("file://")) {
             source = source.replace("file://", "");
         }
@@ -166,6 +172,7 @@ public class TemplateUtils {
             String[] parts = source.split("!");
             return new TemplatePath(parts[1], parts[0]);
         }
+        log.debug("Normalized path is {}", source);
         source = Paths.get(source).toString();
         if (!source.contains(File.separator)) {
             return new TemplatePath(source, "");
@@ -183,9 +190,11 @@ public class TemplateUtils {
      * @return object TemplatePath
      */
     private static TemplatePath createTemplatePath(String source) {
-        String[] paths = source.split(File.separator);
+        log.debug("Starts creating instance of the TemplatePath class for {}", source);
+        String[] paths = source.split("[\\\\/]");
         String[] pathToDirectory = Arrays.copyOf(paths, paths.length - 1);
         String filename = paths[paths.length - 1];
+        log.debug("Create a TemplatePath from filename={} and pathToDirectory={}", filename, pathToDirectory);
         return new TemplatePath(filename, String.join(File.separator, pathToDirectory));
     }
 

@@ -2,6 +2,7 @@ package ru.dlabs.library.email.type;
 
 import java.util.Arrays;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The enum of supported values of Content-Transfer-Encoding header.
@@ -15,6 +16,7 @@ import lombok.Getter;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Slf4j
 @Getter
 public enum TransferEncoder {
 
@@ -48,6 +50,7 @@ public enum TransferEncoder {
      * @return a value of a Content-Transfer-Encoding header or null
      */
     public static TransferEncoder forName(String value) {
+        log.debug("Tries to look up the Content Transfer Encoding in the TransferEncoder. Value is {}", value);
         if (value == null) {
             return null;
         }

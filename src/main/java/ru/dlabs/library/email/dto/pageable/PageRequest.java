@@ -49,4 +49,9 @@ public class PageRequest {
     public int getEnd() {
         return this.getStart() + this.getLength() - 1;
     }
+
+    @Override
+    public String toString() {
+        return "Page<" + start + ", " + length + ">";
+    }
 }

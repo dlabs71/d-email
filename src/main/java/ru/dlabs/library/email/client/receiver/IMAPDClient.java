@@ -72,9 +72,16 @@ public class IMAPDClient implements ReceiverDClient {
     public IMAPDClient(ImapProperties imapProperties) {
         JavaCoreUtils.notNullArgument(imapProperties, "imapProperties");
         this.principal = EmailParticipant.of(imapProperties.getEmail());
+        log.debug("Principal object were created. {}", this.principal);
+
         this.properties = this.collectProperties(imapProperties);
+        log.debug("Configuration properties were created");
+
         this.session = this.connect();
+        log.debug("Session was created");
+
         this.store = createStore(this.session, imapProperties.getEmail(), imapProperties.getPassword());
+        log.debug("Store was created. Client is ready to receiving messages!");
     }
 
     private Properties collectProperties(ImapProperties imapProperties) {
@@ -165,6 +172,7 @@ public class IMAPDClient implements ReceiverDClient {
     }
 
     private Integer getTotalCount(Folder folder) throws FolderOperationException {
+        log.debug("Gets total messages from the folder {}", folder);
         try {
             return folder.getMessageCount();
         } catch (MessagingException e) {
@@ -187,10 +195,12 @@ public class IMAPDClient implements ReceiverDClient {
      */
     @Override
     public List<MessageView> checkEmailMessages(String folderName, PageRequest pageRequest) {
+        log.debug("Checks email messages from the folder {} and page request is {}", folderName, pageRequest);
         Folder folder = this.openFolderForRead(folderName);
         Stream<Message> messages = this.getMessages(folder, pageRequest);
 
         List<MessageView> result = messages.map(MessageViewConverter::convert).collect(Collectors.toList());
+        log.debug(result.size() + " email messages was got");
         closeFolder(folder);
         return result;
     }
@@ -206,11 +216,13 @@ public class IMAPDClient implements ReceiverDClient {
      */
     @Override
     public List<IncomingMessage> readMessages(String folderName, PageRequest pageRequest) {
+        log.debug("Reads email messages from the folder {} and page request is {}", folderName, pageRequest);
         Folder folder = this.openFolderForWrite(folderName);
         Stream<Message> messages = this.getMessages(folder, pageRequest);
 
-        List<IncomingMessage> result =
-            messages.map(BaseMessageConverter::convertToIncomingMessage).collect(Collectors.toList());
+        List<IncomingMessage> result = messages.map(BaseMessageConverter::convertToIncomingMessage)
+            .collect(Collectors.toList());
+        log.debug(result.size() + " email messages was got");
         closeFolder(folder);
         return result;
     }
@@ -226,6 +238,7 @@ public class IMAPDClient implements ReceiverDClient {
      */
     @Override
     public IncomingMessage readMessageById(String folderName, int id) {
+        log.debug("Reads one message by id = {} and folder name = {}", id, folderName);
         Folder folder = this.openFolderForWrite(folderName);
 
         Message message;
@@ -274,7 +287,7 @@ public class IMAPDClient implements ReceiverDClient {
     }
 
     private Folder openFolder(String folderName, int mode) {
-        log.debug("Try to open folder: " + folderName);
+        log.debug("Try to open folder {} with access mode is {}", folderName, mode);
         if (store == null) {
             throw new FolderOperationException("The store is null");
         }
@@ -283,6 +296,7 @@ public class IMAPDClient implements ReceiverDClient {
         try {
             folder = store.getFolder(folderName);
             folder.open(mode);
+            log.debug("Folder is opened");
         } catch (MessagingException e) {
             throw new FolderOperationException(
                 "The folder with the name " + folderName + " couldn't be opened because of the following error: "
@@ -298,11 +312,13 @@ public class IMAPDClient implements ReceiverDClient {
      */
     @Override
     public void closeFolder(Folder folder) {
+        log.debug("Try to close the folder {}", folder);
         if (folder == null) {
             return;
         }
         try {
             folder.close();
+            log.debug("Folder is closed.");
         } catch (MessagingException e) {
             log.warn("The folder with the name " + folder.getName()
                          + " couldn't be closed because of the following error: " + e.getMessage());
@@ -319,14 +335,18 @@ public class IMAPDClient implements ReceiverDClient {
      */
     @Override
     public boolean deleteMessage(String folderName, int id) {
+        log.debug("Deletes one message by id = {} and folder name = {}", id, folderName);
         Folder folder = this.openFolderForWrite(folderName);
 
         try {
             Message message = folder.getMessage(id);
             message.setFlag(Flags.Flag.DELETED, true);
         } catch (MessagingException e) {
-            log.warn("The message with id=" + id
-                         + " wasn't marked as deleted because of the following error: " + e.getMessage());
+            log.warn(
+                "The message with id={} wasn't marked as deleted because of the following error: {}",
+                id,
+                e.getMessage()
+            );
             this.closeFolder(folder);
             return false;
         }
@@ -353,6 +373,7 @@ public class IMAPDClient implements ReceiverDClient {
      */
     @Override
     public Map<Integer, Boolean> deleteMessages(String folderName, Collection<Integer> ids) {
+        log.debug("Deletes one message from the folder {} by the message ids = {}", folderName, ids);
         Folder folder = this.openFolderForWrite(folderName);
         Map<Integer, Boolean> result = new HashMap<>();
         ids.forEach(id -> {
@@ -389,6 +410,7 @@ public class IMAPDClient implements ReceiverDClient {
      */
     @Override
     public Map<Integer, Boolean> deleteAllMessages(String folderName) {
+        log.debug("Deletes all the messages from the folder {}", folderName);
         Folder folder = this.openFolderForWrite(folderName);
         Map<Integer, Boolean> result = new HashMap<>();
         this.getMessages(folder, PageRequest.of(0, Integer.MAX_VALUE)).forEach(message -> {
@@ -421,6 +443,12 @@ public class IMAPDClient implements ReceiverDClient {
         if (totalCount < end) {
             end = totalCount;
         }
+        log.debug(
+            "Gets message from folder {} with page request {}. The folder has {} messages",
+            folder,
+            pageRequest,
+            totalCount
+        );
         try {
             return Arrays.stream(folder.getMessages(pageRequest.getStart() + 1, end));
         } catch (MessagingException e) {

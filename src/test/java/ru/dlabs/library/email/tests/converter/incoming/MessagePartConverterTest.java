@@ -128,13 +128,16 @@ public class MessagePartConverterTest {
         Part emailPartContent = TestConverterUtils.createContent(content, "text");
 
         byte[] result1 = MessagePartConverter.getContentDefaultAsBytes(null);
-        assertNull(result1);
+        assertNotNull(result1);
+        assertEquals(0, result1.length);
 
         byte[] result2 = MessagePartConverter.getContentDefaultAsBytes(new MimeBodyPart());
-        assertNull(result2);
+        assertNotNull(result2);
+        assertEquals(0, result2.length);
 
         byte[] result3 = MessagePartConverter.getContentDefaultAsBytes(emptyAttachment);
-        assertNull(result3);
+        assertNotNull(result3);
+        assertEquals(0, result3.length);
 
         byte[] result4 = MessagePartConverter.getContentDefaultAsBytes(emailPartAttachment);
         assertNotNull(result4);
@@ -238,7 +241,8 @@ public class MessagePartConverterTest {
         assertEquals(emptyAttachment.getFileName(), attachment2.getName());
         assertEquals(emptyAttachment.getContentType(), attachment2.getContentType());
         assertEquals(AttachmentType.APPLICATION, attachment2.getType());
-        assertNull(attachment2.getData());
+        assertNotNull(attachment2.getData());
+        assertEquals(0, attachment2.getData().length);
 
         EmailAttachment attachment3 = MessagePartConverter.getAttachment(emailPart);
         assertNotNull(attachment3);

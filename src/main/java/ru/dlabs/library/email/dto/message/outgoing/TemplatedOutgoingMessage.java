@@ -34,7 +34,6 @@ import ru.dlabs.library.email.util.TemplateUtils;
  * @since 1.0.0
  */
 @Getter
-@ToString
 public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
 
     /**
@@ -165,6 +164,11 @@ public class TemplatedOutgoingMessage extends DefaultOutgoingMessage {
             return null;
         }
         return TemplateUtils.construct(path, params);
+    }
+
+    @Override
+    public String toString() {
+        return "TemplatedOutgoingMessage<" + pathToTemplate + ">." + super.toString();
     }
 
     /**

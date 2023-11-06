@@ -3,6 +3,7 @@ package ru.dlabs.library.email.util;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The utility class contains helpful methods for work with different parts of HTTP.
@@ -14,6 +15,7 @@ import lombok.experimental.UtilityClass;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Slf4j
 @UtilityClass
 public class HttpUtils {
 
@@ -74,13 +76,20 @@ public class HttpUtils {
      * @return value from 'charset' directive. For example: utf-8
      */
     public String defineCharsetFromHeaderValue(String contentTypeValue) {
+        log.debug(
+            "Tries to detect value of the charset directive form the content type header value. The header value is {}",
+            contentTypeValue
+        );
         if (contentTypeValue == null || contentTypeValue.isEmpty()) {
             return null;
         }
         if (contentTypeValue.contains("charset")) {
             String value = contentTypeValue.split("charset")[1].replaceAll("\\s", "").replaceFirst("=", "").trim();
-            return value.split(";")[0];
+            value = value.split(";")[0];
+            log.debug("Charset for content type {} is {}", contentTypeValue, value);
+            return value;
         }
+        log.debug("Charset for content type {} is null", contentTypeValue);
         return null;
     }
 }

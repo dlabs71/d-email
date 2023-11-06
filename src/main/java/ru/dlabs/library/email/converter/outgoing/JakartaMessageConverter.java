@@ -59,9 +59,12 @@ public class JakartaMessageConverter {
         }
         JavaCoreUtils.notNullArgument(session, "session");
         JavaCoreUtils.notNullArgument(emailFrom, "emailFrom");
-
-        // It's creating an envelope of the message
-        MimeMessage envelop = createEnvelop(message, session, emailFrom, nameFrom);
+        log.debug(
+            "Starts converting outgoing message to jakarta Message. Email = {}, Name = {}, Message class = {}",
+            emailFrom,
+            nameFrom,
+            message.getClass()
+        );
 
         MimeMultipart multipart = new MimeMultipart();
         // It's creating and adding a content of the message
@@ -69,6 +72,7 @@ public class JakartaMessageConverter {
         for (BodyPart part : parts) {
             multipart.addBodyPart(part);
         }
+        log.debug("Converts message contents successfully. Size is {}", parts.size());
 
         // It's creating and adding attachments of the message
         List<BodyPart> attachments = JakartaMessagePartConverter.convertAttachmentParts(message);
@@ -77,6 +81,10 @@ public class JakartaMessageConverter {
                 multipart.addBodyPart(attachment);
             }
         }
+        log.debug("Converts message attachments successfully. Size is {}", attachments.size());
+
+        // It's creating an envelope of the message
+        MimeMessage envelop = createEnvelop(message, session, emailFrom, nameFrom);
 
         // It's putting the content and attachments to the message
         envelop.setContent(multipart);

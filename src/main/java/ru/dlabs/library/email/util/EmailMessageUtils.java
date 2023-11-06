@@ -42,6 +42,7 @@ public class EmailMessageUtils {
     public InternetAddress createAddress(String email, String name)
         throws UnsupportedEncodingException, AddressException {
         String senderName = name == null ? email : name;
+        log.debug("Creates instance of the InternetAddress class with email={} and name={}", email, senderName);
         InternetAddress address = new InternetAddress(email, senderName, DEFAULT_ENCODING);
         address.validate();
         return address;
@@ -75,6 +76,7 @@ public class EmailMessageUtils {
      * @return decoded string data
      */
     public String decodeData(String data) {
+        log.debug("Tries to decode the data {}", data);
         if (data == null) {
             return null;
         }

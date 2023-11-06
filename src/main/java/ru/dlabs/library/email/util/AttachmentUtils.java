@@ -44,6 +44,7 @@ public class AttachmentUtils {
      */
     public File createFile(String pathToFile) throws AttachmentException {
         pathToFile = pathToFile.trim();
+        log.debug("Starts getting file for an attachment by path {}", pathToFile);
         try {
             URL url = null;
             if (pathToFile.startsWith("file://") || pathToFile.startsWith(File.separator)) {
@@ -54,6 +55,7 @@ public class AttachmentUtils {
                 url = AttachmentUtils.class.getClassLoader().getResource(pathToFile);
             }
 
+            log.debug("Url is {}", url);
             if (url == null) {
                 throw new AttachmentException(
                     "The resource cannot be loaded. "
@@ -98,6 +100,7 @@ public class AttachmentUtils {
      */
     public EmailAttachment create(String pathToFile, FileParametersDetector detector) throws AttachmentException {
         File file = createFile(pathToFile);
+        log.debug("Creates attachment from the file {}", file);
         if (file.length() > Integer.MAX_VALUE) {
             throw new AttachmentException(
                 "The file is too large. A file cannot be larger than "
@@ -105,6 +108,7 @@ public class AttachmentUtils {
                     + pathToFile);
         }
         String contentType = createContentTypeForAttachment(file, detector);
+        log.debug("Content type for file is {}", contentType);
         byte[] content;
         try {
             InputStream inputStream = Files.newInputStream(file.toPath());
@@ -112,8 +116,13 @@ public class AttachmentUtils {
         } catch (IOException ex) {
             throw new AttachmentException("Read the file was failed. " + ex.getMessage());
         }
-        return EmailAttachment.builder().name(file.getName()).data(content).size((int) file.length()).contentType(
-            contentType).type(AttachmentType.find(contentType)).build();
+        return EmailAttachment.builder()
+            .name(file.getName())
+            .data(content)
+            .size((int) file.length())
+            .contentType(contentType)
+            .type(AttachmentType.find(contentType))
+            .build();
     }
 
     /**
@@ -135,11 +144,14 @@ public class AttachmentUtils {
      * @return a completed string for using in the Content-Type header
      */
     public String createContentTypeForAttachment(File file, FileParametersDetector detector) {
+        log.debug("Tries to create content type for file {} with using the detector is {}", file, detector);
         String mimeType = FileSystemUtils.detectFileMimeType(file, detector);
+        log.debug("MIME type for the file {} is {}", file, mimeType);
         AttachmentType attachmentType = AttachmentType.find(mimeType);
 
         if (AttachmentType.TEXT.equals(attachmentType)) {
             Charset encoding = FileSystemUtils.detectFileEncoding(file, detector);
+            log.debug("Charset content of the file {} is {}", file, encoding);
             if (encoding != null) {
                 return HttpUtils.contentTypeWithCharset(mimeType, encoding);
             }

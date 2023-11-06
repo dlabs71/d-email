@@ -27,4 +27,13 @@ public class EmailAttachment {
     private AttachmentType type;
     private String contentType;
     private Integer size;
+
+    @Override
+    public String toString() {
+        return "EmailAttachment{"
+            + "name='" + name + '\''
+            + ", contentType='" + contentType + '\''
+            + ", size=" + size
+            + '}';
+    }
 }

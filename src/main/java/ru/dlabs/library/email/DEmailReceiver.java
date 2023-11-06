@@ -117,12 +117,11 @@ public final class DEmailReceiver {
     public PageResponse<MessageView> checkEmail(PageRequest pageRequest) {
         String currentFolderName = folderName;
         int totalCount = this.receiverClient.getTotalCount(currentFolderName);
+        Map<String, Object> metadata = JavaCoreUtils.makeMap(FOLDER_NAME_KEY_METADATA, currentFolderName);
         if (totalCount <= 0 || totalCount < pageRequest.getStart()) {
-            return PageResponse.of(new ArrayList<>(), totalCount);
+            return PageResponse.of(new ArrayList<>(), totalCount, metadata);
         }
         List<MessageView> messageViews = this.receiverClient.checkEmailMessages(currentFolderName, pageRequest);
-
-        Map<String, Object> metadata = JavaCoreUtils.makeMap(FOLDER_NAME_KEY_METADATA, currentFolderName);
         return PageResponse.of(messageViews, totalCount, metadata);
     }
 
@@ -150,12 +149,13 @@ public final class DEmailReceiver {
      * @return object of class {@link PageResponse}. Elements in the list of data have the type {@link IncomingMessage}.
      */
     public PageResponse<IncomingMessage> readEmail(PageRequest pageRequest) {
-        int totalCount = this.receiverClient.getTotalCount(folderName);
-        Map<String, Object> metadata = JavaCoreUtils.makeMap(FOLDER_NAME_KEY_METADATA, folderName);
+        String currentFolderName = folderName;
+        int totalCount = this.receiverClient.getTotalCount(currentFolderName);
+        Map<String, Object> metadata = JavaCoreUtils.makeMap(FOLDER_NAME_KEY_METADATA, currentFolderName);
         if (totalCount <= 0 || totalCount <= pageRequest.getStart()) {
             return PageResponse.of(new ArrayList<>(), totalCount, metadata);
         }
-        List<IncomingMessage> messages = this.receiverClient.readMessages(folderName, pageRequest);
+        List<IncomingMessage> messages = this.receiverClient.readMessages(currentFolderName, pageRequest);
         return PageResponse.of(messages, totalCount, metadata);
     }
 

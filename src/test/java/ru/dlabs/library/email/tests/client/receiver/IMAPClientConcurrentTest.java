@@ -58,7 +58,7 @@ public class IMAPClientConcurrentTest extends AbstractTestsClass {
     @BeforeEach
     @SneakyThrows
     public void sendData() {
-        String email = this.emailSender.sender().getEmail();
+        String email = this.emailReceiver.receiver().getEmail();
         this.emailReceiver.clearCurrentFolder();
         this.emailSender.sendText(email, "Тестовое сообщение 1", "Содержание тестового сообщения 1");
         this.emailSender.sendText(email, "Тестовое сообщение 2", "Содержание тестового сообщения 2");
@@ -91,7 +91,8 @@ public class IMAPClientConcurrentTest extends AbstractTestsClass {
     public void checkEmail() {
         try {
             PageResponse<MessageView> response = emailReceiver.checkEmail();
-            log.info("Read from folder: " + response.getMetadata().get(FOLDER_NAME_KEY_METADATA) + ". Size: " + response.getData().size());
+            log.info("Check emails from folder: " + response.getMetadata().get(FOLDER_NAME_KEY_METADATA) + ". Size: " +
+                         response.getData().size());
             if (OUTBOX_NAME.equals(response.getMetadata().get(FOLDER_NAME_KEY_METADATA))) {
                 assertEquals(0, response.getData().size());
             }
@@ -107,7 +108,8 @@ public class IMAPClientConcurrentTest extends AbstractTestsClass {
     public void readEmail() {
         try {
             PageResponse<IncomingMessage> response = emailReceiver.readEmail();
-            log.info("Read from folder: " + response.getMetadata().get(FOLDER_NAME_KEY_METADATA) + ". Size: " + response.getData().size());
+            log.info("Read from folder: " + response.getMetadata().get(FOLDER_NAME_KEY_METADATA) + ". Size: " +
+                         response.getData().size());
             if (OUTBOX_NAME.equals(response.getMetadata().get(FOLDER_NAME_KEY_METADATA))) {
                 assertEquals(0, response.getData().size());
             }

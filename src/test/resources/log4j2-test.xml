@@ -2,13 +2,11 @@
 <Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg %n"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} thread_id=%tid thread_name=%tn thread_priority=%tp %-5level %logger{25} - %msg %n"/>
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="ru.dlabs.library.email" level="info">
-            <AppenderRef ref="Console"/>
-        </Logger>
+        <Logger name="ru.dlabs.library.email" level="INFO"/>
         <Root level="INFO">
             <AppenderRef ref="Console"/>
         </Root>

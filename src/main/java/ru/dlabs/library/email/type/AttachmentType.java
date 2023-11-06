@@ -2,6 +2,7 @@ package ru.dlabs.library.email.type;
 
 import java.util.Arrays;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * It's the enum with attachment types, which are based on MIME types.
@@ -15,6 +16,7 @@ import lombok.Getter;
  * @author Ivanov Danila
  * @since 1.0.0
  */
+@Slf4j
 @Getter
 public enum AttachmentType {
     IMAGE("image/.*"),
@@ -45,6 +47,7 @@ public enum AttachmentType {
      * @return {@link AttachmentType}
      */
     public static AttachmentType find(String mimeType) {
+        log.debug("Tries to look up the mime type in the AttachmentType. Mime type is {}", mimeType);
         return Arrays.stream(AttachmentType.values())
             .filter(item -> !item.equals(UNKNOWN) && mimeType.matches(item.getMimeTypePattern()))
             .findFirst()
