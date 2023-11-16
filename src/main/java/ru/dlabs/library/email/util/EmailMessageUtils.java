@@ -1,6 +1,6 @@
 package ru.dlabs.library.email.util;
 
-import static ru.dlabs.library.email.util.HttpUtils.DEFAULT_ENCODING;
+import static ru.dlabs.library.email.util.ProtocolUtils.DEFAULT_ENCODING;
 
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;

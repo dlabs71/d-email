@@ -3,7 +3,7 @@ package ru.dlabs.library.email.tests.converter.outgoing;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static ru.dlabs.library.email.util.HttpUtils.TEXT_CONTENT_TYPE;
+import static ru.dlabs.library.email.util.ProtocolUtils.TEXT_CONTENT_TYPE;
 
 import jakarta.mail.BodyPart;
 import java.util.Arrays;

@@ -22,11 +22,11 @@ import ru.dlabs.library.email.util.AttachmentUtils;
 @Builder
 public class EmailAttachment {
 
-    private String name;
-    private byte[] data;
-    private AttachmentType type;
-    private String contentType;
-    private Integer size;
+    private final String name;
+    private final byte[] data;
+    private final AttachmentType type;
+    private final String contentType;
+    private final Integer size;
 
     @Override
     public String toString() {

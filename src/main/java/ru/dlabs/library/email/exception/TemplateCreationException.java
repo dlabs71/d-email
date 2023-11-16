@@ -10,7 +10,7 @@ package ru.dlabs.library.email.exception;
  * @author Ivanov Danila
  * @since 1.0.0
  */
-public class TemplateCreationException extends Exception {
+public final class TemplateCreationException extends Exception {
 
     /**
      * The constructor of this class.

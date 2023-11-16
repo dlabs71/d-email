@@ -92,7 +92,7 @@ public class SMTPDClient implements SenderDClient {
      * Returns a using protocol name.
      */
     @Override
-    public String getProtocolName() {
+    public final String getProtocolName() {
         return PROTOCOL.getProtocolName();
     }
 
@@ -100,7 +100,7 @@ public class SMTPDClient implements SenderDClient {
      * Returns name and email address used for connection.
      */
     @Override
-    public EmailParticipant getPrincipal() {
+    public final EmailParticipant getPrincipal() {
         return this.principal;
     }
 

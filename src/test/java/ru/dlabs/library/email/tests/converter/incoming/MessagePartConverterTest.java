@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TYPE_HDR;
-import static ru.dlabs.library.email.util.HttpUtils.HTML_CONTENT_TYPE;
-import static ru.dlabs.library.email.util.HttpUtils.TEXT_CONTENT_TYPE;
+import static ru.dlabs.library.email.util.ProtocolUtils.CONTENT_TYPE_HDR;
+import static ru.dlabs.library.email.util.ProtocolUtils.HTML_CONTENT_TYPE;
+import static ru.dlabs.library.email.util.ProtocolUtils.TEXT_CONTENT_TYPE;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;

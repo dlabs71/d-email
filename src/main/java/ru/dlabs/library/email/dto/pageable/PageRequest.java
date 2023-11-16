@@ -1,6 +1,5 @@
 package ru.dlabs.library.email.dto.pageable;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -14,7 +13,6 @@ import lombok.Getter;
  * @since 1.0.0
  */
 @Getter
-@AllArgsConstructor
 public class PageRequest {
 
     /**
@@ -25,7 +23,12 @@ public class PageRequest {
     /**
      * Length of a data selection.
      */
-    private int length;
+    private final int length;
+
+    private PageRequest(int start, int length) {
+        this.start = start;
+        this.length = length;
+    }
 
     public static PageRequest of(int start, int length) {
         return new PageRequest(start, length);
@@ -46,7 +49,7 @@ public class PageRequest {
      *
      * @return int index
      */
-    public int getEnd() {
+    public final int getEnd() {
         return this.getStart() + this.getLength() - 1;
     }
 

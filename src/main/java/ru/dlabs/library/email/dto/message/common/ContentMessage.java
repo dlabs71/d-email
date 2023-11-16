@@ -4,7 +4,7 @@ import java.nio.charset.Charset;
 import lombok.Getter;
 import ru.dlabs.library.email.type.ContentMessageType;
 import ru.dlabs.library.email.util.AttachmentUtils;
-import ru.dlabs.library.email.util.HttpUtils;
+import ru.dlabs.library.email.util.ProtocolUtils;
 
 /**
  * This class describes an email message content (text of html).
@@ -40,7 +40,7 @@ public class ContentMessage {
         this.data = data;
         this.contentType = contentType;
         this.type = ContentMessageType.forContentType(contentType);
-        String charset = HttpUtils.defineCharsetFromHeaderValue(contentType);
+        String charset = ProtocolUtils.defineCharsetFromHeaderValue(contentType);
         if (charset != null) {
             this.charset = Charset.forName(charset);
         } else {
@@ -60,7 +60,7 @@ public class ContentMessage {
         this.data = data;
 
         if (charset != null) {
-            this.contentType = HttpUtils.contentTypeWithCharset(contentType, charset);
+            this.contentType = ProtocolUtils.contentTypeWithCharset(contentType, charset);
         } else {
             this.contentType = contentType;
         }

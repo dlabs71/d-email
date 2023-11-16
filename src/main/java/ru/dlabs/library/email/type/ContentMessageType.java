@@ -1,7 +1,7 @@
 package ru.dlabs.library.email.type;
 
-import static ru.dlabs.library.email.util.HttpUtils.HTML_CONTENT_TYPE;
-import static ru.dlabs.library.email.util.HttpUtils.TEXT_CONTENT_TYPE;
+import static ru.dlabs.library.email.util.ProtocolUtils.HTML_CONTENT_TYPE;
+import static ru.dlabs.library.email.util.ProtocolUtils.TEXT_CONTENT_TYPE;
 
 import java.util.Arrays;
 import lombok.Getter;

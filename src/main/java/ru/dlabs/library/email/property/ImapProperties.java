@@ -75,7 +75,7 @@ public class ImapProperties extends CommonProperties {
      *
      * <p>Corresponds the next jakarta mail properties: mail.imap.connectionpoolsize
      */
-    private Integer connectionPoolSize = 10;
+    private Integer connectionPoolSize = 20;
 
     /**
      * Timeout value in milliseconds for connection pool connections. Default is 45000 (45 seconds).

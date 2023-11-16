@@ -28,6 +28,7 @@ import ru.dlabs.library.email.property.ImapProperties;
 import ru.dlabs.library.email.property.SessionPropertyCollector;
 import ru.dlabs.library.email.type.Protocol;
 import ru.dlabs.library.email.util.JavaCoreUtils;
+import ru.dlabs.library.email.util.RepeatableUtils;
 
 /**
  * This class is an implementation of the interface {@link ReceiverDClient}.
@@ -122,7 +123,7 @@ public class IMAPDClient implements ReceiverDClient {
      * Returns a using protocol name.
      */
     @Override
-    public String getProtocolName() {
+    public final String getProtocolName() {
         return PROTOCOL.getProtocolName();
     }
 
@@ -130,7 +131,7 @@ public class IMAPDClient implements ReceiverDClient {
      * Returns name and email address used for connection.
      */
     @Override
-    public EmailParticipant getPrincipal() {
+    public final EmailParticipant getPrincipal() {
         return principal;
     }
 
@@ -243,7 +244,7 @@ public class IMAPDClient implements ReceiverDClient {
 
         Message message;
         try {
-            message = folder.getMessage(id);
+            message = RepeatableUtils.repeatable(2, 0, () -> folder.getMessage(id));
         } catch (MessagingException e) {
             throw new FolderOperationException(
                 "Reading the message with id=" + id + " in the folder with name " + folderName
@@ -294,8 +295,8 @@ public class IMAPDClient implements ReceiverDClient {
 
         Folder folder;
         try {
-            folder = store.getFolder(folderName);
-            folder.open(mode);
+            folder = RepeatableUtils.repeatable(2, 0, () -> store.getFolder(folderName));
+            RepeatableUtils.repeatable(2, 0, () -> folder.open(mode));
             log.debug("Folder is opened");
         } catch (MessagingException e) {
             throw new FolderOperationException(
@@ -317,7 +318,7 @@ public class IMAPDClient implements ReceiverDClient {
             return;
         }
         try {
-            folder.close();
+            RepeatableUtils.repeatable(2, 0, () -> folder.close());
             log.debug("Folder is closed.");
         } catch (MessagingException e) {
             log.warn("The folder with the name " + folder.getName()
@@ -339,8 +340,10 @@ public class IMAPDClient implements ReceiverDClient {
         Folder folder = this.openFolderForWrite(folderName);
 
         try {
-            Message message = folder.getMessage(id);
-            message.setFlag(Flags.Flag.DELETED, true);
+            RepeatableUtils.repeatable(2, 0, () -> {
+                Message message = folder.getMessage(id);
+                message.setFlag(Flags.Flag.DELETED, true);
+            });
         } catch (MessagingException e) {
             log.warn(
                 "The message with id={} wasn't marked as deleted because of the following error: {}",
@@ -378,8 +381,10 @@ public class IMAPDClient implements ReceiverDClient {
         Map<Integer, Boolean> result = new HashMap<>();
         ids.forEach(id -> {
             try {
-                Message message = folder.getMessage(id);
-                message.setFlag(Flags.Flag.DELETED, true);
+                RepeatableUtils.repeatable(2, 0, () -> {
+                    Message message = folder.getMessage(id);
+                    message.setFlag(Flags.Flag.DELETED, true);
+                });
                 result.put(id, true);
             } catch (MessagingException e) {
                 log.warn("The message with id=" + id + " wasn't marked as deleted because of the following error: "
@@ -389,7 +394,7 @@ public class IMAPDClient implements ReceiverDClient {
         });
 
         try {
-            folder.expunge();
+            RepeatableUtils.repeatable(2, 0, folder::expunge);
         } catch (MessagingException e) {
             throw new FolderOperationException(
                 "The folder with the name " + folder.getName()
@@ -415,7 +420,9 @@ public class IMAPDClient implements ReceiverDClient {
         Map<Integer, Boolean> result = new HashMap<>();
         this.getMessages(folder, PageRequest.of(0, Integer.MAX_VALUE)).forEach(message -> {
             try {
-                message.setFlag(Flags.Flag.DELETED, true);
+                RepeatableUtils.repeatable(2, 0, () -> {
+                    message.setFlag(Flags.Flag.DELETED, true);
+                });
                 result.put(message.getMessageNumber(), true);
             } catch (MessagingException e) {
                 log.warn("The message with id=" + message.getMessageNumber()
@@ -425,7 +432,7 @@ public class IMAPDClient implements ReceiverDClient {
         });
 
         try {
-            folder.expunge();
+            RepeatableUtils.repeatable(2, 0, folder::expunge);
         } catch (MessagingException e) {
             throw new FolderOperationException(
                 "The folder with the name " + folder.getName()
@@ -438,11 +445,8 @@ public class IMAPDClient implements ReceiverDClient {
     }
 
     private Stream<Message> getMessages(Folder folder, PageRequest pageRequest) {
-        int totalCount = this.getTotalCount(folder);
-        int end = pageRequest.getEnd() + 1;
-        if (totalCount < end) {
-            end = totalCount;
-        }
+        final int totalCount = this.getTotalCount(folder);
+        final int end = Math.min(totalCount, (pageRequest.getEnd() + 1));
         log.debug(
             "Gets message from folder {} with page request {}. The folder has {} messages",
             folder,
@@ -450,7 +454,11 @@ public class IMAPDClient implements ReceiverDClient {
             totalCount
         );
         try {
-            return Arrays.stream(folder.getMessages(pageRequest.getStart() + 1, end));
+            return RepeatableUtils.repeatable(
+                2,
+                0,
+                () -> Arrays.stream(folder.getMessages(pageRequest.getStart() + 1, end))
+            );
         } catch (MessagingException e) {
             throw new FolderOperationException("The get list message operation has failed: " + e.getMessage());
         }

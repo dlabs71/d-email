@@ -26,8 +26,360 @@
 
 # Сборка из исходников
 
+Для сборки из исходников понадобиться система автосборки Maven 3.9.2 или выше. Используемая версия Java 1.8.
+Для сборки достаточно выполнить следующую команду из корня проекта:
+
+```shell
+mvn clean install
+```
+
+Для сборки без выполнения тестов:
+
+```shell
+mvn clean install -DskipTests
+```
+
+# Checkstyle
+
+В проекте настроен Checkstyle при сборке проекта. Используемая версия checkstyle 9.3. Файлы настроек checkstyle
+находятся в директории `checkstyle` в корне проекта. Для проекта был выбран формат Google Checkstyle. Но также были
+внесены следующие изменения.
+
+1. Разрешены аббревиатуры SMTPD и IMAPD
+
+```xml
+
+<property name="allowedAbbreviations" value="SMTPD,IMAPD"/>
+```
+
+2. Увеличены отступы
+
+```xml
+
+<module name="Indentation">
+    <property name="basicOffset" value="4"/>
+    <property name="braceAdjustment" value="2"/>
+    <property name="caseIndent" value="4"/>
+    <property name="throwsIndent" value="4"/>
+    <property name="lineWrappingIndentation" value="4"/>
+    <property name="arrayInitIndent" value="4"/>
+</module>
+```
+
+Для детальной информации о настройке maven-checkstyle-plugin смотрите [pom.xml](pom.xml).
+
+Также в директории `checkstyle` добавлена директория `idea`. В ней находиться xml конфигурация Code Style для Intellij
+IDEA. Данная конфигурация настроена таким образом, чтобы не противоречить checkstyle.
 
 # Использование
+
+## Общая информация
+
+В этой части документа описано базовое использование данной библиотеки. Для более детального описания смотрите раздел "
+Документация" или JavaDoc.
+
+Библиотека предоставляет два основных класса-фасада, через которые вы можете легко и без лишнего кода отправлять и
+принимать сообщения.
+
+- `DEmailReceiver` - предназначен для получения сообщений по протоколу IMAP.
+- `DEmailSender` - предназначен для отправки сообщений по протоколу SMTP.
+
+В каждом из этих классов содержатся исчерпывающие количество методов для отправки и чтения сообщений. Так что для
+большинства разработчиков, которые будут использовать эту библиотеку этих классов будет достаточно. Но если потребуется
+что-то большее, то вы всегда можете обратиться к разделу "Документация" и найти там необходимую информацию.
+
+## Отправка сообщения
+
+Рассмотрим отправку сообщений. Прежде всего, необходимо изначально понимать, что содержимое отправляемых сообщения
+могут быть нескольких типов:
+
+- обычное текстовое сообщение (имеет content-type = text/plain)
+- текстовое html сообщение (имеет content-type = text/html)
+
+В библиотеке предусмотрен для отправки таких сообщений класс `DefaultOutgoingMessage`. Также для удобства разработчиков,
+использующих данную библиотеку, добавлен класс `TemplatedOutgoingMessage`, который наследует  `DefaultOutgoingMessage`.
+Данный класс предназначен для создания сообщений по шаблону используя проект Apache Velocity. При этом шаблон может быть
+как текстовый, так и путь до файла (например файла html). Для удобства работы с шаблонами библиотека поставляет
+utility-класс - `TemplateUtils`.
+
+В сообщении может быть несколько "контентов" (содержимых) с разными content-type. Содержание сообщения описывается
+классом `ContentMessage`. В нём есть поле по которому можно идентифицировать какого типа это содержимое сообщения.
+Данное поле называется `type` и имеет тип перечисления `ContentMessageType`.
+
+Отдельно стоит упомянуть, что отправляемое сообщение может иметь вложения. Вложение описывается
+классом `EmailAttachment`. Для создания вложений пользуйтесь utility-классом `AttachmentUtils`.
+
+Используя фасад `DEmailSender` можно очень легко отправлять сообщения. Данный класс содержит множество перегруженных
+методов отправки сообщения, чтобы упростить создание и отправку сообщения. Прежде чем конструировать отдельно сообщение,
+рекомендуется исследовать возможные методы этого класса.
+Для создания экземпляра класса `DEmailSender` потребуется передать настройки подключения, которые описываются
+классом `SmtpProperties`. Большая часть настроек уже имеет значение по умолчанию. Для детального изучения имеющихся
+настроек смотрите JavaDoc.
+
+Простейшая отправка сообщений.
+
+```java
+import ru.dlabs.library.email.DEmailSender;
+import ru.dlabs.library.email.property.SmtpProperties;
+import ru.dlabs.library.email.type.SendingStatus;
+
+class Test {
+
+    public void test() {
+        SmtpProperties smtpProperties = SmtpProperties.builder()
+            .host("123.23.32.12")
+            .port(587)
+            .name("Name of a sender")
+            .email("sender@example.com")
+            .password("password")
+            .build();
+
+        DEmailSender sender = DEmailSender.of(smtpProperties);
+        SendingStatus result = sender.sendText("recipient@example.com", "Subject", "Text body");
+    }
+}
+```
+
+Отправка сообщения нескольким получателям (рассылка).
+
+```java
+import ru.dlabs.library.email.DEmailSender;
+import ru.dlabs.library.email.property.SmtpProperties;
+import ru.dlabs.library.email.type.SendingStatus;
+
+class Test {
+
+    public void test() {
+        SmtpProperties smtpProperties = SmtpProperties.builder()
+            .host("123.23.32.12")
+            .port(587)
+            .name("Name of a sender")
+            .email("sender@example.com")
+            .password("password")
+            .build();
+
+        DEmailSender sender = DEmailSender.of(smtpProperties);
+        SendingStatus result = sender.sendText(
+            Arrays.asList("recipient1@example.com", "recipient2@example.com"),
+            "Subject",
+            "Text body"
+        );
+    }
+}
+```
+
+Отправка сообщения с вложениями.
+
+```java
+import ru.dlabs.library.email.DEmailSender;
+import ru.dlabs.library.email.property.SmtpProperties;
+import ru.dlabs.library.email.type.SendingStatus;
+import ru.dlabs.library.email.util.AttachmentUtils;
+
+class Test {
+
+    public void test() {
+        SmtpProperties smtpProperties = SmtpProperties.builder()
+            .host("123.23.32.12")
+            .port(587)
+            .name("Name of a sender")
+            .email("sender@example.com")
+            .password("password")
+            .build();
+
+        DEmailSender sender = DEmailSender.of(smtpProperties);
+        SendingStatus result = sender.sendText(
+            Arrays.asList("recipient1@example.com", "recipient2@example.com"),
+            "Subject",
+            "Text body",
+            AttachmentUtils.create("classpath:attachments/file.txt"),
+            AttachmentUtils.create("file:///home/attachments/file.txt")
+        );
+    }
+}
+```
+
+Отправка шаблонного сообщения.
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+import ru.dlabs.library.email.DEmailSender;
+import ru.dlabs.library.email.property.SmtpProperties;
+import ru.dlabs.library.email.type.SendingStatus;
+import ru.dlabs.library.email.util.AttachmentUtils;
+
+class Test {
+
+    public void test() {
+        SmtpProperties smtpProperties = SmtpProperties.builder()
+            .host("123.23.32.12")
+            .port(587)
+            .name("Name of a sender")
+            .email("sender@example.com")
+            .password("password")
+            .build();
+
+        Map<String, Object> templateParams = new HashMap<>();
+        templateParams.put("header", "Header of the message");
+        templateParams.put("content", "Content of the message");
+
+
+        DEmailSender sender = DEmailSender.of(smtpProperties);
+        SendingStatus result = sender.sendTextTemplated(
+            "recipient@example.com",
+            "Subject",
+            "classpath:sender-test/template.txt",
+            templateParams
+        );
+    }
+}
+```
+
+Также в классе `DEmailSender` есть методы для отправки HTML сообщения. Для детальной информации смотрите JavaDoc.
+
+## Получение сообщения
+
+Теперь рассмотрим чтение сообщений с email сервера. Как и с отправкой сообщений, тип контента сообщения может быть:
+
+- обычное текстовое сообщение (имеет content-type = text/plain)
+- текстовое html сообщение (имеет content-type = text/html)
+
+Все сообщения, читаемые с email сервера имеют тип `DefaultIncomingMessage`. Данный класс реализует
+интерфейс `IncomingMessage` и обладает рядом дополнительных методов, помогающих получить содержимое сообщения
+конкретного типа. Например: `getHtmlContents()` или `getTextContents()`. Также есть методы получения содержимого
+сообщения в виде строки.
+
+Так как интерфейс `IncomingMessage` наследует интерфейс `Message`, аналогично интерфейсу `OutgoingMessage`,
+то для описания содержимого сообщения используется класс `ContentMessage`, а для вложений используется
+класс `EmailAttachment`. То есть всё аналогично отправляемым сообщениям.
+
+Используя фасад `DEmailReceiver` можно легко читать сообщения с email сервера. На данный момент реализовано
+взаимодействие с email сервером только по протоколу IMAP. Поддержка протокола POP3 будет добавлена позже. Стоит понимать
+два основных момента при использовании этого фасада.
+
+1. Проверка email сообщений - это получение списка сообщений без тела. Результатом будет список объектов
+   класса `MessageView`. После получения сообщений они не являются прочитанными.
+2. Чтение email сообщений - это получение списка сообщений с телом. Результатом будет список объектов
+   класса `DefaultIncomingMessage`. После получения сообщений они меняют свой статус на "прочитано".
+3. Любое получение списка сообщений работает с использованием Pageable запроса. Т.е. вы указываете начальную позицию и
+   размер выборки через специальный класс `PageRequest`. Результат будет в виде класса `PageResponse`, внутри которого
+   находиться список с данными, общее количество данных и метаданные. В роли метаданных может выступать имя папки из
+   которой читали сообщение.
+
+Для создания экземпляра класса `DEmailReceiver` потребуется передать настройки подключения, которые описываются
+классом `ImapProperties`. Большая часть настроек уже имеет значение по умолчанию. Для детального изучения имеющихся
+настроек смотрите JavaDoc.
+
+Простейшая проверка email сообщений из папки "INBOX".
+
+```java
+import ru.dlabs.library.email.DEmailReceiver;
+import ru.dlabs.library.email.dto.message.incoming.MessageView;
+import ru.dlabs.library.email.dto.pageable.PageRequest;
+import ru.dlabs.library.email.dto.pageable.PageResponse;
+import ru.dlabs.library.email.property.ImapProperties;
+
+class Test {
+
+    public void test() {
+        ImapProperties imapProperties = ImapProperties.builder()
+            .host("123.23.32.12")
+            .port(143)
+            .email("receiver@example.com")
+            .password("password")
+            .build();
+
+        DEmailReceiver receiver = DEmailReceiver.of(imapProperties).folder("INBOX");
+
+        // Получение первых 50 сообщений. Используется PageRequest по умолчанию
+        PageResponse<MessageView> emails1 = receiver.checkEmail();
+
+        // Получение от 50-ого до 150-ого сообщения. Используется собственный PageRequest
+        PageResponse<MessageView> emails2 = receiver.checkEmail(PageRequest.of(50, 100));
+    }
+}
+```
+
+Чтение email сообщений из папки "INBOX".
+
+```java
+import ru.dlabs.library.email.DEmailReceiver;
+import ru.dlabs.library.email.dto.message.incoming.MessageView;
+import ru.dlabs.library.email.dto.pageable.PageRequest;
+import ru.dlabs.library.email.dto.pageable.PageResponse;
+import ru.dlabs.library.email.property.ImapProperties;
+
+class Test {
+
+    public void test() {
+        ImapProperties imapProperties = ImapProperties.builder()
+            .host("123.23.32.12")
+            .port(143)
+            .email("receiver@example.com")
+            .password("password")
+            .build();
+
+        DEmailReceiver receiver = DEmailReceiver.of(imapProperties).folder("INBOX");
+
+        // Чтение первых 50 сообщений. Используется PageRequest по умолчанию
+        PageResponse<MessageView> emails1 = receiver.readEmail();
+
+        // Чтение от 50-ого до 150-ого сообщения. Используется собственный PageRequest
+        PageResponse<MessageView> emails2 = receiver.readEmail(PageRequest.of(50, 100));
+    }
+}
+```
+
+Удаление сообщений из папки "INBOX".
+
+```java
+import java.util.Map;
+import ru.dlabs.library.email.DEmailReceiver;
+import ru.dlabs.library.email.dto.message.incoming.MessageView;
+import ru.dlabs.library.email.dto.pageable.PageRequest;
+import ru.dlabs.library.email.dto.pageable.PageResponse;
+import ru.dlabs.library.email.property.ImapProperties;
+
+class Test {
+
+    public void test() {
+        ImapProperties imapProperties = ImapProperties.builder()
+            .host("123.23.32.12")
+            .port(143)
+            .email("receiver@example.com")
+            .password("password")
+            .build();
+
+        DEmailReceiver receiver = DEmailReceiver.of(imapProperties).folder("INBOX");
+
+        // удалить все сообщения из папки INBOX
+        Map<Integer, Boolean> result = receiver.clearCurrentFolder();
+
+        // удалить сообщение с id = 1 из папки INBOX
+        boolean result = receiver.deleteMessageById(1);
+    }
+}
+```
+
+## Дополнительные возможности
+
+Помимо двух основных классов-фасадов для отправки и приёма сообщений, библиотека также предоставляет ряд вспомогательных
+utility-классов. Они описаны ниже:
+
+- AttachmentUtils - класс помогающий создать объект класса `EmailAttachment`.
+- FileSystemUtils - класс помогающий получить такие характеристики файла, находящегося в файловой системе, как: MIME
+  type, Encoding. При его использовании обратите внимание на `FileParametersDetector`.
+- TemplateUtils - класс помогающий создать `Apache Velocity Template`. Вся работа с проектом `Apache Velocity`
+  инкапсулирована в этом классе.
+
+Обратите внимание на интерфейс `FileParametersDetector`. Он необходим для получения параметров файла таких как MIME type
+и Encoding. Так как получить данные параметры средствами Java не всегда получается корректно, то создан этот интерфейс
+чтобы можно было указать собственную реализацию для получения вышеописанных параметров файла. Библиотека предоставляет
+реализацию по умолчанию - `DefaultFileParametersDetector`, но использование её не даёт гарантий получения корректного
+MIME type или кодировки файла. Однако, для увеличения качества отправки вложений, необходимо корректное получение данных
+параметров. Посмотрите на использование проекта [Apache Tika](https://tika.apache.org/) в качестве основы для построения
+собственной реализации `FileParametersDetector`.
 
 # Документация
 
@@ -51,17 +403,103 @@
 
 ## <h2 id="section1">1. Настройка подключения</h2>
 
+Для настройки получения используются специальные классы находящиеся в пакете `ru.dlabs.library.email.property`. Что
+настройки подключения по SMTP протоколу, что по IMAP протоколу, оба обладают общим набором свойств. Данные свойства
+описаны в классе [CommonProperties](./src/main/java/ru/dlabs/library/email/property/CommonProperties.java).
+
+Все свойства соответствуют значения свойств подключения `jakarta-mail` которые можно
+найти [здесь (SMTP)](https://jakarta.ee/specifications/mail/1.6/apidocs/?com/sun/mail/smtp/package-summary.html)
+и [здесь (IMAP)](https://jakarta.ee/specifications/mail/1.6/apidocs/?com/sun/mail/imap/package-summary.html).
+
+Для настроек подключения по протоколу SMTP существует
+класс [SmtpProperties](./src/main/java/ru/dlabs/library/email/property/SmtpProperties.java). Соответственно, для
+настроек подключения по протоколу IMAP существует
+класс [ImapProperties](./src/main/java/ru/dlabs/library/email/property/ImapProperties.java).
+
+Для более детальной информации по полям класса смотрите JavaDoc.
+
 ## <h2 id="section2">2. DTO классы сообщений</h2>
+
+Все классы предназначенные для хранения информации о сообщении находятся в пакете `ru.dlabs.library.email.dto.message`.
+В пакете существует 3 под-пакета:
+
+- common - классы и интерфейсы являющиеся общими для входящих и исходящих сообщений.
+- incoming - классы и интерфейсы предназначенные для входящих сообщений.
+- outgoing - классы и интерфейсы предназначенные для исходящих сообщений.
 
 ### <h3 id="section21">2.1 Базовые классы сообщений</h3>
 
+Любое сообщение, будь то входящее или исходящее, реализует
+интерфейс [Message](./src/main/java/ru/dlabs/library/email/dto/message/common/Message.java). Данный интерфейс определяет
+все основные методы сообщения. Как можно видеть, используются также следующие классы:
+
+- `ContentMessage` - предназначен для хранения информации о содержимом сообщения.
+- `EmailAttachment` - предназначен для хранения информации о вложении.
+- `EmailParticipant` - предназначен для хранения информации об отправителе или получателе.
+
+Существует также класс `BaseMessage` который реализует данный интерфейс. Данный класс представляет собой основную
+структуру любого email сообщения. Также он содержит дополнительные методы для работы с содержимым сообщения:
+
+| Метод                                    | Описание                                                                         |
+|------------------------------------------|----------------------------------------------------------------------------------|
+| getAllContentsAsString()                 | Получение всех содержимых в виде строки разделённые знаком `\n`                  |
+| getAllContentsAsString(String delimiter) | Получение всех содержимых в виде строки разделённые знаком указанным в параметре |
+
 ### <h3 id="section22">2.2 Входящие сообщения</h3>
+
+Входящие сообщения должны реализовывать
+интерфейс [IncomingMessage](./src/main/java/ru/dlabs/library/email/dto/message/incoming/IncomingMessage.java). Данный
+интерфейс унаследован от общего интерфейса `Message` и определяет несколько вспомогательных методов для работы с
+содержимым сообщения:
+
+| Метод                                     | Описание                                                                                                                                     |
+|-------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| getHtmlContents()                         | Получение частей содержимого сообщения для которых указан content-type = text/html                                                           |
+| getHtmlContentsAsString()                 | Получение частей содержимого сообщения для которых указан content-type = text/html в виде строки разделённой символом `\n`                   |
+| getHtmlContentsAsString(String delimiter) | Получение частей содержимого сообщения для которых указан content-type = text/html в виде строки разделённой символом указанным в параметре  |
+| getTextContents()                         | Получение частей содержимого сообщения для которых указан content-type = text/plain                                                          |
+| getTextContentsAsString()                 | Получение частей содержимого сообщения для которых указан content-type = text/plain в виде строки разделённой символом `\n`                  |
+| getTextContentsAsString(String delimiter) | Получение частей содержимого сообщения для которых указан content-type = text/plain в виде строки разделённой символом указанным в параметре |
+
+Реализацией этого интерфейса по умолчанию является `DefaultIncomingMessage`.
+
+В пакете также имеется класс `MessageView`. Он предназначен для хранения только общей информации о сообщении. Этот класс
+применяется при проверке почтового ящика. Получаем только основную информацию о сообщении, при этом сообщение не
+является прочитанным после этого.
 
 ### <h3 id="section23">2.3 Исходящие сообщения</h3>
 
-#### <h4 id="section231">2.3.1 Строковые исходящие сообщения</h4>
+Исходящие сообщения должны реализовывать
+интерфейс [OutgoingMessage](./src/main/java/ru/dlabs/library/email/dto/message/outgoing/OutgoingMessage.java). Данный
+интерфейс унаследован от общего интерфейса `Message`. Реализацией этого интерфейса по умолчанию
+является `DefaultOutgoingMessage`, определённый в этом же пакете.
 
-#### <h4 id="section232">2.3.2 Шаблонные исходящие сообщения</h4>
+Наряду с реализацией по умолчанию, имеется ещё одна реализация. Это класс `TemplatedOutgoingMessage`, который добавляет
+возможность создать содержимое сообщения указав путь до шаблона сообщения и параметры к этому шаблону. Механизм
+генерации исходного содержимого по шаблону основан на проекте `Apache Velocity`. Весь механизм инкапсулирован в
+классе `TemplateUtils`.
+
+#### <h4 id="section231">2.4 Pageable DTO</h4>
+
+Все необходимые DTO при работе механизмов pageable находятся в пакете `ru.dlabs.library.email.dto.pageable`.
+
+Для реализации pageable запросов применяется
+класс [PageRequest](./src/main/java/ru/dlabs/library/email/dto/pageable/PageRequest.java). Данный класс содержит два
+поля.
+
+| Поле       | Описание                  |
+|------------|---------------------------|
+| int start  | Начальная позиция курсора |
+| int length | Длинна выборки            |
+
+Для создания экземпляра класса используйте статистический метод `of(int start, int length)`.
+
+В данном классе также имеется ряд вспомогательных методов.
+
+| Метод            | Описание                                                                              |
+|------------------|---------------------------------------------------------------------------------------|
+| incrementStart() | Увеличивает указывает следующую позицию курсора. Возвращает текущий экземпляр класса. |
+| getEnd()         | Получает конечную позицию курсора.                                                    |
 
 ## <h2 id="section3">3. Utility классы</h2>
 

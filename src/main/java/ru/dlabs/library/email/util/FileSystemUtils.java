@@ -1,6 +1,6 @@
 package ru.dlabs.library.email.util;
 
-import static ru.dlabs.library.email.util.HttpUtils.DEFAULT_BINARY_CONTENT_TYPE;
+import static ru.dlabs.library.email.util.ProtocolUtils.DEFAULT_BINARY_CONTENT_TYPE;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -76,7 +76,7 @@ public class FileSystemUtils {
      *                 If null, it'll use {@link DefaultFileParametersDetector}
      *
      * @return MIME type of file. If the detector cannot define the MIME type,
-     *     then it returns the default value ({@link HttpUtils#DEFAULT_BINARY_CONTENT_TYPE})
+     *     then it returns the default value ({@link ProtocolUtils#DEFAULT_BINARY_CONTENT_TYPE})
      */
     public String detectFileMimeType(File file, FileParametersDetector detector) {
         log.debug("Tries to detect MIME type for file {}. Using detector is {}", file, detector);

@@ -26,7 +26,7 @@ public class EmailParticipant {
     @Getter
     private final String email;
     @Getter
-    private String name;
+    private final String name;
 
     /**
      * Uses for only toString.
@@ -43,6 +43,7 @@ public class EmailParticipant {
             throw new ValidationMessageException("The recipient's email must not be null");
         }
         this.email = email;
+        this.name = null;
     }
 
     /**
@@ -52,7 +53,10 @@ public class EmailParticipant {
      * @param name  a real name of the participant. For example: John Silver, Billy Bones, etc.
      */
     public EmailParticipant(String email, String name) {
-        this(email);
+        if (email == null) {
+            throw new ValidationMessageException("The recipient's email must not be null");
+        }
+        this.email = email;
         this.name = name;
     }
 

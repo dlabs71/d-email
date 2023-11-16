@@ -153,7 +153,7 @@ public class AttachmentUtils {
             Charset encoding = FileSystemUtils.detectFileEncoding(file, detector);
             log.debug("Charset content of the file {} is {}", file, encoding);
             if (encoding != null) {
-                return HttpUtils.contentTypeWithCharset(mimeType, encoding);
+                return ProtocolUtils.contentTypeWithCharset(mimeType, encoding);
             }
         }
         return mimeType;

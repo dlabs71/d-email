@@ -29,7 +29,7 @@ import ru.dlabs.library.email.type.TransferEncoder;
 @Getter
 @Builder
 @ToString
-public class MessageView implements Message {
+public class MessageView implements IncomingMessage {
 
     private final EmailParticipant sender;
     private final Set<EmailParticipant> recipients;
@@ -57,5 +57,35 @@ public class MessageView implements Message {
     @Override
     public List<EmailAttachment> getAttachments() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public List<ContentMessage> getHtmlContents() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<ContentMessage> getTextContents() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public String getTextContentsAsString() {
+        return null;
+    }
+
+    @Override
+    public String getTextContentsAsString(String delimiter) {
+        return null;
+    }
+
+    @Override
+    public String getHtmlContentsAsString() {
+        return null;
+    }
+
+    @Override
+    public String getHtmlContentsAsString(String delimiter) {
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 package ru.dlabs.library.email.converter.outgoing;
 
-import static ru.dlabs.library.email.util.HttpUtils.CONTENT_TRANSFER_ENCODING_HDR;
+import static ru.dlabs.library.email.util.ProtocolUtils.CONTENT_TRANSFER_ENCODING_HDR;
 
 import jakarta.mail.BodyPart;
 import jakarta.mail.Message;

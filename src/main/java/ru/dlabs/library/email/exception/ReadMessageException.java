@@ -10,7 +10,7 @@ package ru.dlabs.library.email.exception;
  * @author Ivanov Danila
  * @since 1.0.0
  */
-public class ReadMessageException extends RuntimeException {
+public final class ReadMessageException extends RuntimeException {
 
     /**
      * The constructor of this class.

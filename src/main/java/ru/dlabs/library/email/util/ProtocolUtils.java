@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @UtilityClass
-public class HttpUtils {
+public class ProtocolUtils {
 
     public static final String CONTENT_TYPE_HDR = "Content-type";
     public static final String CONTENT_TRANSFER_ENCODING_HDR = "Content-Transfer-Encoding";
@@ -30,7 +30,7 @@ public class HttpUtils {
      * Returns the string value for the Content-Type header with the 'charset' directive.
      * For example: text/html; charset=utf-8
      *
-     * @see HttpUtils#contentTypeWithCharset(String, String)
+     * @see ProtocolUtils#contentTypeWithCharset(String, String)
      */
     public String contentTypeWithCharset(String contentType, Charset charset) {
         return contentTypeWithCharset(contentType, charset.displayName());
@@ -58,7 +58,7 @@ public class HttpUtils {
     /**
      * Returns the string value for the Content-Type header with the 'charset' directive.
      * For example: text/html; charset=utf-8
-     * It uses the {@link HttpUtils#DEFAULT_ENCODING} constant value
+     * It uses the {@link ProtocolUtils#DEFAULT_ENCODING} constant value
      *
      * @param contentType data for the 'media-type' directive. A MIME type of resource.
      *
