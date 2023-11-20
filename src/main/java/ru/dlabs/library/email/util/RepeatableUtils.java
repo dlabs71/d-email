@@ -40,9 +40,9 @@ public class RepeatableUtils {
         throw messagingException;
     }
 
-    public void repeatable(int count, long delayInMs, RepeatableWorker supplier) throws MessagingException {
+    public void repeatable(int count, long delayInMs, RepeatableWorker worker) throws MessagingException {
         RepeatableUtils.repeatable(count, delayInMs, () -> {
-            supplier.work();
+            worker.work();
             return null;
         });
     }
