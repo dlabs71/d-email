@@ -4,14 +4,49 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ru.dlabs.library</groupId>
+    <groupId>ru.dlabs71.library</groupId>
     <artifactId>d-email</artifactId>
-    <version>1.0.0</version>
+    <version>0.0.1</version>
+    <packaging>jar</packaging>
+
+    <name>D-Email</name>
+    <description>It's the library for simplifying sending email messages for a Java application.</description>
+    <url>https://github.com/dlabs71/d-email</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>dlabs71</id>
+            <name>Ivanov Danila</name>
+            <email>danila.a.ivanov@d-labs.ru</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/dlabs71/d-email.git</connection>
+        <developerConnection>scm:git:https://github.com/dlabs71/d-email.git</developerConnection>
+        <url>https://github.com/dlabs71/d-email/tree/latest</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <issueManagement>
+        <url>https://github.com/dlabs71/d-email/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
 
     <properties>
+        <checkstyle.version>9.3</checkstyle.version>
+
         <java.version>1.8</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <slf4j.version>2.0.7</slf4j.version>
@@ -27,6 +62,9 @@
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-checkstyle-plugin.version>3.3.0</maven-checkstyle-plugin.version>
+        <maven-javadoc-plugin.version>3.6.2</maven-javadoc-plugin.version>
+
+        <maven.plugin.validation>BRIEF</maven.plugin.validation>
     </properties>
 
     <dependencies>
@@ -116,7 +154,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>9.3</version>
+                        <version>${checkstyle.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -124,6 +162,7 @@
                     <failOnViolation>false</failOnViolation>
                     <configLocation>checkstyle/checkstyle.xml</configLocation>
                     <suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
+                    <enableRulesSummary>false</enableRulesSummary>
                 </configuration>
                 <executions>
                     <execution>
@@ -132,6 +171,19 @@
                             <goal>check</goal>
                         </goals>
                         <phase>test</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

@@ -6,7 +6,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="ru.dlabs.library.email" level="INFO"/>
+        <Logger name="ru.dlabs71.library.email" level="INFO"/>
         <Root level="INFO">
             <AppenderRef ref="Console"/>
         </Root>
