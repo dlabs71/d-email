@@ -1,0 +1,1 @@
+It's a template with the name ${templateName} for testing a utility class with the name ${className};
