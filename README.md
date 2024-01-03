@@ -689,13 +689,13 @@ mvn clean install -DskipTests
 Также в директории `checkstyle` добавлена директория `idea`. В ней находиться xml конфигурация Code Style для Intellij
 IDEA. Данная конфигурация настроена таким образом, чтобы не противоречить checkstyle.
 
-[maven-central-img]:
+[maven-central-img]: https://maven-badges.herokuapp.com/maven-central/ru.dlabs71.library/d-email/badge.svg?gav=true
 
-[maven-central-url]:
+[maven-central-url]: https://maven-badges.herokuapp.com/maven-central/ru.dlabs71.library/d-email/?gav=true
 
-[javadocs-img]: https://javadoc.io/badge/d-email/d-email/2.15.0.svg
+[javadocs-img]: https://javadoc.io/badge2/ru.dlabs71.library/d-email/javadoc.svg
 
-[javadocs-url]: https://javadoc.io/doc/d-email/d-email/2.15.0
+[javadocs-url]: https://javadoc.io/doc/ru.dlabs71.library/d-email
 
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg
 
